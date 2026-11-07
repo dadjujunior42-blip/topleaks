@@ -354,7 +354,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 
 <script>
 (function(){
-  /* ---------- Données d'exemple ---------- */
   var A={
     a1:{n:'LEDDY LEDDY',role:'',bio:''},
     a2:{n:'Mama Nzuzi',role:'Humoriste et comédienne',bio:'Vingt ans de scène, du théâtre de quartier aux grandes salles. Elle joue les commerçantes, les tantes et les voisines avec une précision redoutable.'},
@@ -381,12 +380,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
   var byId={};V.forEach(function(v){byId[v.id]=v});
   var FEATURED=['s6','s9','s3'];
   var ROWS=[
-    ['Nouveautés',function(v){return v.y===2026}],
-    ['Exclusivités VIP',function(v){return v.p>0}],
-    ['Les plus vus',null]
+    ['Nouveautés',function(v){return v.y===2026},3],
+    ['Exclusivités VIP',function(v){return v.p>0},7],
+    ['Les plus vus',null,6]
   ];
 
-  /* ---------- Utilitaires ---------- */
   var $=function(s){return document.querySelector(s)};
   var p2=function(n){return String(n).padStart(2,'0')};
   var FC=function(n){return String(n)+'\u00a0FC'};
@@ -398,7 +396,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
   var toastT;
   function toast(msg){var t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show')},2200)}
 
-  /* ---------- Rendu accueil ---------- */
   function slideHTML(v){
     return '<article class="slide" style="--g:'+grad(v)+'"><span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
       '<div class="tags"><span class="tag'+(v.p?' tag-vip':'')+'">'+(v.p?'VIP':'Gratuit')+'</span><span class="tag">'+v.tag+'</span></div>'+
@@ -417,12 +414,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
     $('#slides').innerHTML=FEATURED.map(function(id){return slideHTML(byId[id])}).join('');
     $('#dots').innerHTML=FEATURED.map(function(_,i){return '<i'+(i===0?' class="on"':'')+'></i>'}).join('');
     $('#rows').innerHTML=ROWS.map(function(r){
-      var list=r[1]?V.filter(r[1]):V.slice().sort(function(a,b){return b.r-a.r}).slice(0,6);
+      var list=(r[1]?V.filter(r[1]):V.slice().sort(function(a,b){return b.r-a.r})).slice(0,r[2]||6);
       return '<section class="row"><h2>'+r[0]+'</h2><div class="rail">'+list.map(cardHTML).join('')+'</div></section>';
     }).join('');
   }
 
-  /* ---------- Carrousel ---------- */
   var slides=$('#slides'),auto=null,reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   function dotIndex(){return Math.round(slides.scrollLeft/Math.max(1,slides.clientWidth))}
   slides.addEventListener('scroll',function(){
@@ -439,7 +435,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
     },6000);
   }
 
-  /* ---------- Navigation ---------- */
   var views={home:$('#home'),detail:$('#detail'),pay:$('#pay')},homeY=0;
   function show(name){
     if(!views.home.hidden&&name!=='home')homeY=window.scrollY;
@@ -451,7 +446,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
     if(c)openDetail(c.getAttribute('data-open'));
   });
 
-  /* ---------- Recherche ---------- */
   var q=$('#q');
   function search(){
     var s=plain(q.value.trim());
@@ -467,7 +461,6 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
   q.addEventListener('input',search);
   $('#qclear').addEventListener('click',function(){q.value='';search();q.focus()});
 
-  /* ---------- Détail et lecteur ---------- */
   var cur=null,pos=0,playing=false,timer=null,unlocked={},favs={};
   var seek=$('#seek');
   var locked=function(){return cur.p>0&&!unlocked[cur.id]};
@@ -560,13 +553,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
     }catch(e){toast('Copie impossible ici')}
   });
 
-  /* ---------- Paiement ---------- */
   var OPS=[
     {n:'M-Pesa',sub:'Vodacom',c:'#0b57d0',t:'#ffffff'},
     {n:'Orange Money',sub:'',c:'#ff7900',t:'#111111'},
     {n:'Airtel Money',sub:'',c:'#e4002b',t:'#ffffff'}
   ];
-  /* Pour afficher les logos officiels : renseigner ici l'image fournie par chaque opérateur (data:image/svg+xml;base64,... ou data:image/png;base64,...) */
   var LOGOS={'M-Pesa':'','Orange Money':'','Airtel Money':''};
   $('#ops').insertAdjacentHTML('beforeend',OPS.map(function(o){
     var inner=LOGOS[o.n]?'<img class="oplogo" src="'+LOGOS[o.n]+'" alt="'+o.n+'">':'<b>'+o.n+'</b>'+(o.sub?'<small>'+o.sub+'</small>':'');
