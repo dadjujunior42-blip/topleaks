@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>TOPLEAKS V2 — aperçu connecté</title>
+<style>html,body{margin:0;min-height:100%;background:#0b0b0d}iframe{display:block;width:100%;height:100vh;border:0}</style>
+</head>
+<body>
+<iframe id="app" title="Aperçu de l’application TOPLEAKS V2" src="about:blank"></iframe>
+<script>
+(function(){
+  'use strict';
+  var PROJECT_URL='https://ozakwmoftlassrrcdiqg.supabase.co';
+  var PUBLIC_KEY='sb_publishable_yOJOb8ba26j8KsEbjQlUMA_ntB4GNo7';
+  var SOURCE='https://raw.githubusercontent.com/dadjujunior42-blip/topleaks/main/TOPLEAKS.html';
+  var frame=document.getElementById('app');
+  function errorPage(message){document.body.innerHTML='<main style="max-width:620px;margin:12vh auto;padding:24px;color:#f2f0eb;background:#151518;border:1px solid #34343b;border-radius:16px;font:16px/1.5 system-ui"><h1 style="color:#ffb21e">Aperçu TOPLEAKS V2</h1><p>'+message+'</p></main>'}
+  fetch(SOURCE).then(function(r){if(!r.ok)throw new Error('Impossible de charger TOPLEAKS.html ('+r.status+').');return r.text()}).then(function(html){
+    var start=html.indexOf('var V=[');
+    var end=start<0?-1:html.indexOf('\n  ];',start);
+    if(start<0||end<0)throw new Error('La structure du fichier TOPLEAKS.html a changé; je préfère ne pas charger une version incorrecte.');
+    html=html.slice(0,start)+'var V=[];'+html.slice(end+5);
+    html=html.replace(/var byId=\{\};V\.forEach\(function\(v\)\{byId\[v\.id\]=v\}\);/, 'var byId={};');
+    html=html.replace(/var FEATURED=\[[^\]]*\];/, 'var FEATURED=[];');
+    html=html.replace(/var ROWS=\[[\s\S]*?\n  \];/, "var ROWS=[['Toutes les vidéos',null]];");
+    var old='  renderHome();\n})();';
+    var code="  function loadSupabaseVideos(){\n"+
+      "    var endpoint='"+PROJECT_URL+"/rest/v1/videos?select=id,title,artist,description,thumbnail_url,duration_seconds,price_fc,published,created_at&published=eq.true&order=created_at.desc&limit=100';\n"+
+      "    fetch(endpoint,{headers:{apikey:'"+PUBLIC_KEY+"',Authorization:'Bearer "+PUBLIC_KEY+"'}}).then(function(response){if(!response.ok)throw new Error('Supabase HTTP '+response.status+' — vérifie la table public.videos, les colonnes et la règle RLS.');return response.json()}).then(function(rows){\n"+
+      "      V=(Array.isArray(rows)?rows:[]).map(function(row,index){var title=String(row.title||'Sans titre');var artist=String(row.artist||'TOPLEAKS');var key='supabase_artist_'+index;if(!A[key])A[key]={n:artist,role:'',bio:''};var seed=0;for(var i=0;i<title.length;i++)seed=(seed*31+title.charCodeAt(i))%360;return {id:String(row.id),a:key,t:title,tag:Number(row.price_fc)>0?'VIP':'Sketch',dur:Math.max(1,Number(row.duration_seconds)||60),r:4.8,p:Math.max(0,Number(row.price_fc)||0),y:row.created_at?new Date(row.created_at).getFullYear():new Date().getFullYear(),h:seed,d:String(row.description||''),img:String(row.thumbnail_url||''),video_url:''}});\n"+
+      "      byId={};V.forEach(function(v){byId[v.id]=v});FEATURED=V.slice(0,3).map(function(v){return v.id});ROWS=[['Toutes les vidéos',null]];renderHome();\n"+
+      "      var foot=document.querySelector('.foot');if(foot)foot.textContent='Connecté à Supabase · '+V.length+(V.length===1?' vidéo publiée.':' vidéos publiées.')+' — Aperçu V2.';\n"+
+      "      if(V.length){var cards=document.querySelectorAll('.card[data-open]');Array.prototype.forEach.call(cards,function(card){var v=byId[card.getAttribute('data-open')];var thumb=card.querySelector('.thumb');if(!v||!v.img||!thumb)return;try{var u=new URL(v.img);if(u.protocol!=='https:')return;var img=document.createElement('img');img.src=u.href;img.alt='';img.loading='lazy';img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover';thumb.insertBefore(img,thumb.firstChild)}catch(e){}})}\n"+
+      "    }).catch(function(err){var foot=document.querySelector('.foot');if(foot)foot.textContent='Connexion Supabase échouée : '+err.message+' Vérifie public.videos et sa règle RLS.';console.error(err)});\n"+
+      "  }\n  loadSupabaseVideos();\n})();";
+    if(html.indexOf(old)<0)throw new Error('Point de démarrage de la V2 introuvable; aucun code de la page n’a été exécuté.');
+    html=html.replace(old,code);
+    frame.srcdoc=html;
+  }).catch(function(err){errorPage('Le lien d’aperçu n’a pas pu se préparer : '+err.message)});
+})();
+</script>
+</body>
+</html>
