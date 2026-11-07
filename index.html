@@ -1,1 +1,27 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b0b0d"><meta http-equiv="refresh" content="0;url=./topleaks-auth-fixed.html"><title>TOPLEAKS</title><link rel="canonical" href="./topleaks-auth-fixed.html"></head><body><p>Ouverture de TOPLEAKS… <a href="./topleaks-auth-fixed.html">Appuyer ici si l’application ne s’ouvre pas.</a></p><script>window.location.replace(new URL('./topleaks-auth-fixed.html',window.location.href).href);</script></body></html>
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0d">
+<title>TOPLEAKS V6</title>
+<style>html,body{margin:0;min-height:100%;background:#0b0b0d}iframe{display:block;width:100%;height:100vh;height:100dvh;border:0}main{max-width:620px;margin:12vh auto;padding:24px;color:#f2f0eb;background:#151518;border:1px solid #34343b;border-radius:16px;font:16px/1.5 system-ui,sans-serif}</style>
+</head>
+<body>
+<iframe id="app" title="TOPLEAKS V6"></iframe>
+<script>
+(function(){
+  'use strict';
+  var frame=document.getElementById('app');
+  function fail(message){var box=document.createElement('main');box.textContent='TOPLEAKS ne peut pas se charger : '+message;document.body.replaceChildren(box)}
+  fetch('./topleaks-v6.html').then(function(response){if(!response.ok)throw Error('HTTP '+response.status);return response.text()}).then(function(html){
+    /* Fix a missing closing parenthesis in the auth form handler that prevented all V6 JavaScript from parsing. */
+    var broken='.catch(function(x){msg(x.message,true})};function loginDone(j)';
+    var fixed='.catch(function(x){msg(x.message,true)});};function loginDone(j)';
+    if(html.indexOf(broken)<0)throw Error('La version V6 ne correspond pas au correctif attendu.');
+    frame.srcdoc=html.replace(broken,fixed);
+  }).catch(function(error){fail(error.message||String(error))});
+})();
+</script>
+</body>
+</html>
