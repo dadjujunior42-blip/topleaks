@@ -3,82 +3,76 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>TOPLEAKS — aperçu ALL</title>
+  <title>TOPLEAKS V2 — aperçu Supabase</title>
   <style>
     *{box-sizing:border-box}
-    html,body{margin:0;height:100%;background:#0b0b0d}
+    html,body{margin:0;min-height:100%;background:#0b0b0d}
     body{overflow:auto}
     iframe{display:block;width:100%;height:100vh;min-height:100%;border:0}
   </style>
 </head>
 <body>
-  <iframe id="app" title="Aperçu de TOPLEAKS, catalogue ALL" src="TOPLEAKS.html"></iframe>
+  <iframe id="app" title="Aperçu de TOPLEAKS V2 connecté à Supabase" src="TOPLEAKS.html"></iframe>
   <script>
     (function(){
+      'use strict';
+      var PROJECT_URL='https://ozakwmoftlassrrcdiqg.supabase.co';
+      // Publishable key is intended for browser use. Never put a service_role/secret key here.
+      var PUBLIC_KEY='sb_publishable_yOJOb8ba26j8KsEbjQlUMA_ntB4GNo7';
       var frame=document.getElementById('app');
-      function makePreview(){
-        var doc;
-        try{doc=frame.contentDocument||frame.contentWindow.document}catch(e){return}
-        if(!doc)return;
-        var rows=doc.querySelector('#rows');
-        if(!rows)return;
+      var loaded=false;
 
-        var seen={};
-        var cards=[];
-        rows.querySelectorAll('.card[data-open]').forEach(function(card){
-          var id=card.getAttribute('data-open');
-          if(id&&!seen[id]&&cards.length<12){seen[id]=true;cards.push(card)}
-        });
+      function safeText(value,fallback){return typeof value==='string'&&value.trim()?value.trim():fallback}
+      function hue(value){var n=0;for(var i=0;i<value.length;i++)n=(n*31+value.charCodeAt(i))%360;return n}
+      function safeImage(value){try{var u=new URL(value);return u.protocol==='https:'?u.href:''}catch(e){return ''}}
 
-        var hero=doc.querySelector('#hero');
-        if(hero)hero.hidden=true;
-        rows.innerHTML='';
-        var section=doc.createElement('section');
-        section.className='row';
-        var heading=doc.createElement('h2');
-        heading.textContent='ALL';
-        var rail=doc.createElement('div');
-        rail.className='rail preview-all';
-        rail.tabIndex=0;
-        rail.setAttribute('role','region');
-        rail.setAttribute('aria-label','Toutes les vidéos, défilement horizontal. Utilisez les flèches gauche et droite.');
-        cards.forEach(function(card){rail.appendChild(card)});
-        section.appendChild(heading);
-        section.appendChild(rail);
-        rows.appendChild(section);
-
-        var css=doc.createElement('style');
-        css.textContent='.preview-all{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#ffb21e #2a2a31;padding:4px 2px 12px;cursor:grab;overscroll-behavior-inline:contain;touch-action:pan-x}.preview-all:active{cursor:grabbing}.preview-all:focus-visible{outline:2px solid #f2f0eb;outline-offset:4px;border-radius:8px}.preview-all .card{flex:0 0 calc((100% - 30px)/4);min-width:0;scroll-snap-align:start;padding:5px 5px 8px;border-radius:12px}.preview-all .thumb{aspect-ratio:16/10;border-radius:9px}.preview-all .glyph{font-size:54px}.preview-all .vip{font-size:9px;padding:2px 4px}.preview-all .c-title{font-size:12px;line-height:1.25}.preview-all .c-meta{font-size:10px;overflow-wrap:anywhere}@media(max-width:360px){.preview-all .card{flex-basis:calc((100% - 20px)/3)}}';
-        doc.head.appendChild(css);
-
-        rail.addEventListener('keydown',function(e){
-          var step=Math.max(160,Math.round(rail.clientWidth*.75));
-          if(e.key==='ArrowRight'||e.key==='PageDown'){rail.scrollBy({left:step,behavior:'smooth'});e.preventDefault()}
-          else if(e.key==='ArrowLeft'||e.key==='PageUp'){rail.scrollBy({left:-step,behavior:'smooth'});e.preventDefault()}
-          else if(e.key==='Home'){rail.scrollTo({left:0,behavior:'smooth'});e.preventDefault()}
-          else if(e.key==='End'){rail.scrollTo({left:rail.scrollWidth,behavior:'smooth'});e.preventDefault()}
-        });
-        rail.addEventListener('wheel',function(e){
-          if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){rail.scrollLeft+=e.deltaY;e.preventDefault()}
-        },{passive:false});
-        var down=false,startX=0,startLeft=0,dragged=false;
-        rail.addEventListener('pointerdown',function(e){
-          if(e.pointerType==='touch'||e.button!==0)return;
-          down=true;dragged=false;startX=e.clientX;startLeft=rail.scrollLeft;
-          try{rail.setPointerCapture(e.pointerId)}catch(_){}
-        });
-        rail.addEventListener('pointermove',function(e){
-          if(!down)return;
-          var dx=e.clientX-startX;
-          if(Math.abs(dx)>5)dragged=true;
-          if(dragged){rail.scrollLeft=startLeft-dx;e.preventDefault()}
-        });
-        function stopDrag(){if(down){down=false;if(dragged){rail.dataset.dragged='yes';setTimeout(function(){delete rail.dataset.dragged},180)}}}
-        rail.addEventListener('pointerup',stopDrag);
-        rail.addEventListener('pointercancel',stopDrag);
-        rail.addEventListener('click',function(e){if(rail.dataset.dragged==='yes'){e.preventDefault();e.stopPropagation()}},true);
+      function displayError(message){
+        var doc;try{doc=frame.contentDocument||frame.contentWindow.document}catch(e){return}
+        var rows=doc&&doc.querySelector('#rows');if(!rows)return;
+        var p=doc.createElement('p');p.className='empty';p.textContent=message;
+        rows.replaceChildren(p);
       }
-      frame.addEventListener('load',makePreview);
+
+      function displayVideos(videos){
+        var doc;try{doc=frame.contentDocument||frame.contentWindow.document}catch(e){return}
+        if(!doc)return;
+        var rows=doc.querySelector('#rows');if(!rows)return;
+        var hero=doc.querySelector('#hero');if(hero)hero.hidden=true;
+        var results=doc.querySelector('#results');if(results)results.hidden=true;
+        rows.replaceChildren();
+        var section=doc.createElement('section');section.className='row';
+        var heading=doc.createElement('h2');heading.textContent='ALL';
+        var rail=doc.createElement('div');rail.className='rail preview-all';rail.tabIndex=0;rail.setAttribute('role','region');rail.setAttribute('aria-label','Toutes les vidéos publiées, défilement horizontal. Utilisez les flèches gauche et droite.');
+        videos.forEach(function(video){
+          var title=safeText(video.title,'Sans titre');
+          var card=doc.createElement('article');card.className='card';
+          var thumb=doc.createElement('div');thumb.className='thumb';thumb.style.setProperty('--g','linear-gradient(145deg,hsl('+hue(title)+' 55% 32%),hsl('+((hue(title)+35)%360)+' 60% 13%))');
+          var glyph=doc.createElement('span');glyph.className='glyph';glyph.setAttribute('aria-hidden','true');glyph.textContent='“';thumb.appendChild(glyph);
+          var image=safeImage(video.thumbnail_url);
+          if(image){var img=doc.createElement('img');img.src=image;img.alt='Vignette : '+title;img.loading='lazy';img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover';img.onerror=function(){img.remove()};thumb.appendChild(img)}
+          if(Number(video.price_fc)>0){var badge=doc.createElement('span');badge.className='vip';badge.textContent='VIP';thumb.appendChild(badge)}
+          var name=doc.createElement('span');name.className='c-title';name.textContent=title;
+          var artist=doc.createElement('span');artist.className='c-meta';artist.textContent=safeText(video.artist,'TOPLEAKS');
+          var price=doc.createElement('span');price.className='c-meta';price.textContent=Number(video.price_fc)>0?Number(video.price_fc)+' FC':'Gratuit';
+          card.append(thumb,name,artist,price);rail.appendChild(card);
+        });
+        if(!videos.length){var empty=doc.createElement('p');empty.className='empty';empty.textContent='Aucune vidéo publiée pour le moment. Ajoute une vidéo et règle published sur true.';section.appendChild(heading);section.appendChild(empty)}
+        else{section.appendChild(heading);section.appendChild(rail)}
+        rows.appendChild(section);
+        var css=doc.createElement('style');css.textContent='.preview-all{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#ffb21e #2a2a31;padding:4px 2px 12px;cursor:grab;overscroll-behavior-inline:contain;touch-action:pan-x}.preview-all:active{cursor:grabbing}.preview-all:focus-visible{outline:2px solid #f2f0eb;outline-offset:4px;border-radius:8px}.preview-all .card{flex:0 0 calc((100% - 30px)/4);min-width:0;scroll-snap-align:start;padding:5px 5px 8px;border-radius:12px}.preview-all .thumb{aspect-ratio:16/10;border-radius:9px}.preview-all .glyph{font-size:54px}.preview-all .vip{font-size:9px;padding:2px 4px}.preview-all .c-title{font-size:12px;line-height:1.25}.preview-all .c-meta{font-size:10px;overflow-wrap:anywhere}@media(max-width:360px){.preview-all .card{flex-basis:calc((100% - 20px)/3)}}';doc.head.appendChild(css);
+        rail&&rail.addEventListener('keydown',function(e){var step=Math.max(160,Math.round(rail.clientWidth*.75));if(e.key==='ArrowRight'||e.key==='PageDown'){rail.scrollBy({left:step,behavior:'smooth'});e.preventDefault()}else if(e.key==='ArrowLeft'||e.key==='PageUp'){rail.scrollBy({left:-step,behavior:'smooth'});e.preventDefault()}else if(e.key==='Home'){rail.scrollTo({left:0,behavior:'smooth'});e.preventDefault()}else if(e.key==='End'){rail.scrollTo({left:rail.scrollWidth,behavior:'smooth'});e.preventDefault()}});
+      }
+
+      function loadVideos(){
+        var endpoint=PROJECT_URL+'/rest/v1/videos?select=id,title,artist,thumbnail_url,price_fc,created_at&published=eq.true&order=created_at.desc&limit=50';
+        fetch(endpoint,{headers:{apikey:PUBLIC_KEY,Authorization:'Bearer '+PUBLIC_KEY}})
+          .then(function(response){if(!response.ok)throw new Error('Supabase a répondu HTTP '+response.status+'. Vérifie la table videos, ses colonnes et la règle RLS.');return response.json()})
+          .then(function(rows){displayVideos(Array.isArray(rows)?rows:[])})
+          .catch(function(error){displayError('Connexion Supabase impossible : '+error.message)});
+      }
+      function onFrameLoad(){if(loaded)return;loaded=true;loadVideos()}
+      frame.addEventListener('load',onFrameLoad);
+      if(frame.contentDocument&&frame.contentDocument.readyState==='complete')onFrameLoad();
     })();
   </script>
 </body>
