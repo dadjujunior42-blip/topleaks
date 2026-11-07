@@ -1,7 +1,5 @@
--- TOPLEAKS complete Supabase setup.
--- Run in Supabase SQL Editor. Safe to rerun.
--- videos.id is UUID. Social video_id is text to accept the app's string IDs.
-
+-- TOPLEAKS complete Supabase setup. Run in Supabase SQL Editor.
+-- Safe to rerun. videos.id is UUID; social video_id is text to match the app.
 create extension if not exists pgcrypto;
 
 create table if not exists public.videos (
@@ -16,44 +14,35 @@ create table if not exists public.videos (
   published boolean not null default true,
   created_at timestamptz not null default now()
 );
-alter table public.videos enable row level security;
-grant select on public.videos to anon, authenticated;
-grant insert, update, delete on public.videos to authenticated;
-
-drop policy if exists "videos_lecture_publique" on public.videos;
-drop policy if exists "Tout le monde peut voir les vidéos publiées" on public.videos;
-drop policy if exists "videos_admin_tout" on public.videos;
-create policy "videos_lecture_publique" on public.videos
-for select to anon, authenticated using (published = true or public.is_admin());
-
 create table if not exists public.admins (
   user_id uuid primary key references auth.users(id) on delete cascade
 );
+alter table public.videos enable row level security;
 alter table public.admins enable row level security;
+grant select on public.videos to anon, authenticated;
+grant insert, update, delete on public.videos to authenticated;
 grant select on public.admins to authenticated;
-drop policy if exists "admins_lecture_soi" on public.admins;
-create policy "admins_lecture_soi" on public.admins
-for select to authenticated using (user_id = (select auth.uid()));
 
 create or replace function public.is_admin()
-returns boolean
-language sql stable security definer
-set search_path = ''
-as $$
-  select exists (
-    select 1 from public.admins a where a.user_id = (select auth.uid())
-  );
+returns boolean language sql stable security definer set search_path = '' as $$
+  select exists (select 1 from public.admins a where a.user_id = (select auth.uid()));
 $$;
 revoke all on function public.is_admin() from public, anon;
 grant execute on function public.is_admin() to authenticated;
 
--- Admin-only writes on the catalog.
+drop policy if exists "videos_lecture_publique" on public.videos;
+drop policy if exists "Tout le monde peut voir les vidéos publiées" on public.videos;
+drop policy if exists "videos_admin_tout" on public.videos;
 drop policy if exists "videos_admin_write" on public.videos;
+create policy "videos_lecture_publique" on public.videos
+for select to anon, authenticated using (published = true or public.is_admin());
 create policy "videos_admin_write" on public.videos
-for all to authenticated
-using (public.is_admin()) with check (public.is_admin());
+for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
-drop policy if exists "views_ajout_public" on public.video_views;
+drop policy if exists "admins_lecture_soi" on public.admins;
+create policy "admins_lecture_soi" on public.admins
+for select to authenticated using (user_id = (select auth.uid()));
+
 create table if not exists public.video_views (
   id bigint generated always as identity primary key,
   video_id uuid not null references public.videos(id) on delete cascade,
@@ -62,9 +51,10 @@ create table if not exists public.video_views (
 alter table public.video_views enable row level security;
 grant insert on public.video_views to anon, authenticated;
 grant select on public.video_views to authenticated;
+drop policy if exists "views_ajout_public" on public.video_views;
+drop policy if exists "views_lecture_admin" on public.video_views;
 create policy "views_ajout_public" on public.video_views
 for insert to anon, authenticated with check (true);
-drop policy if exists "views_lecture_admin" on public.video_views;
 create policy "views_lecture_admin" on public.video_views
 for select to authenticated using (public.is_admin());
 
@@ -93,7 +83,6 @@ select v.id, v.title, v.artist, v.price_fc, v.published, v.created_at,
 from public.videos v;
 grant select on public.video_stats to authenticated;
 
--- Profiles: optional display name and self-reported country.
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   username text not null check (char_length(username) between 1 and 40),
@@ -117,9 +106,7 @@ with check ((select auth.uid()) = id);
 
 create or replace function public.create_profile_for_new_user()
 returns trigger language plpgsql security definer set search_path = '' as $$
-declare
-  raw_username text;
-  raw_country text;
+declare raw_username text; raw_country text;
 begin
   raw_username := nullif(trim(new.raw_user_meta_data ->> 'username'), '');
   raw_country := upper(trim(coalesce(new.raw_user_meta_data ->> 'country', '')));
@@ -135,7 +122,6 @@ drop trigger if exists create_profile_after_signup on auth.users;
 create trigger create_profile_after_signup after insert on auth.users
 for each row execute procedure public.create_profile_for_new_user();
 
--- Likes and comments. Public can read; only the signed-in owner can write.
 create table if not exists public.video_likes (
   id bigint generated always as identity primary key,
   video_id text not null,
@@ -157,31 +143,26 @@ grant select on public.video_likes, public.video_comments to anon, authenticated
 grant insert, delete on public.video_likes to authenticated;
 grant insert on public.video_comments to authenticated;
 drop policy if exists "Anyone can read likes" on public.video_likes;
-create policy "Anyone can read likes" on public.video_likes
-for select to anon, authenticated using (true);
+create policy "Anyone can read likes" on public.video_likes for select to anon, authenticated using (true);
 drop policy if exists "Users can like as themselves" on public.video_likes;
-create policy "Users can like as themselves" on public.video_likes
-for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "Users can like as themselves" on public.video_likes for insert to authenticated with check ((select auth.uid()) = user_id);
 drop policy if exists "Users can remove their own likes" on public.video_likes;
-create policy "Users can remove their own likes" on public.video_likes
-for delete to authenticated using ((select auth.uid()) = user_id);
+create policy "Users can remove their own likes" on public.video_likes for delete to authenticated using ((select auth.uid()) = user_id);
 drop policy if exists "Anyone can read comments" on public.video_comments;
-create policy "Anyone can read comments" on public.video_comments
-for select to anon, authenticated using (true);
+create policy "Anyone can read comments" on public.video_comments for select to anon, authenticated using (true);
 drop policy if exists "Users can comment as themselves" on public.video_comments;
-create policy "Users can comment as themselves" on public.video_comments
-for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "Users can comment as themselves" on public.video_comments for insert to authenticated with check ((select auth.uid()) = user_id);
+
 create index if not exists video_views_video_id_idx on public.video_views(video_id);
 create index if not exists video_likes_video_id_idx on public.video_likes(video_id);
 create index if not exists video_comments_video_created_idx on public.video_comments(video_id, created_at desc);
 
--- Public video storage. Uploads require an authenticated admin.
 insert into storage.buckets (id, name, public) values ('videos', 'videos', true)
 on conflict (id) do nothing;
 drop policy if exists "videos_envoi_admin" on storage.objects;
 create policy "videos_envoi_admin" on storage.objects
 for insert to authenticated with check (bucket_id = 'videos' and public.is_admin());
 
--- After creating your account in Authentication > Users, make yourself admin:
+-- After creating your account in Authentication > Users, grant admin access:
 -- insert into public.admins (user_id)
 -- select id from auth.users where email = 'YOUR_EMAIL';
