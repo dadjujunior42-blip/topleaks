@@ -356,7 +356,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 (function(){
   /* ---------- Données d'exemple ---------- */
   var A={
-    a1:{n:'Fiston Bahati',role:'Humoriste, one-man show',bio:'Ancien instituteur devenu humoriste, il écrit ses spectacles en observant sa propre famille.'},
+    a1:{n:'LEDDY LEDDY',role:'',bio:''},
     a2:{n:'Mama Nzuzi',role:'Humoriste et comédienne',bio:'Vingt ans de scène, du théâtre de quartier aux grandes salles. Elle joue les commerçantes, les tantes et les voisines avec une précision redoutable.'},
     a3:{n:'Kavira la Tigresse',role:'Humoriste, stand-up',bio:'Voix puissante, mimiques rapides. Elle remplit les salles avec des histoires de famille et de voyages.'},
     a4:{n:'Papy Mulamba',role:'Comédien',bio:'Spécialiste des personnages d’autorité dépassés par les événements. Ses sketchs circulent surtout par le bouche-à-oreille.'},
@@ -369,7 +369,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
     {id:'s3',a:'a3',t:'La belle-mère arrive samedi',tag:'Sketch',dur:705,r:4.8,p:0,y:2026,h:340,d:'Un message de trois mots suffit à mobiliser toute la maison. Ménage, menus, discours de bienvenue : Kavira joue chaque membre de la famille, du plus stressé au plus calme.'},
     {id:'s4',a:'a4',t:'Le coiffeur qui ne ment jamais',tag:'Sketch',dur:320,r:4.3,p:0,y:2025,h:158,d:'Chez ce coiffeur, le miroir dit la vérité et le client la regrette. Papy Mulamba enchaîne les clients impossibles, de celui qui veut la coupe du footballeur à celui qui apporte sa photo de 1998.'},
     {id:'s5',a:'a5',t:'Réunion de quartier',tag:'Sketch',dur:545,r:4.4,p:0,y:2025,h:285,d:'Ordre du jour : le caniveau. Durée prévue : dix minutes. Chancelvie Ndaya interprète toute l’assemblée, des orateurs fleuves aux voisins qui arrivent en retard avec leurs chaises.'},
-    {id:'s6',a:'a1',t:'Ma famille, ce grand spectacle',tag:'One-man show',dur:4360,r:4.9,p:1000,y:2026,h:20,d:'Fiston Bahati raconte sa famille comme on raconte un feuilleton : les oncles qui donnent des conseils, la tante qui sait tout avant tout le monde et le petit frère toujours « en route ». Un spectacle complet, enregistré devant une salle comble.'},
+    {id:'s6',a:'a1',t:'LEDDY LEDDY',tag:'VIP',dur:4360,r:4.9,p:1000,y:2026,h:20,d:''},
     {id:'s7',a:'a4',t:'Chef de quartier',tag:'One-man show',dur:3500,r:4.7,p:1000,y:2025,h:265,d:'Papy Mulamba devient chef de quartier et découvre que gouverner, c’est d’abord écouter douze personnes parler en même temps. Une heure de situations absurdes, de décisions solennelles et de tampons introuvables.'},
     {id:'s8',a:'a2',t:'Mama Nzuzi tient la boutique',tag:'One-man show',dur:3855,r:4.8,p:1000,y:2026,h:315,d:'Derrière le comptoir, Mama Nzuzi voit défiler toute la ville : les clients qui paient demain, les enfants qui négocient un bonbon et les grands discours sur les prix. Un one-woman show chaleureux et très observé.'},
     {id:'s9',a:'a3',t:'Tigresse en tournée',tag:'One-man show',dur:4865,r:4.9,p:1000,y:2026,h:0,d:'Kavira la Tigresse prend la route avec une valise, un micro et beaucoup trop d’opinions. Gares, hôtels, salles pleines et mamans fières dans le public : le meilleur de sa tournée, filmé en une soirée.'},
@@ -403,14 +403,14 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
     return '<article class="slide" style="--g:'+grad(v)+'"><span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
       '<div class="tags"><span class="tag'+(v.p?' tag-vip':'')+'">'+(v.p?'VIP':'Gratuit')+'</span><span class="tag">'+v.tag+'</span></div>'+
       '<h2 class="slide-title">'+v.t+'</h2>'+
-      '<p class="slide-meta">'+A[v.a].n+' · '+long(v.dur)+' · ★ '+rate(v.r)+'</p>'+
+      '<p class="slide-meta">'+A[v.a].n+'</p>'+
       '<button class="btn btn-primary" type="button" data-open="'+v.id+'"><svg class="ic f"><use href="#i-play"/></svg>Regarder maintenant</button></div></article>';
   }
   function cardHTML(v){
-    return '<button class="card" type="button" data-open="'+v.id+'" aria-label="'+v.t+', '+A[v.a].n+', '+long(v.dur)+(v.p?', VIP, '+FC(v.p):', gratuit')+'">'+
+    return '<button class="card" type="button" data-open="'+v.id+'" aria-label="'+v.t+', '+A[v.a].n+(v.p?', VIP, '+FC(v.p):', gratuit')+'">'+
       '<div class="thumb" style="--g:'+grad(v)+'"><span class="glyph" aria-hidden="true">“</span>'+
       (v.p?'<span class="vip"><svg class="ic"><use href="#i-lock"/></svg>VIP</span>':'')+
-      '<span class="dur">'+fmt(v.dur)+'</span></div>'+
+      '</div>'+
       '<span class="c-title">'+v.t+'</span><span class="c-meta">'+A[v.a].n+' · '+(v.p?FC(v.p):'Gratuit')+'</span></button>';
   }
   function renderHome(){
@@ -516,7 +516,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
   function renderCta(){
     var box=$('#dcta');
     if(cur.p&&!unlocked[cur.id]){
-      box.innerHTML='<button id="unlock" class="btn btn-primary" type="button"><svg class="ic"><use href="#i-lock"/></svg>DÉBLOQUER CE SPECTACLE ('+FC(cur.p)+')</button><small>Paiement par Mobile Money. Aperçu gratuit de 30 secondes.</small>';
+      box.innerHTML='<button id="unlock" class="btn btn-primary" type="button"><svg class="ic"><use href="#i-lock"/></svg>DÉBLOQUER CE SPECTACLE ('+FC(cur.p)+')</button>';
       $('#unlock').addEventListener('click',openPay);
     }else{
       box.innerHTML=(cur.p?'<span class="ok-note"><svg class="ic"><use href="#i-check"/></svg>Spectacle débloqué</span>':'')+
@@ -539,11 +539,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
     $('#gate').hidden=true;
     $('#dtitle').textContent=cur.t;
     $('#drating').innerHTML=stars(cur.r)+'<span class="score">'+rate(cur.r)+'<small>/5</small></span>';
-    $('#dchips').innerHTML=(cur.p?'<span class="chip vipc">VIP</span>':'<span class="chip">Gratuit</span>')+'<span class="chip">'+cur.tag+'</span><span class="chip">'+long(cur.dur)+'</span><span class="chip">'+cur.y+'</span><span class="chip">Tout public</span>';
-    $('#ddesc').textContent=cur.d;
+    $('#dchips').innerHTML=(cur.p?'<span class="chip vipc">VIP</span>':'<span class="chip">Gratuit</span>')+'<span class="chip">'+cur.tag+'</span>';
+    $('#ddesc').textContent='';
+    $('#ddesc').hidden=true;
     var n=V.filter(function(v){return v.a===cur.a}).length;
-    var ini=a.n.split(' ').filter(function(w){return /^[A-ZÉ]/.test(w)}).slice(0,2).map(function(w){return w[0]}).join('');
-    $('#dartist').innerHTML='<div class="avatar" style="--g:'+grad({h:(cur.h+120)%360})+'" aria-hidden="true">'+ini+'</div><div><h3>'+a.n+'</h3><p class="role">'+a.role+'</p><p class="bio">'+a.bio+'</p><p class="count">'+n+(n>1?' contenus':' contenu')+' sur TOPLEAKS</p></div>';
+    var ini=(a.n||'').split(' ').filter(function(w){return /^[A-ZÉ]/.test(w)}).slice(0,2).map(function(w){return w[0]}).join('');
+    $('#dartist').innerHTML='<div class="avatar" style="--g:'+grad({h:(cur.h+120)%360})+'" aria-hidden="true">'+ini+'</div><div><h3>'+(a.n||'')+'</h3></div>';
     setPos(0);renderCta();renderFav();
     show('detail');
   }
@@ -578,8 +579,8 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
   function openPay(){
     if(!locked())return;
     pause();
-    $('#psum').innerHTML='<div class="sum-top"><div class="thumb" style="--g:'+grad(cur)+'"><span class="glyph" aria-hidden="true">“</span><span class="dur">'+fmt(cur.dur)+'</span></div><div><b>'+cur.t+'</b><span>'+A[cur.a].n+'</span></div></div>'+
-      '<div class="sum-row"><span>Accès</span><span>Spectacle complet, '+long(cur.dur)+'</span></div>'+
+    $('#psum').innerHTML='<div class="sum-top"><div class="thumb" style="--g:'+grad(cur)+'"><span class="glyph" aria-hidden="true">“</span></div><div><b>'+cur.t+'</b><span>'+A[cur.a].n+'</span></div></div>'+
+      '<div class="sum-row"><span>Accès</span><span>Spectacle complet</span></div>'+
       '<div class="sum-row total"><span>Montant à payer</span><span class="amount">'+FC(cur.p)+'</span></div>';
     $('#perr').textContent='';$('#phone').classList.remove('bad');
     $('#confirm').textContent='Confirmer le paiement ('+FC(cur.p)+')';
