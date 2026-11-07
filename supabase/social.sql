@@ -1,6 +1,6 @@
--- TOPLEAKS social actions: run this once in Supabase SQL Editor.
--- video_id is text intentionally, so it works with either numeric or UUID video IDs.
--- A user can only create/delete their own likes and comments; reads are public.
+-- TOPLEAKS social actions. Run once in Supabase SQL Editor.
+-- video_id uses text to support existing video IDs that may be numeric or UUID.
+-- Likes/comments are public to read; only authenticated users can write as themselves.
 
 create table if not exists public.video_likes (
   id bigint generated always as identity primary key,
