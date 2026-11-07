@@ -1,7 +1,9 @@
--- TOPLEAKS complete Supabase setup. Run in Supabase SQL Editor.
--- Safe to rerun. videos.id is UUID; social video_id is text to match the app.
+-- TOPLEAKS : mise en place complète de Supabase.
+-- À coller dans SQL Editor puis "Run". Peut être relancé sans risque.
+-- Les identifiants de vidéos sont de type uuid.
 create extension if not exists pgcrypto;
 
+-- 1. VIDÉOS -----------------------------------------------------------
 create table if not exists public.videos (
   id uuid primary key default gen_random_uuid(),
   title text not null,
@@ -31,18 +33,22 @@ revoke all on function public.is_admin() from public, anon;
 grant execute on function public.is_admin() to authenticated;
 
 drop policy if exists "videos_lecture_publique" on public.videos;
+drop policy if exists "videos_lecture_connectes" on public.videos;
 drop policy if exists "Tout le monde peut voir les vidéos publiées" on public.videos;
 drop policy if exists "videos_admin_tout" on public.videos;
 drop policy if exists "videos_admin_write" on public.videos;
 create policy "videos_lecture_publique" on public.videos
-for select to anon, authenticated using (published = true or public.is_admin());
+  for select to anon using (published = true);
+create policy "videos_lecture_connectes" on public.videos
+  for select to authenticated using (published = true or public.is_admin());
 create policy "videos_admin_write" on public.videos
-for all to authenticated using (public.is_admin()) with check (public.is_admin());
+  for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
 drop policy if exists "admins_lecture_soi" on public.admins;
 create policy "admins_lecture_soi" on public.admins
-for select to authenticated using (user_id = (select auth.uid()));
+  for select to authenticated using (user_id = (select auth.uid()));
 
+-- 2. VISIONNAGES ------------------------------------------------------
 create table if not exists public.video_views (
   id bigint generated always as identity primary key,
   video_id uuid not null references public.videos(id) on delete cascade,
@@ -54,10 +60,11 @@ grant select on public.video_views to authenticated;
 drop policy if exists "views_ajout_public" on public.video_views;
 drop policy if exists "views_lecture_admin" on public.video_views;
 create policy "views_ajout_public" on public.video_views
-for insert to anon, authenticated with check (true);
+  for insert to anon, authenticated with check (true);
 create policy "views_lecture_admin" on public.video_views
-for select to authenticated using (public.is_admin());
+  for select to authenticated using (public.is_admin());
 
+-- 3. ACHATS (remplis par le serveur de paiement, jamais par l'appli) ---
 create table if not exists public.purchases (
   id bigint generated always as identity primary key,
   video_id uuid references public.videos(id) on delete set null,
@@ -73,8 +80,9 @@ alter table public.purchases enable row level security;
 grant select on public.purchases to authenticated;
 drop policy if exists "achats_lecture_admin" on public.purchases;
 create policy "achats_lecture_admin" on public.purchases
-for select to authenticated using (public.is_admin());
+  for select to authenticated using (public.is_admin());
 
+-- 4. STATISTIQUES PAR SPECTACLE --------------------------------------
 create or replace view public.video_stats with (security_invoker = true) as
 select v.id, v.title, v.artist, v.price_fc, v.published, v.created_at,
   (select count(*) from public.video_views w where w.video_id = v.id) as views,
@@ -83,6 +91,7 @@ select v.id, v.title, v.artist, v.price_fc, v.published, v.created_at,
 from public.videos v;
 grant select on public.video_stats to authenticated;
 
+-- 5. PROFILS ----------------------------------------------------------
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   username text not null check (char_length(username) between 1 and 40),
@@ -95,14 +104,14 @@ revoke all on public.profiles from anon, authenticated;
 grant select, insert, update on public.profiles to authenticated;
 drop policy if exists "Users can read own profile" on public.profiles;
 create policy "Users can read own profile" on public.profiles
-for select to authenticated using ((select auth.uid()) = id);
+  for select to authenticated using ((select auth.uid()) = id);
 drop policy if exists "Users can insert own profile" on public.profiles;
 create policy "Users can insert own profile" on public.profiles
-for insert to authenticated with check ((select auth.uid()) = id);
+  for insert to authenticated with check ((select auth.uid()) = id);
 drop policy if exists "Users can update own profile" on public.profiles;
 create policy "Users can update own profile" on public.profiles
-for update to authenticated using ((select auth.uid()) = id)
-with check ((select auth.uid()) = id);
+  for update to authenticated using ((select auth.uid()) = id)
+  with check ((select auth.uid()) = id);
 
 create or replace function public.create_profile_for_new_user()
 returns trigger language plpgsql security definer set search_path = '' as $$
@@ -119,9 +128,10 @@ end;
 $$;
 revoke all on function public.create_profile_for_new_user() from public, anon, authenticated;
 drop trigger if exists create_profile_after_signup on auth.users;
-create trigger create_profile_after_signup after insert on auth.users
-for each row execute procedure public.create_profile_for_new_user();
+create trigger create_profile_after_signup on auth.users
+  for each row execute procedure public.create_profile_for_new_user();
 
+-- 6. J'AIME ET COMMENTAIRES ------------------------------------------
 create table if not exists public.video_likes (
   id bigint generated always as identity primary key,
   video_id text not null,
@@ -153,16 +163,33 @@ create policy "Anyone can read comments" on public.video_comments for select to 
 drop policy if exists "Users can comment as themselves" on public.video_comments;
 create policy "Users can comment as themselves" on public.video_comments for insert to authenticated with check ((select auth.uid()) = user_id);
 
+-- La liste publique des commentaires expose seulement le pseudo, pas l'e-mail.
+create or replace function public.list_comments(p_video_id text, p_limit integer default 100)
+returns table (id bigint, body text, created_at timestamptz, username text)
+language sql stable security definer set search_path = '' as $$
+  select c.id, c.body, c.created_at, coalesce(p.username, 'Utilisateur')
+  from public.video_comments c
+  left join public.profiles p on p.id = c.user_id
+  where c.video_id = p_video_id
+  order by c.created_at desc
+  limit least(greatest(coalesce(p_limit, 100), 1), 200);
+$$;
+revoke all on function public.list_comments(text, integer) from public;
+grant execute on function public.list_comments(text, integer) to anon, authenticated;
+
 create index if not exists video_views_video_id_idx on public.video_views(video_id);
 create index if not exists video_likes_video_id_idx on public.video_likes(video_id);
 create index if not exists video_comments_video_created_idx on public.video_comments(video_id, created_at desc);
 
+-- 7. STOCKAGE DES FICHIERS VIDÉO -------------------------------------
 insert into storage.buckets (id, name, public) values ('videos', 'videos', true)
 on conflict (id) do nothing;
 drop policy if exists "videos_envoi_admin" on storage.objects;
 create policy "videos_envoi_admin" on storage.objects
-for insert to authenticated with check (bucket_id = 'videos' and public.is_admin());
+  for insert to authenticated with check (bucket_id = 'videos' and public.is_admin());
 
--- After creating your account in Authentication > Users, grant admin access:
+-- 8. DEVENIR ADMIN ----------------------------------------------------
+-- Créez d'abord votre compte (Authentication > Users > Add user), puis lancez
+-- ces lignes en remplaçant l'e-mail :
 -- insert into public.admins (user_id)
--- select id from auth.users where email = 'YOUR_EMAIL';
+-- select id from auth.users where email = 'VOTRE_EMAIL';
