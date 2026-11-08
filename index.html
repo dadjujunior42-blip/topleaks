@@ -15,11 +15,15 @@
   var frame=document.getElementById('app');
   function fail(message){var box=document.createElement('main');box.textContent='TOPLEAKS ne peut pas se charger : '+message;document.body.replaceChildren(box)}
   fetch('./topleaks-v6.html').then(function(response){if(!response.ok)throw Error('HTTP '+response.status);return response.text()}).then(function(html){
-    /* Fix a missing closing parenthesis in the auth form handler that prevented all V6 JavaScript from parsing. */
     var broken='.catch(function(x){msg(x.message,true})};function loginDone(j)';
     var fixed='.catch(function(x){msg(x.message,true)});};function loginDone(j)';
     if(html.indexOf(broken)<0)throw Error('La version V6 ne correspond pas au correctif attendu.');
-    frame.srcdoc=html.replace(broken,fixed);
+    html=html.replace(broken,fixed);
+    var style='<style>.tl-thumb-media{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;z-index:0!important;pointer-events:none!important}.thumb>.glyph{z-index:1}.thumb .vip,.thumb .new,.slide-body{z-index:2}.slide>.glyph,.slide>.scrim{z-index:1}</style>';
+    var thumbs='<script>(function(){var U="https://ozakwmoftlassrrcdiqg.supabase.co",K="sb_publishable_yOJOb8ba26j8KsEbjQlUMA_ntB4GNo7",data={};function paint(){document.querySelectorAll("[data-open]").forEach(function(button){var id=button.getAttribute("data-open"),row=data[id];if(!row)return;var box=button.closest(".slide")||button.querySelector(".thumb")||button.closest(".card")&&button.closest(".card").querySelector(".thumb");if(!box||box.querySelector(".tl-thumb-media"))return;var src=row.thumbnail_url;if(!src||!/^https:\\/\\//i.test(src))return;var image=document.createElement("img");image.className="tl-thumb-media";image.alt="";image.loading="lazy";image.decoding="async";image.src=src;image.onerror=function(){image.remove()};box.insertBefore(image,box.firstChild)});}fetch(U+"/rest/v1/videos?select=id,thumbnail_url&published=eq.true",{headers:{apikey:K}}).then(function(r){if(!r.ok)throw Error();return r.json()}).then(function(rows){rows.forEach(function(r){data[String(r.id)]=r});paint();new MutationObserver(paint).observe(document.body,{childList:true,subtree:true})}).catch(function(){});})();<\\/script>';
+    html=html.replace('</head>',style+'</head>');
+    html=html.replace('</body>',thumbs+'</body>');
+    frame.srcdoc=html;
   }).catch(function(error){fail(error.message||String(error))});
 })();
 </script>
