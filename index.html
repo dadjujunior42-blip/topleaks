@@ -462,6 +462,14 @@ body{font:400 14px/1.5 var(--body)}
 .abtns .btn{min-height:34px;padding:0 10px;font-size:12px}
 .arow{flex-wrap:wrap}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.bar,.pbar,.actions{background:var(--bg)}}
+/* ===== V8 : fenêtres de connexion et d'inscription (cartes centrées, verre dépoli) ===== */
+.modal.center{align-items:center;padding:20px;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.sheet.glass{max-width:400px;max-height:90vh;max-height:90dvh;border-radius:20px;background:rgba(22,22,27,.8);-webkit-backdrop-filter:blur(20px) saturate(140%);backdrop-filter:blur(20px) saturate(140%);border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 80px rgba(0,0,0,.6);padding:22px 18px 20px;animation:pop .22s ease both}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+.switch{margin-top:14px;text-align:center;color:var(--muted);font-size:13px}
+.switch .flink{display:inline;padding:0;color:var(--accent);font-weight:600}
+@media (prefers-reduced-motion:reduce){.sheet.glass{animation:none}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.sheet.glass{background:#17171c}}
 </style>
 
 </head>
@@ -708,43 +716,66 @@ body{font:400 14px/1.5 var(--body)}
   </div>
 </div>
 
-<div id="authm" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="authtitle">
-  <div class="sheet">
+<div id="authm" class="modal center" hidden role="dialog" aria-modal="true" aria-labelledby="authtitle">
+  <div class="sheet glass">
     <button id="authclose" class="xclose" type="button" aria-label="Fermer"><svg class="ic"><use href="#i-close"/></svg></button>
-    <h2 id="authtitle" data-i18n="acct_title"></h2>
+    <h2 id="authtitle" data-i18n="login"></h2>
     <p id="authuser" class="hint"></p>
-    <div id="authtabs" class="tabs">
-      <button id="tablogin" type="button" aria-pressed="true" data-i18n="login"></button>
-      <button id="tabsignup" type="button" aria-pressed="false" data-i18n="signup"></button>
+    <div id="loginbox">
+      <form id="authform" class="aform" novalidate>
+        <label class="label" for="aemailin" data-i18n="email"></label>
+        <input id="aemailin" class="field aemail" type="email" autocomplete="email" inputmode="email">
+        <label class="label" for="apwin" data-i18n="pw_label"></label>
+        <input id="apwin" class="field aemail" type="password" autocomplete="current-password">
+        <div class="stack"><button id="authsubmit" class="btn btn-primary" type="submit" data-i18n="login"></button><button id="forgot" class="flink" type="button" data-i18n="forgot"></button></div>
+      </form>
+      <div class="stack"><button id="gbtn" class="btn btn-ghost" type="button"><b class="gmark">G</b><span data-i18n="google"></span></button></div>
+      <p class="switch"><span data-i18n="no_account"></span> <button id="gosignup" class="flink" type="button" data-i18n="signup"></button></p>
     </div>
-    <form id="authform" class="aform" novalidate>
-      <div id="signupfields" class="aform" hidden>
-        <label class="label" for="aname" data-i18n="username"></label>
-        <input id="aname" class="field aemail" type="text" maxlength="40" autocomplete="nickname">
-        <label class="label" for="acountry" data-i18n="country"></label>
-        <select id="acountry" class="field aemail">
-          <option value="" data-i18n="country_none"></option>
-          <option value="CD">République démocratique du Congo</option><option value="CG">République du Congo</option>
-          <option value="FR">France</option><option value="BE">Belgique</option><option value="CI">Côte d’Ivoire</option>
-          <option value="SN">Sénégal</option><option value="CM">Cameroun</option><option value="US">États-Unis</option><option value="GB">Royaume-Uni</option>
-        </select>
-      </div>
-      <label class="label" for="aemailin" data-i18n="email"></label>
-      <input id="aemailin" class="field aemail" type="email" autocomplete="email" inputmode="email">
-      <div class="stack"><button id="authsubmit" class="btn btn-primary" type="submit"></button></div>
+    <div id="resetstep" class="aform" hidden>
+      <p class="hint" data-i18n="reset_copy"></p>
+      <input id="newpw" class="field aemail" type="password" autocomplete="new-password" aria-label="Nouveau mot de passe">
+      <div class="stack"><button id="resetsave" class="btn btn-primary" type="button" data-i18n="reset_save"></button></div>
+    </div>
+    <p id="authmsg" class="hint" role="status" aria-live="polite"></p>
+    <button id="signout" class="flink" type="button" hidden data-i18n="logout"></button>
+  </div>
+</div>
+
+<div id="signm" class="modal center" hidden role="dialog" aria-modal="true" aria-labelledby="signtitle">
+  <div class="sheet glass">
+    <button id="signclose" class="xclose" type="button" aria-label="Fermer"><svg class="ic"><use href="#i-close"/></svg></button>
+    <h2 id="signtitle" data-i18n="signup"></h2>
+    <form id="signform" class="aform" novalidate>
+      <label class="label" for="aname" data-i18n="username"></label>
+      <input id="aname" class="field aemail" type="text" maxlength="40" autocomplete="nickname">
+      <label class="label" for="acountry" data-i18n="country"></label>
+      <select id="acountry" class="field aemail">
+        <option value="" data-i18n="country_none"></option>
+        <option value="CD">République démocratique du Congo</option><option value="CG">République du Congo</option>
+        <option value="FR">France</option><option value="BE">Belgique</option><option value="CI">Côte d’Ivoire</option>
+        <option value="SN">Sénégal</option><option value="CM">Cameroun</option><option value="US">États-Unis</option><option value="GB">Royaume-Uni</option>
+      </select>
+      <label class="label" for="semail" data-i18n="email"></label>
+      <input id="semail" class="field aemail" type="email" autocomplete="email" inputmode="email">
+      <label class="label" for="spw" data-i18n="password"></label>
+      <input id="spw" class="field aemail" type="password" autocomplete="new-password">
+      <div class="stack"><button id="signsubmit" class="btn btn-primary" type="submit" data-i18n="signup"></button></div>
     </form>
     <div id="otpstep" class="aform" hidden>
       <p id="otpcopy" class="hint"></p>
-      <input id="otpcode" class="field aemail" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="00000000" aria-label="Code à 8 chiffres">
+      <input id="otpcode" class="field aemail" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="00000000" aria-label="Code de confirmation">
       <div class="stack">
         <button id="otpverify" class="btn btn-primary" type="button" data-i18n="otp_confirm"></button>
         <button id="otpresend" class="flink" type="button" data-i18n="otp_resend"></button>
         <button id="otpedit" class="flink" type="button" data-i18n="otp_edit"></button>
       </div>
     </div>
-    <div class="stack"><button id="gbtn" class="btn btn-ghost" type="button"><b class="gmark">G</b><span data-i18n="google"></span></button></div>
-    <p id="authmsg" class="hint" role="status" aria-live="polite"></p>
-    <button id="signout" class="flink" type="button" hidden data-i18n="logout"></button>
+    <div id="signalt">
+      <div class="stack"><button id="sgbtn" class="btn btn-ghost" type="button"><b class="gmark">G</b><span data-i18n="google"></span></button></div>
+      <p class="switch"><span data-i18n="have_account"></span> <button id="gologin" class="flink" type="button" data-i18n="login"></button></p>
+    </div>
+    <p id="signmsg" class="hint" role="status" aria-live="polite"></p>
   </div>
 </div>
 
@@ -821,7 +852,7 @@ body{font:400 14px/1.5 var(--body)}
     reset_copy:'Choisissez un nouveau mot de passe.',reset_save:'Enregistrer le mot de passe',reset_ok:'Mot de passe modifié.',
     new_videos:'{n} nouveau(x) spectacle(s) depuis votre dernière visite',com_del:'Supprimer',com_del_ask:'Supprimer ce commentaire ?'};
   for(var vk in V7)I.fr[vk]=V7[vk];
-  I.fr.send_code='Recevoir le code';I.fr.otp_copy='Un code à 8 chiffres vient d’être envoyé à {e}. Saisissez-le ici.';I.fr.e_nouser='Aucun compte avec cette adresse. Choisissez « Créer un compte ».';
+  I.fr.pw_label='Mot de passe';I.fr.no_account='Pas encore de compte ?';I.fr.have_account='Déjà un compte ?';I.fr.otp_copy='Un code de confirmation vient d’être envoyé à {e}. Saisissez-le ici pour activer votre compte.';I.fr.e_nouser='Aucun compte avec cette adresse. Choisissez « Créer un compte ».';
   ['sw','ln'].forEach(function(l){delete I[l].otp_copy;delete I[l].send_code});
   I.fr.priv_demo='Démo : aucun accès réel. Cette vidéo est protégée : elle ne s’ouvre qu’après un achat confirmé par le serveur.';
   I.fr.priv_fail='Lecture protégée indisponible pour le moment.';
@@ -846,7 +877,7 @@ body{font:400 14px/1.5 var(--body)}
   function reindex(){byId={};V.forEach(function(v){byId[v.id]=v});FEATURED=V.slice(0,3).map(function(v){return v.id})}
   var $=function(s){return document.querySelector(s)};
   var p2=function(n){return String(n).padStart(2,'0')};
-  var FC=function(n){return String(n)+' FC'};
+  var FC=function(n){return String(n)+' FC'};
   var fmt=function(s){s=Math.floor(s);var h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?h+':'+p2(m)+':'+p2(x):m+':'+p2(x)};
   var rate=function(r){return String(r).replace('.',',')};
   var grad=function(v){var g='linear-gradient(160deg,hsl('+v.h+' 55% 32%),hsl('+((v.h+35)%360)+' 60% 13%))';return v.img?"center/cover url('"+encodeURI(v.img).replace(/'/g,'%27')+"'),"+g:g};
@@ -1304,7 +1335,7 @@ body{font:400 14px/1.5 var(--body)}
   }
 
   /* ---------- Compte : Supabase Auth par l'API REST (clé publique uniquement) ---------- */
-  var AUTH_KEY='tl_auth_v1',session=null,mode='login',pendingEmail='',pendingData=null,authPending=null,refreshing=null,lastFocus=null,sharedDone=false;
+  var AUTH_KEY='tl_auth_v1',session=null,pendingEmail='',authPending=null,refreshing=null,lastFocus=null,sharedDone=false;
   var enc=encodeURIComponent,web=/^https?:$/.test(location.protocol);
   function appUrl(){return web?location.origin+location.pathname:location.href.split('#')[0].split('?')[0]}
   function shareUrl(){return appUrl()+'?video='+enc(cur.id)}
@@ -1369,93 +1400,124 @@ body{font:400 14px/1.5 var(--body)}
       },function(){var e=new Error('network');e.network=true;throw e});
     });
   }
-  function authMsg(x,bad){var el=$('#authmsg');el.textContent=x||'';el.className='hint'+(x&&bad?' bad':'')}
+  function authMsg(x,bad){var el=$('#signm').hidden?$('#authmsg'):$('#signmsg');el.textContent=x||'';el.className='hint'+(x&&bad?' bad':'')}
+  var MODALS=['#authm','#signm','#comm'];
   function openModal(sel){
     lastFocus=document.activeElement;$(sel).hidden=false;document.body.style.overflow='hidden';
-    setTimeout(function(){var f=$(sel).querySelector('input:not([type=hidden]),textarea,.xclose');var q2=$(sel).querySelectorAll('input,textarea');for(var i=0;i<q2.length;i++){if(!q2[i].closest('[hidden]')){f=q2[i];break}}if(f)try{f.focus()}catch(e){}},40);
+    setTimeout(function(){var f=null,q2=$(sel).querySelectorAll('input,textarea');for(var i=0;i<q2.length;i++){if(!q2[i].closest('[hidden]')){f=q2[i];break}}if(!f)f=$(sel).querySelector('.xclose');if(f)try{f.focus()}catch(e){}},40);
   }
   function closeModal(sel){
     $(sel).hidden=true;
-    if($('#authm').hidden&&$('#comm').hidden)document.body.style.overflow='';
+    if(MODALS.every(function(m){return $(m).hidden}))document.body.style.overflow='';
     if(lastFocus&&lastFocus.focus)try{lastFocus.focus()}catch(e){}
   }
-  function openAuth(msg,after){authPending=after||null;renderAccount();authMsg(msg||'',!!msg);openModal('#authm')}
-  function setMode(m){
-    mode=m;$('#tablogin').setAttribute('aria-pressed',m==='login');$('#tabsignup').setAttribute('aria-pressed',m==='signup');
-    $('#signupfields').hidden=m!=='signup';
-    $('#authsubmit').textContent=t('send_code');
-    authMsg('');
+  function closeAuthModals(){['#authm','#signm'].forEach(function(m){if(!$(m).hidden)closeModal(m)})}
+  /* Connexion : fenêtre #authm (e-mail + mot de passe ou Google). Inscription : fenêtre #signm (création + code de confirmation). */
+  function openAuth(msg,after){authPending=after||null;if(!$('#signm').hidden)closeModal('#signm');renderAccount();openModal('#authm');authMsg(msg||'',!!msg)}
+  function openSignup(){
+    if(!$('#authm').hidden)closeModal('#authm');
+    $('#signform').hidden=false;$('#signalt').hidden=false;$('#otpstep').hidden=true;
+    openModal('#signm');authMsg('');
+  }
+  function showOtp(email){
+    pendingEmail=email;$('#otpcopy').textContent=t('otp_copy',{e:email});
+    $('#signform').hidden=true;$('#signalt').hidden=true;$('#otpstep').hidden=false;authMsg('');
+    try{$('#otpcode').focus()}catch(e){}
   }
   function renderAccount(){
     var on=!!session,mail=(session&&session.user&&session.user.email)||'';
     $('#acct').classList.toggle('on',on);
     $('#acct').setAttribute('aria-label',on?t('logged_as',{e:mail}):t('acct'));
-    $('#authuser').textContent=on?t('logged_as',{e:mail}):t('not_logged');
-    var otp=!$('#otpstep').hidden;
-    $('#authtabs').hidden=on||otp;$('#authform').hidden=on||otp;$('#gbtn').parentNode.hidden=on||otp;$('#signout').hidden=!on;
-    if(on)$('#otpstep').hidden=true;
-    $('#comlogin').hidden=on;
-    $('#authsubmit').textContent=t('send_code');
+    $('#authuser').textContent=on?t('logged_as',{e:mail}):'';
+    $('#authtitle').textContent=t(on?'acct_title':'login');
+    $('#loginbox').hidden=on;$('#signout').hidden=!on;$('#comlogin').hidden=on;
   }
   function afterLogin(j,msg){
     var x=normSession(j);if(!x)throw new Error('session');
-    storeSession(x);authMsg('');toast(msg);closeModal('#authm');
+    storeSession(x);authMsg('');toast(msg);closeAuthModals();
+    $('#otpstep').hidden=true;$('#otpcode').value='';
     var cb=authPending;authPending=null;
     loadPurchases();
     if(cur&&!views.detail.hidden)refreshSocial();
     if(!views.admin.hidden)renderAdmin();
     if(cb)cb();
   }
-  function busy(b){$('#authsubmit').disabled=b;$('#otpverify').disabled=b;$('#gbtn').disabled=b}
+  function busy(b){['#authsubmit','#signsubmit','#otpverify','#gbtn','#sgbtn'].forEach(function(id){$(id).disabled=b})}
   $('#acct').addEventListener('click',function(){openAuth('')});
   $('#authclose').addEventListener('click',function(){closeModal('#authm')});
-  $('#tablogin').addEventListener('click',function(){setMode('login')});
-  $('#tabsignup').addEventListener('click',function(){setMode('signup')});
-  /* Connexion par code à usage unique, sans mot de passe et sans redirection.
-     POST /auth/v1/otp = supabase.auth.signInWithOtp({email}) ; POST /auth/v1/verify (type « email ») = supabase.auth.verifyOtp({email,token,type:'email'}) */
-  function sendCode(email,data){
-    var body={email:email,create_user:mode==='signup'};
-    if(data)body.data=data;
-    return authApi('POST','otp',body);
-  }
+  $('#signclose').addEventListener('click',function(){closeModal('#signm')});
+  $('#gosignup').addEventListener('click',openSignup);
+  $('#gologin').addEventListener('click',function(){openAuth('')});
+  /* Connexion directe : aucun code demandé */
   $('#authform').addEventListener('submit',function(e){
     e.preventDefault();
-    var email=$('#aemailin').value.trim(),data=null;
+    var email=$('#aemailin').value.trim(),pw=$('#apwin').value;
     if(!/^\S+@\S+\.\S+$/.test(email)){authMsg(t('e_email'),true);return}
-    if(mode==='signup'){
-      var name=$('#aname').value.trim();
-      if(name.length<2){authMsg(t('e_name'),true);return}
-      data={username:name,country:$('#acountry').value||null};
-    }
+    if(!pw){authMsg(t('e_invalid'),true);return}
     busy(true);authMsg(t('sending'));
-    sendCode(email,data).then(function(){
-      pendingEmail=email;pendingData=data;
-      $('#otpcopy').textContent=t('otp_copy',{e:email});$('#otpstep').hidden=false;renderAccount();authMsg('');$('#otpcode').focus();
+    authApi('POST','token?grant_type=password',{email:email,password:pw}).then(function(j){afterLogin(j,t('connected'))}).catch(function(err){
+      if(err&&(err.code==='email_not_confirmed'||/not confirmed/i.test(err.message||''))){
+        /* compte créé mais jamais confirmé : on renvoie le code et on ouvre l'étape de confirmation */
+        authApi('POST','resend',{type:'signup',email:email}).catch(function(){});
+        openSignup();showOtp(email);return;
+      }
+      authMsg(friendlyErr(err),true);
+    }).then(function(){busy(false)});
+  });
+  /* Inscription : création du compte, puis code de confirmation reçu par e-mail */
+  $('#signform').addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=$('#semail').value.trim(),pw=$('#spw').value,name=$('#aname').value.trim();
+    if(name.length<2){authMsg(t('e_name'),true);return}
+    if(!/^\S+@\S+\.\S+$/.test(email)){authMsg(t('e_email'),true);return}
+    if(pw.length<6){authMsg(t('e_weak'),true);return}
+    busy(true);authMsg(t('sending'));
+    authApi('POST','signup',{email:email,password:pw,data:{username:name,country:$('#acountry').value||null}}).then(function(j){
+      if(j&&j.access_token){afterLogin(j,t('created_signed'));return}
+      var u=j&&(j.user||j);
+      if(u&&Array.isArray(u.identities)&&u.identities.length===0){authMsg(t('e_exists'),true);return}
+      showOtp(email);
     }).catch(function(err){authMsg(friendlyErr(err),true)}).then(function(){busy(false)});
   });
   $('#otpverify').addEventListener('click',function(){
     var code=$('#otpcode').value.replace(/\s+/g,'');
     if(!/^\d{6,10}$/.test(code)){authMsg(t('e_code'),true);return}
     busy(true);authMsg(t('sending'));
-    authApi('POST','verify',{type:'email',email:pendingEmail,token:code}).then(function(j){
-      $('#otpstep').hidden=true;$('#otpcode').value='';afterLogin(j,t('connected'));
-    }).catch(function(err){authMsg(friendlyErr(err),true)}).then(function(){busy(false)});
+    authApi('POST','verify',{type:'signup',email:pendingEmail,token:code}).then(function(j){afterLogin(j,t('confirmed'))}).catch(function(err){authMsg(friendlyErr(err),true)}).then(function(){busy(false)});
   });
   $('#otpcode').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('#otpverify').click()}});
   $('#otpresend').addEventListener('click',function(){
     authMsg(t('sending'));
-    sendCode(pendingEmail,pendingData).then(function(){authMsg(t('code_sent'))}).catch(function(err){authMsg(friendlyErr(err),true)});
+    authApi('POST','resend',{type:'signup',email:pendingEmail}).then(function(){authMsg(t('code_sent'))}).catch(function(err){authMsg(friendlyErr(err),true)});
   });
-  $('#otpedit').addEventListener('click',function(){$('#otpstep').hidden=true;$('#otpcode').value='';renderAccount()});
-  $('#gbtn').addEventListener('click',function(){
+  $('#otpedit').addEventListener('click',function(){$('#otpstep').hidden=true;$('#otpcode').value='';$('#signform').hidden=false;$('#signalt').hidden=false;authMsg('')});
+  /* Mot de passe oublié : lien reçu par e-mail, puis nouveau mot de passe dans la fenêtre de connexion */
+  $('#forgot').addEventListener('click',function(){
+    var email=$('#aemailin').value.trim();
+    if(!/^\S+@\S+\.\S+$/.test(email)){authMsg(t('e_email'),true);return}
+    authMsg(t('sending'));
+    authApi('POST','recover',{email:email}).then(function(){authMsg(t('forgot_sent'))}).catch(function(err){authMsg(friendlyErr(err),true)});
+  });
+  $('#resetsave').addEventListener('click',function(){
+    var pw=$('#newpw').value;
+    if(pw.length<6){authMsg(t('e_weak'),true);return}
+    authMsg(t('sending'));
+    authedFetch(SB_URL+'/auth/v1/user',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})}).then(function(r){
+      if(!r.ok)return restErr(r);
+      $('#newpw').value='';$('#resetstep').hidden=true;authMsg('');toast(t('reset_ok'));closeAuthModals();renderAccount();
+    }).catch(function(err){authMsg(friendlyErr(err),true)});
+  });
+  function googleLogin(){
     if(!web){authMsg(t('e_google_file'),true);return}
     authMsg(t('sending'));
     location.href=SB_URL+'/auth/v1/authorize?provider=google&redirect_to='+enc(appUrl());
-  });
+  }
+  $('#gbtn').addEventListener('click',googleLogin);
+  $('#sgbtn').addEventListener('click',googleLogin);
   $('#signout').addEventListener('click',function(){
     var tk=session&&session.access_token;
     if(tk)authApi('POST','logout',null,tk).catch(function(){});
-    storeSession(null);SRV={};ADM=false;admCache=null;toast(t('signedout'));closeModal('#authm');
+    storeSession(null);SRV={};ADM=false;admCache=null;toast(t('signedout'));closeAuthModals();
     if(cur&&!views.detail.hidden)refreshSocial();
     if(!views.admin.hidden)renderAdmin();
   });
@@ -1471,15 +1533,15 @@ body{font:400 14px/1.5 var(--body)}
     return authApi('GET','user',null,at).then(function(u){
       storeSession({access_token:at,refresh_token:rt,expires_at:+p.get('expires_at')||Math.floor(Date.now()/1000)+(+p.get('expires_in')||3600),
         user:{id:u.id,email:u.email||'',name:(u.user_metadata&&u.user_metadata.username)||''}});
-      toast(t('connected'));
+      if(p.get('type')==='recovery'){$('#resetstep').hidden=false;openAuth(t('reset_copy'))}else toast(t('connected'));
     }).catch(function(err){openAuth(friendlyErr(err),null)});
   }
   window.addEventListener('storage',function(e){if(e.key===AUTH_KEY){loadSession();renderAccount()}});
   document.addEventListener('keydown',function(e){
     if(e.key!=='Escape')return;
-    if(!$('#authm').hidden)closeModal('#authm');else if(!$('#comm').hidden)closeModal('#comm');
+    if(!$('#signm').hidden)closeModal('#signm');else if(!$('#authm').hidden)closeModal('#authm');else if(!$('#comm').hidden)closeModal('#comm');
   });
-  ['#authm','#comm'].forEach(function(sel){$(sel).addEventListener('click',function(e){if(e.target===$(sel))closeModal(sel)})});
+  ['#authm','#signm','#comm'].forEach(function(sel){$(sel).addEventListener('click',function(e){if(e.target===$(sel))closeModal(sel)})});
 
   /* ---------- J'aime et commentaires ---------- */
   var REST=SB_URL+'/rest/v1/';
@@ -1743,7 +1805,7 @@ body{font:400 14px/1.5 var(--body)}
   /* ---------- Démarrage ---------- */
   $('#saver').checked=!!ST.saver;
   applyLang();renderContact();
-  loadSession();setMode('login');renderAccount();
+  loadSession();renderAccount();
   consumeHash().then(function(){renderAccount();loadVideos();loadPurchases()});
 })();
 </script>
