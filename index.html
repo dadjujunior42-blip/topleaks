@@ -585,6 +585,10 @@ video{-webkit-filter:none;filter:none}
 #player:fullscreen{width:100%;height:100%;margin:0;padding:0;aspect-ratio:auto;background:#000;transform:none}
 #player:-webkit-full-screen #vid{object-fit:contain}
 #player:fullscreen #vid{object-fit:contain}
+/* ===== V13 : miniatures nettes (image réelle, aucun filtre ni fusion de couleurs) ===== */
+.thumb-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0;background:transparent}
+.thumb,.slide,.card,.slide-body,.dur,.vip,.new,.tag{-webkit-backdrop-filter:none;backdrop-filter:none;-webkit-filter:none;filter:none;mix-blend-mode:normal}
+.thumb,.slide{-webkit-transform:none;transform:none;isolation:auto}
 </style>
 
 </head>
@@ -996,6 +1000,7 @@ video{-webkit-filter:none;filter:none}
   ['sw','ln'].forEach(function(l){delete I[l].otp_copy;delete I[l].send_code});
   I.fr.priv_demo='Démo : aucun accès réel. Cette vidéo est protégée : elle ne s’ouvre qu’après un achat confirmé par le serveur.';
   I.fr.pay_to='Numéro de paiement';
+  I.fr.play_need='Connectez-vous pour regarder cette vidéo.';
   I.fr.pay_manual_note='Payez par Mobile Money au numéro indiqué, puis confirmez sur WhatsApp. L’accès est activé sur votre compte après vérification.';
   I.fr.pay_sent_title='Demande enregistrée';
   I.fr.pay_sent_txt='Envoyez {p} par {op} au {n}, puis confirmez sur WhatsApp avec votre référence de paiement. L’accès est activé après vérification.';
@@ -1029,6 +1034,9 @@ video{-webkit-filter:none;filter:none}
   var fmt=function(s){s=Math.floor(s);var h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?h+':'+p2(m)+':'+p2(x):m+':'+p2(x)};
   var rate=function(r){return String(r).replace('.',',')};
   var grad=function(v){var g='linear-gradient(160deg,hsl('+v.h+' 55% 32%),hsl('+((v.h+35)%360)+' 60% 13%))';return v.img?"center/cover url('"+encodeURI(v.img).replace(/'/g,'%27')+"'),"+g:g};
+  var gradBg=function(v){return 'linear-gradient(160deg,hsl('+v.h+' 55% 32%),hsl('+((v.h+35)%360)+' 60% 13%))'};
+  /* Miniature : vraie image de couverture ; si elle ne charge pas, le dégradé en dessous reste visible */
+  var thumbImg=function(v){return v.img?'<img class="thumb-img" src="'+esc(v.img)+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'">':''};
   var plain=function(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase()};
   var esc=function(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
   var toastT;
@@ -1080,7 +1088,7 @@ video{-webkit-filter:none;filter:none}
   }
   try{if(window.MutationObserver)new MutationObserver(hydrateCovers).observe(document.querySelector('.app'),{childList:true,subtree:true})}catch(e){}
   function slideHTML(v){
-    return '<article class="slide" style="--g:'+grad(v)+'">'+cover(v)+'<span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
+    return '<article class="slide" style="--g:'+gradBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
       '<div class="tags"><span class="tag'+(v.p?' tag-vip':'')+'">'+(v.p?'VIP':t('free'))+'</span>'+(isNew(v)?'<span class="tag">'+t('isnew')+'</span>':'')+'</div>'+
       '<h2 class="slide-title">'+esc(v.t)+'</h2>'+
       '<p class="slide-meta">'+esc(aName(v))+'</p>'+
@@ -1088,7 +1096,7 @@ video{-webkit-filter:none;filter:none}
   }
   function cardHTML(v){
     return '<button class="card" type="button" data-open="'+esc(v.id)+'" aria-label="'+esc(v.t)+', '+esc(aName(v))+(v.p?', VIP, '+FC(v.p):', '+t('free'))+'">'+
-      '<div class="thumb" style="--g:'+grad(v)+'">'+cover(v)+'<span class="glyph" aria-hidden="true">“</span>'+
+      '<div class="thumb" style="--g:'+gradBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span>'+
       (v.p?'<span class="vip"><svg class="ic"><use href="#i-lock"/></svg>VIP</span>':'')+
       (isNew(v)?'<span class="new">'+t('isnew')+'</span>':'')+
       '</div>'+
@@ -1234,6 +1242,8 @@ video{-webkit-filter:none;filter:none}
     $('#gate').hidden=false;
   }
   function play(){
+    /* Lecture réservée aux comptes connectés : sinon on ouvre la fenêtre de connexion */
+    if(!session){pause();openAuth(t('play_need'),function(){if(cur&&views.detail&&!views.detail.hidden)play()});return}
     if(cur.priv&&locked()&&!cur.video_url){showGate();return}
     if(cur.video_url){
       if(locked()&&vid.currentTime>=limit()){showGate();return}
@@ -1443,7 +1453,7 @@ video{-webkit-filter:none;filter:none}
   function renderPaySum(){
     var it=payItem;
     var thumb=it.vid
-      ?'<div class="thumb" style="--g:'+grad(it.vid)+'">'+cover(it.vid)+'<span class="glyph" aria-hidden="true">“</span></div>'
+      ?'<div class="thumb" style="--g:'+gradBg(it.vid)+'">'+thumbImg(it.vid)+cover(it.vid)+'<span class="glyph" aria-hidden="true">“</span></div>'
       :'<div class="thumb offer-thumb" style="--g:linear-gradient(160deg,hsl(38 70% 40%),hsl(275 60% 16%))"><span class="glyph" aria-hidden="true">“</span></div>';
     var h='<div class="sum-top">'+thumb+'<div><b>'+esc(it.title)+'</b><span>'+esc(it.sub)+'</span></div></div>'+
       '<div class="sum-row"><span>'+t('price')+'</span><span>'+FC(it.price)+'</span></div>';
