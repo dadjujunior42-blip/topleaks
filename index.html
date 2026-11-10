@@ -510,6 +510,17 @@ body{font:400 14px/1.5 var(--body)}
 .sheet.glass #otpcode{text-align:center;font-size:20px;letter-spacing:.3em;font-variant-numeric:tabular-nums}
 .sheet.glass .switch{margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
 .sheet.glass #loginbox>.stack{margin-top:12px}
+/* ===== V10 : logo Google, menu ⋮ admin ===== */
+.gsvg{flex:none;display:block}
+#gbtn,#sgbtn{gap:10px}
+.arow{position:relative}
+.kebab{position:relative;flex:none}
+.kbtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--fg);display:grid;place-items:center;padding:0}
+.kbtn[aria-expanded=true]{border-color:var(--accent);color:var(--accent)}
+.kmenu{position:absolute;right:0;top:40px;z-index:25;min-width:172px;padding:6px;border-radius:12px;background:#17171d;border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:2px}
+.kmenu button{min-height:40px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:var(--fg);text-align:left;font-size:14px;font-weight:500}
+.kmenu button:hover,.kmenu button:focus-visible{background:rgba(255,255,255,.08)}
+.kmenu button.danger{color:var(--bad)}
 </style>
 
 </head>
@@ -528,6 +539,7 @@ body{font:400 14px/1.5 var(--body)}
   <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></symbol>
   <symbol id="i-like" viewBox="0 0 24 24"><path d="M7 11v9H4v-9zM7 11l4-7c1.5 0 2.5 1 2.5 2.5V9h5.2a1.8 1.8 0 011.8 2.1l-1.1 7A2 2 0 0117.4 20H7"/></symbol>
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1.1-4.4A8 8 0 1121 12z"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.9" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.9" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.9" fill="currentColor" stroke="none"/></symbol>
   <symbol id="i-smile" viewBox="0 0 24 24"><path d="M5 11c1.5 5.5 12.5 5.5 14 0z"/><path d="M8 7.5h.01M16 7.5h.01"/></symbol>
 </svg>
 
@@ -684,6 +696,13 @@ body{font:400 14px/1.5 var(--body)}
     </div>
 
     <div id="apanel" hidden>
+      <h3 class="ah">Catégories</h3>
+      <form id="acatform" class="aform">
+        <label class="label" for="acatname">Nouvelle catégorie</label>
+        <div class="cnumrow"><input id="acatname" class="field aemail" type="text" maxlength="40"><button class="clink main" type="submit">Ajouter</button></div>
+      </form>
+      <div id="acats"></div>
+
       <h3 class="ah">Ajouter une vidéo</h3>
       <form id="aadd" class="aform">
         <label class="label" for="atitle">Titre</label>
@@ -694,6 +713,8 @@ body{font:400 14px/1.5 var(--body)}
         <input id="aprice" class="field aemail" type="number" inputmode="numeric" min="0" step="100" value="0" required>
         <label class="label" for="adesc">Description (facultatif)</label>
         <input id="adesc" class="field aemail" type="text" maxlength="400">
+        <label class="label" for="acat">Catégorie (facultatif)</label>
+        <select id="acat" class="field aemail"><option value="">Aucune</option></select>
         <label class="label" for="afile">Fichier vidéo (mp4) : vous pouvez en choisir plusieurs</label>
         <input id="afile" class="field aemail afile" type="file" accept="video/mp4,video/webm" multiple>
         <div id="amulti" class="multi" hidden></div>
@@ -773,7 +794,7 @@ body{font:400 14px/1.5 var(--body)}
         <input id="apwin" class="field aemail" type="password" autocomplete="current-password">
         <div class="stack"><button id="authsubmit" class="btn btn-primary" type="submit" data-i18n="login"></button><button id="forgot" class="flink" type="button" data-i18n="forgot"></button></div>
       </form>
-      <div class="stack"><button id="gbtn" class="btn btn-ghost" type="button"><b class="gmark">G</b><span data-i18n="google"></span></button></div>
+      <div class="stack"><button id="gbtn" class="btn btn-ghost" type="button"><svg class="gsvg" viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span data-i18n="google"></span></button></div>
       <p class="switch"><span data-i18n="no_account"></span> <button id="gosignup" class="flink" type="button" data-i18n="signup"></button></p>
     </div>
     <div id="resetstep" class="aform" hidden>
@@ -816,7 +837,7 @@ body{font:400 14px/1.5 var(--body)}
       </div>
     </div>
     <div id="signalt">
-      <div class="stack"><button id="sgbtn" class="btn btn-ghost" type="button"><b class="gmark">G</b><span data-i18n="google"></span></button></div>
+      <div class="stack"><button id="sgbtn" class="btn btn-ghost" type="button"><svg class="gsvg" viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span data-i18n="google"></span></button></div>
       <p class="switch"><span data-i18n="have_account"></span> <button id="gologin" class="flink" type="button" data-i18n="login"></button></p>
     </div>
     <p id="signmsg" class="hint" role="status" aria-live="polite"></p>
@@ -837,7 +858,7 @@ body{font:400 14px/1.5 var(--body)}
 
   /* ---------- Textes : français, swahili, lingala (à faire relire par un locuteur) ---------- */
   var I={
-    fr:{search:'Rechercher',watch:'Regarder maintenant',all:'Tous',free:'Gratuit',isnew:'Nouveau',preview:'Aperçu de 30 s',
+    fr:{search:'Rechercher',watch:'Regarder maintenant',all:'Tous',free:'Gratuit',isnew:'Nouveau',preview:'Aperçu de 5 s',
       gate:'Fin de l’aperçu. Débloquez ce spectacle pour voir la suite.',unlock:'DÉBLOQUER CE SPECTACLE ({p})',unlocked:'Spectacle débloqué',
       fav:'Favoris',fav_on:'Dans mes favoris',share:'Partager',fav_add:'Ajouté aux favoris',fav_del:'Retiré des favoris',
       shared:'Texte copié, prêt à partager',nocopy:'Copie impossible ici',pay_title:'Paiement',secure:'Sécurisé',choose_op:'Choisissez votre opérateur',
@@ -852,7 +873,7 @@ body{font:400 14px/1.5 var(--body)}
       data_saver:'Économie de data',loading:'Chargement des vidéos…',none:'Aucune vidéo pour le moment.',fail:'Impossible de charger les vidéos.',retry:'Réessayer',
       no_result:'Aucun résultat pour « {q} ». Essayez un nom d’artiste ou un titre.',res_one:'{n} résultat pour « {q} »',res_many:'{n} résultats pour « {q} »',
       draft:'Version provisoire, à faire valider avant publication.'},
-    sw:{search:'Tafuta',watch:'Tazama sasa',all:'Zote',free:'Bure',isnew:'Mpya',preview:'Onyesho la sekunde 30',
+    sw:{search:'Tafuta',watch:'Tazama sasa',all:'Zote',free:'Bure',isnew:'Mpya',preview:'Onyesho la sekunde 5',
       gate:'Onyesho limeisha. Fungua onyesho hili ili uendelee kutazama.',unlock:'FUNGUA ONYESHO HILI ({p})',unlocked:'Onyesho limefunguliwa',
       fav:'Vipendwa',fav_on:'Katika vipendwa vyangu',share:'Shiriki',fav_add:'Imeongezwa kwenye vipendwa',fav_del:'Imeondolewa kwenye vipendwa',
       pay_title:'Malipo',secure:'Salama',choose_op:'Chagua mtandao wako',mm_number:'Namba ya Mobile Money',mm_hint:'Namba ya akaunti inayolipa, tarakimu 10.',
@@ -860,7 +881,7 @@ body{font:400 14px/1.5 var(--body)}
       confirm:'Thibitisha malipo ({p})',cancel:'Ghairi',wait_title:'Thibitisha kwenye simu yako',ok_title:'Malipo yamethibitishwa',browse:'Angalia maonyesho',
       contact_title:'Wasiliana nasi',contact_text:'Una swali, tatizo la malipo au pendekezo la onyesho? Tuandikie.',our_number:'Namba yetu',copy:'Nakili',call:'Piga simu',
       choose:'Chagua',about:'Kuhusu sisi',terms:'Masharti ya matumizi',privacy:'Faragha',data_saver:'Okoa data',loading:'Inapakia video…',none:'Hakuna video kwa sasa.',retry:'Jaribu tena'},
-    ln:{search:'Luka',watch:'Tala sikoyo',all:'Nyonso',free:'Ya ofele',isnew:'Ya sika',preview:'Komeka ya sekonde 30',
+    ln:{search:'Luka',watch:'Tala sikoyo',all:'Nyonso',free:'Ya ofele',isnew:'Ya sika',preview:'Komeka ya sekonde 5',
       gate:'Komeka esili. Fungola show oyo mpo ozala kotala.',unlock:'FUNGOLA SHOW OYO ({p})',unlocked:'Show efungwami',
       fav:'Oyo nalingi',fav_on:'Na oyo nalingi',share:'Kabola',fav_add:'Ebakisami na oyo nalingi',fav_del:'Elongolami na oyo nalingi',
       pay_title:'Kofuta',secure:'Na libateli',choose_op:'Pona réseau na yo',mm_number:'Nimero ya Mobile Money',mm_hint:'Nimero ya compte oyo ekofuta, ba chiffres 10.',
@@ -918,7 +939,7 @@ body{font:400 14px/1.5 var(--body)}
 
   /* ---------- Utilitaires ---------- */
   var A={},V=[],byId={},FEATURED=[],loading=true,failed=false;
-  var SRV={},FIL={price:'all',dur:'all',artist:''};
+  var SRV={},FIL={price:'all',dur:'all',artist:'',cat:''},CATS=[];
   function reindex(){byId={};V.forEach(function(v){byId[v.id]=v});FEATURED=V.slice(0,3).map(function(v){return v.id})}
   var $=function(s){return document.querySelector(s)};
   var p2=function(n){return String(n).padStart(2,'0')};
@@ -978,7 +999,7 @@ body{font:400 14px/1.5 var(--body)}
     $('#dots').innerHTML=FEATURED.map(function(_,i){return '<i'+(i===0?' class="on"':'')+'></i>'}).join('');
     $('#hero').style.display=V.length?'':'none';
     $('#rows').innerHTML=V.length
-      ?'<section class="row"><h2>'+t('all')+'<small id="rowcount">'+V.length+'</small></h2><div id="filters" class="filters"></div><div id="gridbox" class="grid"></div><div id="morebox" class="more"></div></section>'
+      ?'<section class="row"><h2>'+t('all')+'</h2><div id="filters" class="filters"></div><div id="gridbox" class="grid"></div><div id="morebox" class="more"></div></section>'
       :'<div class="empty"><p>'+esc(failed?t('fail'):t('none'))+'</p>'+(failed?'<button id="retry" class="btn btn-ghost" type="button">'+t('retry')+'</button>':'')+'</div>';
     if(V.length){renderFilters();renderGrid()}
   }
@@ -986,15 +1007,16 @@ body{font:400 14px/1.5 var(--body)}
     return V.filter(function(v){
       if(FIL.price==='free'&&v.p)return false;if(FIL.price==='vip'&&!v.p)return false;
       if(FIL.dur==='short'&&!(v.dur>0&&v.dur<600))return false;if(FIL.dur==='long'&&!(v.dur>=600))return false;
-      if(FIL.artist&&v.a!==FIL.artist)return false;return true;
+      if(FIL.artist&&v.a!==FIL.artist)return false;if(FIL.cat&&v.cat!==FIL.cat)return false;return true;
     });
   }
   function renderFilters(){
     var box=$('#filters');if(!box)return;
-    function ch(g,v,l){return '<button class="fchip" type="button" data-f="'+g+':'+v+'" aria-pressed="'+(FIL[g]===v)+'">'+esc(l)+'</button>'}
+    function ch(g,v,l){return '<button class="fchip" type="button" data-f="'+esc(g+':'+v)+'" aria-pressed="'+(FIL[g]===v)+'">'+esc(l)+'</button>'}
     var h=ch('price','all',t('f_all'))+ch('price','free',t('free'))+ch('price','vip','VIP')+ch('dur','short',t('f_short'))+ch('dur','long',t('f_long'));
     var arts=Object.keys(A);
     if(arts.length>1)h+='<select id="fart" class="fsel" aria-label="Artiste"><option value="">'+esc(t('f_artist'))+'</option>'+arts.map(function(a){return '<option value="'+esc(a)+'"'+(FIL.artist===a?' selected':'')+'>'+esc(a)+'</option>'}).join('')+'</select>';
+    CATS.filter(function(c){return V.some(function(v){return v.cat===String(c.id)})}).forEach(function(c){h+=ch('cat',String(c.id),c.name)});
     box.innerHTML=h;
   }
   var PER=6,SHOWN=PER;
@@ -1002,13 +1024,12 @@ body{font:400 14px/1.5 var(--body)}
     var rows=filtered(),g=$('#gridbox');if(!g)return;
     g.innerHTML=rows.length?rows.slice(0,SHOWN).map(cardHTML).join(''):'<p class="hint" style="grid-column:1/-1">'+esc(t('f_none'))+'</p>';
     var mb=$('#morebox');if(mb)mb.innerHTML=rows.length>SHOWN?'<button id="moreb" class="btn btn-ghost" type="button">'+esc(t('more'))+' ('+(rows.length-SHOWN)+')</button>':'';
-    var c=$('#rowcount');if(c)c.textContent=rows.length===V.length?V.length:rows.length+' / '+V.length;
   }
   $('#rows').addEventListener('click',function(e){
     if(e.target.closest('#moreb')){SHOWN+=PER;renderGrid();return}
     var b=e.target.closest('[data-f]');if(!b)return;
-    var p=b.getAttribute('data-f').split(':');SHOWN=PER;
-    FIL[p[0]]=(p[0]==='dur'&&FIL.dur===p[1])?'all':p[1];renderFilters();renderGrid();
+    var fs=b.getAttribute('data-f'),fi=fs.indexOf(':'),fg=fs.slice(0,fi),fv=fs.slice(fi+1);SHOWN=PER;
+    FIL[fg]=(fg==='cat')?(FIL.cat===fv?'':fv):((fg==='dur'&&FIL.dur===fv)?'all':fv);renderFilters();renderGrid();
   });
   $('#rows').addEventListener('change',function(e){if(e.target.id==='fart'){FIL.artist=e.target.value;SHOWN=PER;renderGrid()}});
   /* ---------- Bannière ---------- */
@@ -1061,7 +1082,7 @@ body{font:400 14px/1.5 var(--body)}
   }
   q.addEventListener('input',search);
   function goHome(){
-    q.value='';FIL.price='all';FIL.dur='all';FIL.artist='';SHOWN=PER;search();renderFilters();renderGrid();
+    q.value='';FIL.price='all';FIL.dur='all';FIL.artist='';FIL.cat='';SHOWN=PER;search();renderFilters();renderGrid();
     homeY=0;show('home');window.scrollTo(0,0);
   }
   $('#logo').addEventListener('click',goHome);
@@ -1074,7 +1095,8 @@ body{font:400 14px/1.5 var(--body)}
   var ADM=false;
   /* Vidéo protégée (cur.priv) : seul un achat confirmé par le serveur ou un compte admin l'ouvre. Le déblocage démo n'y donne aucun accès. */
   var locked=function(){if(cur.priv)return cur.p>0&&!SRV[cur.id]&&!ADM;return cur.p>0&&!ST.unlocked[cur.id]&&!SRV[cur.id]};
-  var limit=function(){return locked()?(cur.dur?Math.min(30,cur.dur):30):cur.dur};
+  var PREVIEW_SEC=5;
+  var limit=function(){return locked()?(cur.dur?Math.min(PREVIEW_SEC,cur.dur):PREVIEW_SEC):cur.dur};
 
   function setPos(v){
     pos=Math.max(0,Math.min(v,limit()));
@@ -1316,11 +1338,11 @@ body{font:400 14px/1.5 var(--body)}
     if(k==='about')return draft+
       '<p>TOPLEAKS est une plateforme de vidéo à la demande consacrée à l’humour local : sketchs, one-man shows et documentaires.</p>'+
       '<h3>Une plateforme éditée</h3><p>Tous les contenus sont choisis et publiés par TOPLEAKS. Les utilisateurs ne publient pas de vidéos.</p>'+
-      '<h3>Gratuit ou payant</h3><p>Certains spectacles sont gratuits. Les spectacles VIP se débloquent en francs congolais (FC) par Mobile Money : M-Pesa, Orange Money ou Airtel Money. Chaque spectacle payant propose un aperçu gratuit de 30 secondes.</p>'+
+      '<h3>Gratuit ou payant</h3><p>Certains spectacles sont gratuits. Les spectacles VIP se débloquent en francs congolais (FC) par Mobile Money : M-Pesa, Orange Money ou Airtel Money. Chaque spectacle payant propose un aperçu gratuit de 5 secondes.</p>'+
       '<h3>Nous contacter</h3><p>Écrivez-nous sur WhatsApp ou appelez le '+n+'.</p>';
     if(k==='terms')return draft+
       '<h3>1. Objet</h3><p>Ces conditions encadrent l’utilisation de l’application TOPLEAKS, service de vidéo à la demande édité par TOPLEAKS.</p>'+
-      '<h3>2. Accès aux contenus</h3><p>Les contenus gratuits sont accessibles à tous. Les contenus VIP sont accessibles après paiement. Un aperçu de 30 secondes est offert avant l’achat.</p>'+
+      '<h3>2. Accès aux contenus</h3><p>Les contenus gratuits sont accessibles à tous. Les contenus VIP sont accessibles après paiement. Un aperçu de 5 secondes est offert avant l’achat.</p>'+
       '<h3>3. Prix et paiement</h3><p>Les prix sont indiqués en francs congolais (FC), toutes taxes comprises. Le paiement se fait par Mobile Money. Le contenu est débloqué après confirmation du paiement par l’opérateur.</p>'+
       '<h3>4. Prix et codes promo</h3><p>Chaque spectacle VIP a son prix, indiqué avant le paiement. Les codes promo ne se cumulent pas.</p>'+
       '<h3>5. Usage personnel</h3><p>Les contenus sont réservés à un usage personnel. Il est interdit de les copier, enregistrer, partager ou diffuser. Les vidéos payantes portent un filigrane qui permet d’identifier la source d’une fuite.</p>'+
@@ -1363,8 +1385,8 @@ body{font:400 14px/1.5 var(--body)}
   function https(u){return u&&/^https:\/\//.test(u)?u:''}
   function loadVideos(){
     loading=true;failed=false;renderHome();
-    var url=SB_URL+'/rest/v1/videos?select=id,title,artist,description,thumbnail_url,video_url,duration_seconds,price_fc,created_at,video_path&is_published=eq.true&order=created_at.desc';
-    fetch(url,{headers:{apikey:SB_KEY}}).then(function(r){if(r.status===400&&url.indexOf(',video_path')>-1){url=url.replace(',video_path','');return fetch(url,{headers:{apikey:SB_KEY}})}return r}).then(function(r){
+    var url=SB_URL+'/rest/v1/videos?select=id,title,artist,description,thumbnail_url,video_url,duration_seconds,price_fc,created_at,video_path,category_id&is_published=eq.true&order=created_at.desc';
+    (function go(){return fetch(url,{headers:{apikey:SB_KEY}}).then(function(r){if(r.status===400){var n=url.replace(',category_id','');if(n===url)n=url.replace(',video_path','');if(n!==url){url=n;return go()}}return r})})().then(function(r){
       if(!r.ok)return r.text().then(function(tx){
         var m='';try{m=JSON.parse(tx).message||''}catch(x){}
         var err=new Error('HTTP '+r.status+(m?' · '+m:''));err.status=r.status;throw err;
@@ -1375,7 +1397,7 @@ body{font:400 14px/1.5 var(--body)}
         var name=r.artist||'TOPLEAKS';
         if(!A[name])A[name]={n:name};
         return {id:String(r.id),a:name,t:r.title||'Sans titre',dur:r.duration_seconds||0,r:0,p:+r.price_fc||0,
-          created:r.created_at,h:hue(r.title||''),d:r.description||'',db:true,img:https(r.thumbnail_url),video_url:https(r.video_url),priv:r.video_path||'',preview:r.video_path?https(r.video_url):''};
+          created:r.created_at,h:hue(r.title||''),d:r.description||'',db:true,img:https(r.thumbnail_url),video_url:https(r.video_url),cat:String(r.category_id==null?'':r.category_id),priv:r.video_path||'',preview:r.video_path?https(r.video_url):''};
       });
       loading=false;failed=false;reindex();renderHome();search();openShared();notifyNew();
       setStatus(V.length?'Supabase · '+V.length:'Supabase · 0');
@@ -1739,7 +1761,7 @@ body{font:400 14px/1.5 var(--body)}
       if(!x)return;
       return authedFetch(REST+'admins?select=user_id&user_id=eq.'+enc(x.user.id)).then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
         if(!rows.length){$('#aneed').hidden=false;$('#aneedtxt').textContent=t('admin_not');$('#aopenauth').hidden=true;return}
-        $('#apanel').hidden=false;loadStats();
+        $('#apanel').hidden=false;loadStats();loadCats();
       });
     }).catch(function(err){$('#aneed').hidden=false;amsg(friendlyErr(err),true)});
   }
@@ -1747,6 +1769,51 @@ body{font:400 14px/1.5 var(--body)}
   $('#adminclose').addEventListener('click',function(){show('home')});
   $('#aopenauth').addEventListener('click',function(){openAuth('',renderAdmin)});
   var ADMV={},editId=null;
+  /* Catégories : table « categories » (id, name) et colonne videos.category_id, gérées par l'admin */
+  function fillCatSelect(){
+    var sel=$('#acat');if(!sel)return;var cv=sel.value;
+    sel.innerHTML='<option value="">Aucune</option>'+CATS.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>'}).join('');
+    sel.value=cv;
+  }
+  function renderCats(){
+    var box=$('#acats');if(!box)return;
+    box.innerHTML=CATS.length?CATS.map(function(c){return '<div class="arow"><div><b>'+esc(c.name)+'</b></div><div class="abtns"><button class="btn btn-ghost" type="button" data-cedit="'+esc(c.id)+'">Modifier</button><button class="btn btn-ghost" type="button" data-cdel="'+esc(c.id)+'">Supprimer</button></div></div>'}).join(''):'<p class="hint">Aucune catégorie.</p>';
+  }
+  function loadCats(){
+    return fetch(REST+'categories?select=id,name&order=name.asc',{headers:{apikey:SB_KEY}}).then(function(r){return r.ok?r.json():[]}).then(function(rows){CATS=Array.isArray(rows)?rows:[]}).catch(function(){CATS=[]}).then(function(){fillCatSelect();renderCats();renderFilters()});
+  }
+  function catErr(err){return (err.noSession?t('admin_need'):err.message)+' (table « categories » installée ?)'}
+  $('#acatform').addEventListener('submit',function(e){
+    e.preventDefault();var n=$('#acatname').value.trim();
+    if(n.length<2){amsg('Nom de catégorie trop court.',true);return}
+    authedFetch(REST+'categories',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({name:n})}).then(function(r){
+      if(!r.ok)return restErr(r);
+      $('#acatname').value='';amsg('Catégorie ajoutée.');return loadCats();
+    }).catch(function(err){amsg('Échec : '+catErr(err),true)});
+  });
+  $('#acats').addEventListener('click',function(e){
+    var ed=e.target.closest('[data-cedit]'),dl=e.target.closest('[data-cdel]');
+    function find(id){return CATS.filter(function(c){return String(c.id)===id})[0]}
+    if(ed){
+      var id=ed.getAttribute('data-cedit'),c=find(id),n=prompt('Nouveau nom de la catégorie',c?c.name:'');
+      if(n===null)return;n=n.trim();
+      if(n.length<2){amsg('Nom de catégorie trop court.',true);return}
+      authedFetch(REST+'categories?id=eq.'+enc(id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({name:n})}).then(function(r){
+        if(!r.ok)return restErr(r);amsg('Catégorie modifiée.');return loadCats();
+      }).catch(function(err){amsg('Échec : '+catErr(err),true)});
+    }else if(dl){
+      var id2=dl.getAttribute('data-cdel'),c2=find(id2);
+      if(!confirm('Supprimer la catégorie « '+(c2?c2.name:'')+' » ? Les vidéos qui l’utilisent resteront publiées, sans catégorie.'))return;
+      dl.disabled=true;
+      authedFetch(REST+'videos?category_id=eq.'+enc(id2),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({category_id:null})}).then(function(){
+        return authedFetch(REST+'categories?id=eq.'+enc(id2),{method:'DELETE'});
+      }).then(function(r){
+        if(!r.ok)return restErr(r);
+        if(FIL.cat===id2)FIL.cat='';
+        amsg('Catégorie supprimée.');return loadCats().then(function(){loadVideos()});
+      }).catch(function(err){dl.disabled=false;amsg('Échec : '+catErr(err),true)});
+    }
+  });
   function loadStats(){
     var box=$('#astats');box.innerHTML='<div class="sk" style="height:56px"></div>';
     authedFetch(REST+'video_stats?select=*&order=created_at.desc').then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
@@ -1756,9 +1823,10 @@ body{font:400 14px/1.5 var(--body)}
       box.innerHTML=rows.map(function(r){
         ADMV[r.id]=r;tv+=+r.views||0;ts+=+r.sales||0;tr+=+r.revenue_fc||0;
         return '<div class="arow'+(r.is_published?'':' off')+'"><div><b>'+esc(r.title)+'</b><span>'+(r.price_fc>0?FC(r.price_fc):t('free'))+' · '+(+r.views||0)+' vues · '+(+r.sales||0)+' ventes · '+FC(+r.revenue_fc||0)+'</span></div>'+
-          '<div class="abtns"><button class="btn btn-ghost" type="button" data-pub="'+esc(r.id)+'" data-state="'+(r.is_published?'1':'0')+'">'+(r.is_published?'Masquer':'Publier')+'</button>'+
-          '<button class="btn btn-ghost" type="button" data-edit="'+esc(r.id)+'">Modifier</button>'+
-          '<button class="btn btn-ghost" type="button" data-del="'+esc(r.id)+'">Supprimer</button></div></div>';
+          '<div class="kebab"><button class="kbtn" type="button" data-kebab aria-haspopup="menu" aria-expanded="false" aria-label="Options"><svg class="ic"><use href="#i-dots"/></svg></button>'+
+          '<div class="kmenu" role="menu" hidden><button type="button" role="menuitem" data-edit="'+esc(r.id)+'">Modifier</button>'+
+          '<button type="button" role="menuitem" data-pub="'+esc(r.id)+'" data-state="'+(r.is_published?'1':'0')+'">'+(r.is_published?'Masquer':'Publier')+'</button>'+
+          '<button type="button" role="menuitem" class="danger" data-del="'+esc(r.id)+'">Supprimer</button></div></div></div>';
       }).join('')+'<p class="hint">Total : '+tv+' vues · '+ts+' ventes · '+FC(tr)+'</p>';
     }).then(function(){var sel=$('#gvideo');if(sel)sel.innerHTML=Object.keys(ADMV).filter(function(k){return ADMV[k].price_fc>0}).map(function(k){return '<option value="'+esc(k)+'">'+esc(ADMV[k].title)+' · '+FC(ADMV[k].price_fc)+'</option>'}).join('')}).catch(function(err){box.innerHTML='<p class="hint bad">Statistiques indisponibles : '+esc(err.message)+'</p>'});
   }
@@ -1779,16 +1847,22 @@ body{font:400 14px/1.5 var(--body)}
   function stopEdit(){editId=null;$('#aadd').reset();resetMulti();$('#asubmit').textContent='Publier la vidéo';$('#acancel').hidden=true}
   function startEdit(id){
     amsg('Chargement…');
-    authedFetch(REST+'videos?select=title,artist,description,price_fc&id=eq.'+enc(id)).then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
+    authedFetch(REST+'videos?select=title,artist,description,price_fc,category_id&id=eq.'+enc(id)).then(function(r){if(r.status===400)return authedFetch(REST+'videos?select=title,artist,description,price_fc&id=eq.'+enc(id)).then(function(r2){return r2.ok?r2.json():restErr(r2)});return r.ok?r.json():restErr(r)}).then(function(rows){
       var v=rows[0];if(!v){amsg('Vidéo introuvable.',true);return}
-      resetMulti();editId=id;$('#atitle').value=v.title||'';$('#aartist').value=v.artist||'';$('#aprice').value=v.price_fc||0;$('#adesc').value=v.description||'';
+      resetMulti();editId=id;$('#atitle').value=v.title||'';$('#aartist').value=v.artist||'';$('#aprice').value=v.price_fc||0;$('#adesc').value=v.description||'';fillCatSelect();$('#acat').value=(v.category_id==null?'':String(v.category_id));
       $('#afile').value='';$('#aurl').value='';$('#asubmit').textContent='Enregistrer les modifications';$('#acancel').hidden=false;
       amsg('Modification en cours. Laissez fichier et lien vides pour garder la vidéo actuelle.');
       try{$('#aadd').scrollIntoView({behavior:'smooth'})}catch(e){}
     }).catch(function(err){amsg('Échec : '+err.message,true)});
   }
   $('#acancel').addEventListener('click',function(){stopEdit();amsg('')});
+  function closeKmenus(){Array.prototype.forEach.call(document.querySelectorAll('.kmenu'),function(m){m.hidden=true;var k=m.parentNode.querySelector('.kbtn');if(k)k.setAttribute('aria-expanded','false')})}
+  document.addEventListener('click',function(e){if(!e.target.closest('.kebab'))closeKmenus()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeKmenus()});
   $('#astats').addEventListener('click',function(e){
+    var kb=e.target.closest('[data-kebab]');
+    if(kb){var m=kb.parentNode.querySelector('.kmenu'),was=m.hidden;closeKmenus();m.hidden=!was;kb.setAttribute('aria-expanded',was?'true':'false');return}
+    if(e.target.closest('.kmenu'))closeKmenus();
     var b=e.target.closest('[data-pub]'),ed=e.target.closest('[data-edit]'),dl=e.target.closest('[data-del]');
     if(b){
       var next=b.getAttribute('data-state')!=='1';b.disabled=true;
@@ -1878,6 +1952,7 @@ body{font:400 14px/1.5 var(--body)}
           up.thumbnail_url=th;markRow(row,'busy','Enregistrement…');
           var body={title:title,artist:$('#aartist').value.trim()||null,description:$('#adesc').value.trim()||null,price_fc:price,is_published:true,thumbnail_url:th||null};
           if(priv)body.video_path=up.video_path;else body.video_url=up.video_url;
+          if($('#acat').value||CATS.length)body.category_id=$('#acat').value||null;
           if(info.dur)body.duration_seconds=info.dur;
           return authedFetch(REST+'videos',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)}).then(function(r){if(!r.ok)return restErr(r)});
         });
@@ -1923,6 +1998,7 @@ body{font:400 14px/1.5 var(--body)}
     media.then(function(m){
       var body={title:$('#atitle').value.trim(),artist:$('#aartist').value.trim()||null,description:$('#adesc').value.trim()||null,price_fc:price};
       if(m){body.video_url=m.url||null;if(m.path||eid)body.video_path=m.path||null;if(file)body.thumbnail_url=m.thumb||null;if(m.dur)body.duration_seconds=m.dur}
+      if($('#acat').value||CATS.length)body.category_id=$('#acat').value||null;
       if(!eid)body.is_published=true;
       return authedFetch(REST+'videos'+(eid?'?id=eq.'+enc(eid):''),{method:eid?'PATCH':'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)});
     }).then(function(r){
@@ -1935,7 +2011,7 @@ body{font:400 14px/1.5 var(--body)}
   $('#saver').checked=!!ST.saver;
   applyLang();renderContact();
   loadSession();renderAccount();
-  consumeHash().then(function(){renderAccount();loadVideos();loadPurchases()});
+  consumeHash().then(function(){renderAccount();loadCats();loadVideos();loadPurchases()});
 })();
 </script>
 </body>
