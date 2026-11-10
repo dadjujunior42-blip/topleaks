@@ -473,6 +473,21 @@ body{font:400 14px/1.5 var(--body)}
 .mrow[data-state=ok] .mst{color:var(--ok)}
 .mrow[data-state=err] .mst{color:var(--bad)}
 .mrow[data-state=busy] .mst{color:var(--accent)}
+/* Sélecteur de frame (admin) */
+.fp{display:grid;gap:8px;margin:10px 0;min-width:0}
+.fp-stage video{display:block;width:100%;max-height:260px;border-radius:10px;background:#050506;object-fit:contain}
+.fp.compact .fp-stage video{max-height:170px}
+.fp-bar{display:flex;align-items:center;gap:8px}
+.fp-range{flex:1;min-width:0;accent-color:var(--accent)}
+.fp-btn{min-width:36px;height:36px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--raise);color:var(--fg);font-size:15px;font-weight:600;cursor:pointer}
+.fp-btn:disabled{opacity:.5;cursor:default}
+.fp-chips{display:flex;gap:6px;flex-wrap:wrap}
+.fp-chip{height:30px;font-size:12px}
+.fp-info{font-size:12px;color:var(--muted)}
+.athumb .fp{flex:1}
+.mcov{grid-column:1/-1;display:flex;align-items:center;gap:10px}
+.mimg{width:96px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;background:var(--raise)}
+.mfp{grid-column:1/-1}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.bar,.pbar,.actions{background:var(--bg)}}
 /* ===== V8 : fenêtres de connexion et d'inscription (cartes centrées, verre dépoli) ===== */
 .modal.center{align-items:center;padding:20px;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
@@ -1132,6 +1147,10 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
       <input id="qedesc" class="field aemail" type="text" maxlength="400">
       <label class="label" for="qecat">Catégorie</label>
       <select id="qecat" class="field aemail"><option value="">Aucune</option></select>
+      <div class="label">Miniature</div>
+      <div id="qecur" class="athumb" hidden></div>
+      <div id="qeframe" hidden></div>
+      <p class="hint">Déplacez le curseur pour choisir l’image de la miniature. L’actuelle n’est remplacée que si vous bougez le curseur.</p>
       <p class="hint">Changer le prix ne protège pas un fichier déjà public : pour protéger une vidéo payante, republiez-la avec son fichier.</p>
       <div class="stack"><button id="qesave" class="btn btn-primary" type="submit">Enregistrer</button><button id="qecancel" class="btn btn-ghost" type="button">Annuler</button></div>
     </form>
@@ -2480,20 +2499,44 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
       toast('Vidéo supprimée, fichiers effacés');loadVideos();refreshAdminLists();
     }).catch(quickErr);
   }
-  var qeId=null;
+  var qeId=null,qePicker=null,qeOld='';
+  function qeClean(){
+    if(qePicker){qePicker.destroy();qePicker=null}
+    var h=$('#qeframe');if(h){h.innerHTML='';h.hidden=true}
+    var c=$('#qecur');if(c){c.innerHTML='';c.hidden=true}
+  }
+  function closeQE(){qeClean();closeModal('#qedit')}
+  /* Mini-lecteur de la vidéo existante : lien public direct, ou lien signé d'une heure pour une vidéo VIP (fichier privé) */
+  function qeFrame(id,v){
+    var cur=$('#qecur'),host=$('#qeframe');
+    if(v.thumbnail_url){cur.innerHTML='<img alt="Miniature actuelle" src="'+esc(v.thumbnail_url)+'"><span>Miniature actuelle</span>';cur.hidden=false}
+    else{cur.innerHTML='';cur.hidden=true}
+    host.hidden=false;host.innerHTML='<p class="fp-info">Chargement de la vidéo…</p>';
+    function fail(){
+      if(qeId!==id)return;
+      if(qePicker){qePicker.destroy();qePicker=null}
+      host.innerHTML='<p class="fp-info">Aperçu indisponible pour cette vidéo (lien externe ou fichier protégé). Le reste reste modifiable.</p>';
+    }
+    function go(src){if(qeId!==id)return;qePicker=FramePicker(host,{src:src,compact:true,onError:fail})}
+    if(v.video_path){
+      authedFetch(SB_URL+'/storage/v1/object/sign/videos-private/'+v.video_path.split('/').map(encodeURIComponent).join('/'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({expiresIn:3600})})
+      .then(function(r){return r.ok?r.json():restErr(r)}).then(function(j){go(SB_URL+'/storage/v1'+j.signedURL)}).catch(fail);
+    }else if(v.video_url)go(v.video_url);
+    else fail();
+  }
   function qeMsg(x,bad){var el=$('#qemsg');el.textContent=x||'';el.className='hint'+(x&&bad?' bad':'')}
   function openQuickEdit(id){
-    qeId=id;$('#qeform').reset();
+    qeId=id;qeClean();qeOld='';$('#qeform').reset();
     $('#qecat').innerHTML='<option value="">Aucune</option>'+CATS.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>'}).join('');
     qeMsg('Chargement…');openModal('#qedit');
     function ok(r){return r.ok?r.json():restErr(r)}
-    authedFetch(REST+'videos?select=title,artist,description,price_fc,category_id&id=eq.'+enc(id)).then(function(r){
-      return r.status===400?authedFetch(REST+'videos?select=title,artist,description,price_fc&id=eq.'+enc(id)).then(ok):ok(r);
+    authedFetch(REST+'videos?select=title,artist,description,price_fc,category_id,video_url,video_path,thumbnail_url&id=eq.'+enc(id)).then(function(r){
+      return r.status===400?authedFetch(REST+'videos?select=title,artist,description,price_fc,video_url,video_path,thumbnail_url&id=eq.'+enc(id)).then(ok):ok(r);
     }).then(function(rows){
       if(qeId!==id)return;
       var v=rows[0];if(!v){qeMsg('Vidéo introuvable.',true);return}
       $('#qetitleinp').value=v.title||'';$('#qeartist').value=v.artist||'';$('#qeprice').value=v.price_fc||0;$('#qedesc').value=v.description||'';
-      $('#qecat').value=(v.category_id==null?'':String(v.category_id));qeMsg('');
+      $('#qecat').value=(v.category_id==null?'':String(v.category_id));qeMsg('');qeOld=v.thumbnail_url||'';qeFrame(id,v);
     }).catch(function(err){qeMsg('Échec : '+(err.noSession?t('admin_need'):err.message),true)});
   }
   document.addEventListener('click',function(e){
@@ -2515,11 +2558,11 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
   document.addEventListener('keydown',function(e){
     if(e.key!=='Escape')return;
     closeCkMenus();
-    if(!$('#qedit').hidden)closeModal('#qedit');
+    if(!$('#qedit').hidden)closeQE();
   });
-  $('#qeclose').addEventListener('click',function(){closeModal('#qedit')});
-  $('#qecancel').addEventListener('click',function(){closeModal('#qedit')});
-  $('#qedit').addEventListener('click',function(e){if(e.target===this)closeModal('#qedit')});
+  $('#qeclose').addEventListener('click',closeQE);
+  $('#qecancel').addEventListener('click',closeQE);
+  $('#qedit').addEventListener('click',function(e){if(e.target===this)closeQE()});
   $('#qeform').addEventListener('submit',function(e){
     e.preventDefault();var id=qeId;if(!id)return;
     var title=$('#qetitleinp').value.trim(),price=parseInt($('#qeprice').value,10);
@@ -2527,16 +2570,30 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
     if(!(price>=0)){qeMsg('Prix invalide.',true);return}
     var body={title:title,artist:$('#qeartist').value.trim()||null,description:$('#qedesc').value.trim()||null,price_fc:price};
     if($('#qecat').value||CATS.length)body.category_id=$('#qecat').value||null;
-    var btn=$('#qesave');btn.disabled=true;qeMsg('Enregistrement…');
-    authedFetch(REST+'videos?id=eq.'+enc(id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)}).then(function(r){
+    var btn=$('#qesave'),newThumb=null,oldThumb=qeOld,saved=false;btn.disabled=true;qeMsg('Enregistrement…');
+    /* frame choisie : capture -> envoi dans le bucket -> thumbnail_url mis à jour avec le titre, le prix, etc. */
+    var pick=qePicker&&qePicker.touched()?qePicker.capture():Promise.resolve(null);
+    pick.then(function(blob){
+      if(!blob)return;
+      qeMsg('Envoi de la miniature…');
+      return uploadFile(blob,'cover.'+(blob.type==='image/webp'?'webp':'jpg')).then(function(u){newThumb=u;body.thumbnail_url=u});
+    }).then(function(){
+      qeMsg('Enregistrement…');
+      return authedFetch(REST+'videos?id=eq.'+enc(id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)});
+    }).then(function(r){
       if(!r.ok)return restErr(r);
-      closeModal('#qedit');toast('Modifications enregistrées');loadVideos();refreshAdminLists();
-    }).catch(function(err){qeMsg('Échec : '+(err.noSession?t('admin_need'):(err.network?t('e_net'):err.message)),true)}).then(function(){btn.disabled=false});
+      saved=true;
+      closeQE();toast('Modifications enregistrées');loadVideos();refreshAdminLists();
+      if(newThumb&&oldThumb)cleanFiles({thumbnail_url:oldThumb}); /* ancienne image effacée du bucket (au mieux) */
+    }).catch(function(err){
+      if(newThumb&&!saved)cleanFiles({thumbnail_url:newThumb}); /* fiche refusée : pas d'image orpheline */
+      qeMsg('Échec : '+(err.noSession?t('admin_need'):(err.network?t('e_net'):err.message)),true);
+    }).then(function(){btn.disabled=false});
   });
   /* VIP : le fichier est privé, aucune image ne peut en être extraite côté visiteur. La vignette calculée ici part dans le bucket public Supabase.
      Au mieux : en cas d'échec la carte reste simplement noire. */
   function upThumb(info,priv){
-    if(!priv||!info||!info.blob)return Promise.resolve(null);
+    if(!(priv||(info&&info.custom))||!info||!info.blob)return Promise.resolve(null);
     return uploadFile(info.blob,'cover.'+(info.blob.type==='image/webp'?'webp':'jpg')).catch(function(){return null});
   }
   function uploadFile(file,fname,bucket){
@@ -2544,6 +2601,105 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
     var name=Date.now()+'-'+(fname||file.name).normalize('NFD').replace(/[^\w.\-]+/g,'_');
     return authedFetch(SB_URL+'/storage/v1/object/'+enc(bucket)+'/'+enc(name),{method:'POST',headers:{'Content-Type':file.type||'video/mp4','x-upsert':'false'},body:file})
     .then(function(r){return r.ok?(bucket===BUCKET?SB_URL+'/storage/v1/object/public/'+enc(bucket)+'/'+enc(name):name):restErr(r)});
+  }
+  /* ---------- Sélecteur de frame (façon TikTok / Facebook) ----------
+     Mini-lecteur muet + curseur à l'image près (30 i/s), utilisé par #aadd (1 fichier), #amulti (une ligne par fichier) et #qedit (vidéo déjà publiée).
+     La frame choisie est capturée dans un <canvas> ; l'image part dans le bucket Supabase et son lien va dans videos.thumbnail_url.
+     Ce lecteur n'existe que dans l'espace admin : aucune balise <video> n'est ajoutée au catalogue. */
+  var FPS=30;
+  function fmtT(s){s=Math.max(0,s||0);var m=Math.floor(s/60),x=Math.floor(s%60),d=Math.floor(s*10)%10;return m+':'+(x<10?'0':'')+x+','+d}
+  function FramePicker(host,o){
+    var self={},v=document.createElement('video'),blobUrl=null,dur=0,frames=0,tgt=0,seeking=false,want=null,touched=false,dead=false,guard=0;
+    var root=document.createElement('div');
+    root.className='fp'+(o.compact?' compact':'');
+    root.innerHTML='<div class="fp-stage"></div><div class="fp-bar"><button type="button" class="fp-btn" data-step="-1" aria-label="Image précédente">‹</button><input class="fp-range" type="range" min="0" max="1" step="1" value="0" disabled aria-label="Choisir l’image de la miniature"><button type="button" class="fp-btn" data-step="1" aria-label="Image suivante">›</button></div>'+
+      (o.compact?'':'<div class="fp-chips">'+[10,30,50,70,90].map(function(p){return '<button type="button" class="fp-btn fp-chip" data-p="'+p+'">'+p+' %</button>'}).join('')+'</div>')+
+      '<div class="fp-info" aria-live="polite">Chargement de la vidéo…</div>';
+    host.innerHTML='';host.appendChild(root);
+    var rg=root.querySelector('.fp-range'),info=root.querySelector('.fp-info');
+    root.querySelector('.fp-stage').appendChild(v);
+    v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.preload='metadata';v.controls=false;
+    if(o.file){blobUrl=URL.createObjectURL(o.file);v.src=blobUrl}
+    else{v.crossOrigin='anonymous';v.src=o.src}  /* crossOrigin avant src : sinon le canvas serait « taché » et la capture refusée */
+    function label(){info.textContent=touched?'Miniature choisie : '+fmtT(tgt)+' sur '+fmtT(dur):'Image automatique. Bougez le curseur pour choisir la miniature.'}
+    function fail(){if(dead)return;rg.disabled=true;touched=false;info.textContent='Aperçu impossible pour cette vidéo.';if(o.onError)o.onError()}
+    /* un seul déplacement à la fois : on garde seulement la dernière position demandée pendant qu'un seek est en cours */
+    function seek(t){
+      if(seeking){want=t;return}
+      seeking=true;want=null;
+      clearTimeout(guard);guard=setTimeout(function(){if(!seeking)return;seeking=false;if(want!==null){var w=want;want=null;seek(w)}},3000);
+      try{v.currentTime=t}catch(e){seeking=false}
+    }
+    v.addEventListener('seeked',function(){
+      if(dead)return;
+      seeking=false;clearTimeout(guard);
+      if(want!==null){var w=want;want=null;seek(w)}
+    });
+    function go(f,user){
+      if(!frames)return;
+      f=Math.max(0,Math.min(frames,Math.round(f)));
+      rg.value=f;tgt=Math.min(f/FPS,Math.max(0,dur-.1));
+      if(user)touched=true;
+      label();seek(tgt);
+    }
+    v.addEventListener('loadedmetadata',function(){
+      if(dead)return;
+      dur=v.duration;
+      if(!isFinite(dur)||dur<=0){fail();return}
+      frames=Math.max(1,Math.floor(dur*FPS));rg.max=frames;rg.disabled=false;
+      go((o.time!=null?o.time:Math.min(1,Math.max(.1,dur/2)))*FPS,false); /* départ à ~1 s, comme l'extraction automatique */
+    });
+    v.addEventListener('error',fail);
+    rg.addEventListener('input',function(){go(+rg.value,true)});
+    root.addEventListener('click',function(e){
+      var b=e.target.closest('button');if(!b||!frames)return;
+      if(b.hasAttribute('data-step'))go(+rg.value+(+b.getAttribute('data-step')),true);
+      else if(b.hasAttribute('data-p'))go(frames*(+b.getAttribute('data-p'))/100,true);
+    });
+    function settled(){
+      return new Promise(function(res){
+        if(!seeking&&want===null){res();return}
+        var tm=setTimeout(function(){v.removeEventListener('seeked',h);res()},4000);
+        function h(){if(!seeking&&want===null){clearTimeout(tm);v.removeEventListener('seeked',h);res()}}
+        v.addEventListener('seeked',h);
+      });
+    }
+    self.touched=function(){return touched};
+    self.time=function(){return tgt};
+    /* Capture la frame affichée : Blob WebP (repli JPEG pour Safari). Rejette si le canvas est refusé (vidéo externe sans CORS). */
+    self.capture=function(){
+      return settled().then(function(){
+        return new Promise(function(res,rej){
+          if(!v.videoWidth){rej(new Error('Capture impossible : vidéo non chargée.'));return}
+          try{
+            var w=Math.min(640,v.videoWidth),c=document.createElement('canvas');
+            c.width=w;c.height=Math.round(w*v.videoHeight/v.videoWidth);
+            c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+            c.toBlob(function(b){
+              if(b&&b.type==='image/webp'){res(b);return}
+              c.toBlob(function(j){(j||b)?res(j||b):rej(new Error('Capture impossible.'))},'image/jpeg',.8);
+            },'image/webp',.8);
+          }catch(e){rej(new Error('Capture refusée : la vidéo vient d’un autre site sans autorisation CORS.'))}
+        });
+      });
+    };
+    self.destroy=function(){
+      dead=true;clearTimeout(guard);
+      try{v.pause();v.removeAttribute('src');v.load()}catch(e){}
+      if(blobUrl){try{URL.revokeObjectURL(blobUrl)}catch(e){}blobUrl=null}
+      host.innerHTML='';
+    };
+    return self;
+  }
+  /* Image finale d'une vidéo : la frame choisie si l'admin a bougé le curseur (ou une frame déjà validée), sinon la couverture automatique */
+  function coverWith(file,picker,saved){
+    return getCover(file).then(function(info){
+      var p=picker&&picker.touched()?picker.capture().catch(function(){return null}):Promise.resolve(null);
+      return p.then(function(blob){
+        blob=blob||saved;
+        return blob?{dur:info.dur,blob:blob,custom:true}:info;
+      });
+    });
   }
   /* Couverture automatique : image figée de la vidéo choisie + durée, calculées dans le navigateur */
   function probeVideo(file){
@@ -2568,7 +2724,7 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
   }
   /* ---------- Miniatures : aperçu local uniquement (aucun hébergement d'image) ----------
      À la sélection du fichier : durée + image à ~1 s, calculées dans le navigateur.
-     Rien n'est envoyé : thumbnail_url reste vide et le catalogue extrait l'image directement de la vidéo. */
+     Sans choix de l'admin rien n'est envoyé (thumbnail_url vide : le catalogue extrait l'image). Si l'admin choisit une frame, elle est envoyée et enregistrée dans thumbnail_url. */
   var COVERS=typeof WeakMap!=='undefined'?new WeakMap():null;
   function prepCover(file){
     var c=COVERS&&COVERS.get(file);if(c)return c;
@@ -2576,16 +2732,13 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
     if(COVERS)COVERS.set(file,c);return c;
   }
   function getCover(file){return prepCover(file)}
+  var singlePicker=null;
   function showCoverPreview(file){
     var box=$('#athumb');if(!box)return;
+    if(singlePicker){singlePicker.destroy();singlePicker=null}
     if(!file){box.hidden=true;box.innerHTML='';return}
-    box.hidden=false;box.textContent='Analyse de la vidéo…';
-    prepCover(file).then(function(r){
-      if($('#afile').files[0]!==file)return;
-      if(!r.blob){box.textContent='Aperçu impossible : le catalogue affichera l’image extraite de la vidéo.';return}
-      var u=URL.createObjectURL(r.blob);
-      box.innerHTML='<img alt="Miniature" src="'+u+'"><span>Aperçu. L’image est extraite automatiquement de la vidéo pour les visiteurs.</span>';
-    });
+    box.hidden=false;
+    singlePicker=FramePicker(box,{file:file});
   }
   /* ---------- Envoi de plusieurs vidéos à la fois ----------
      Chaque fichier a son titre et son prix. Envoi un par un : analyse (couverture + durée), fichier,
@@ -2594,6 +2747,7 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
   function baseTitle(n){return n.replace(/\.[^.]+$/,'').replace(/^\d{8,}-/,'').replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim()}
   function sizeMb(f){return (f.size/1048576).toFixed(1)+' Mo'}
   function resetMulti(){
+    multi.forEach(function(m){if(m.picker){m.picker.destroy();m.picker=null}});
     multi=[];var box=$('#amulti');if(box){box.hidden=true;box.innerHTML=''}
     $('#atitle').required=true;
     $('#asubmit').textContent='Publier la vidéo';
@@ -2601,7 +2755,7 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
   function renderMulti(){
     var box=$('#amulti'),price=$('#aprice').value||'0';
     box.innerHTML='<p class="mhead">'+multi.length+' vidéos : titre et prix pour chacune. L’artiste et la description ci-dessus sont communs. Prix 0 = gratuite, sinon la vidéo part dans le stockage privé.</p>'+
-      multi.map(function(m,i){return '<div class="mrow" data-i="'+i+'" data-state="wait"><input class="field mt" type="text" maxlength="120" aria-label="Titre" value="'+esc(m.title)+'"><input class="field mp" type="number" inputmode="numeric" min="0" step="100" aria-label="Prix en FC" value="'+esc(price)+'"><small>'+esc(m.file.name)+' · '+sizeMb(m.file)+'</small><span class="mst">En attente</span></div>'}).join('');
+      multi.map(function(m,i){return '<div class="mrow" data-i="'+i+'" data-state="wait"><input class="field mt" type="text" maxlength="120" aria-label="Titre" value="'+esc(m.title)+'"><input class="field mp" type="number" inputmode="numeric" min="0" step="100" aria-label="Prix en FC" value="'+esc(price)+'"><div class="mcov"><img class="mimg" alt="Miniature" hidden><button type="button" class="fp-btn mpick">Choisir la miniature</button></div><div class="mfp" hidden></div><small>'+esc(m.file.name)+' · '+sizeMb(m.file)+'</small><span class="mst">En attente</span></div>'}).join('');
     box.hidden=false;
   }
   $('#afile').addEventListener('change',function(){
@@ -2613,11 +2767,35 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
     $('#asubmit').textContent='Publier '+fs.length+' vidéos';
     renderMulti();
     /* plusieurs fichiers : miniatures préparées une par une en arrière-plan */
-    fs.reduce(function(p,f){return p.then(function(){return prepCover(f)})},Promise.resolve());
+    fs.reduce(function(p,f){return p.then(function(){return prepCover(f)}).then(function(info){paintRowCover(f,info)})},Promise.resolve());
   });
   $('#aprice').addEventListener('input',function(){
     if(!multi.length)return;
     Array.prototype.forEach.call(document.querySelectorAll('#amulti .mrow:not([data-state=ok]) .mp'),function(i){i.value=$('#aprice').value});
+  });
+  function paintRowCover(f,info){
+    if(!info||!info.blob)return;
+    multi.forEach(function(m,i){
+      if(m.file!==f||m.custom)return;
+      var im=document.querySelector('#amulti .mrow[data-i="'+i+'"] .mimg');
+      if(im){im.src=URL.createObjectURL(info.blob);im.hidden=false}
+    });
+  }
+  function closeRowPicker(row,m){
+    var b=row.querySelector('.mpick'),host=row.querySelector('.mfp'),im=row.querySelector('.mimg'),pk=m.picker;
+    var p=pk&&pk.touched()?pk.capture().then(function(blob){if(blob){m.custom=blob;m.time=pk.time();im.src=URL.createObjectURL(blob);im.hidden=false}}).catch(function(err){amsg('Miniature : '+err.message,true)}):Promise.resolve();
+    p.then(function(){
+      if(m.picker){m.picker.destroy();m.picker=null}
+      host.hidden=true;b.textContent=m.custom?'Changer la miniature':'Choisir la miniature';
+    });
+  }
+  $('#amulti').addEventListener('click',function(e){
+    var b=e.target.closest('.mpick');if(!b)return;
+    var row=b.closest('.mrow'),m=multi[+row.getAttribute('data-i')];
+    if(!m||row.getAttribute('data-state')==='ok'||row.getAttribute('data-state')==='busy')return;
+    if(m.picker){closeRowPicker(row,m);return}
+    var host=row.querySelector('.mfp');host.hidden=false;b.textContent='Valider la miniature';
+    m.picker=FramePicker(host,{file:m.file,compact:true,time:m.time});
   });
   function markRow(row,state,txt){row.setAttribute('data-state',state);row.querySelector('.mst').textContent=txt}
   function uploadOne(row){
@@ -2626,7 +2804,7 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
     if(!(price>=0))return Promise.reject(new Error('Prix invalide'));
     var priv=price>0,up={};
     markRow(row,'busy','Miniature…');
-    return getCover(m.file).then(function(info){
+    return coverWith(m.file,m.picker,m.custom).then(function(info){
       markRow(row,'busy','Envoi du fichier…');
       return (priv?uploadFile(m.file,null,'videos-private'):uploadFile(m.file)).then(function(u){
         if(priv)up.video_path=u;else up.video_url=u;
@@ -2642,7 +2820,8 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
       });
     }).then(function(){
       markRow(row,'ok','Publiée'+(priv?' (protégée)':''));
-      Array.prototype.forEach.call(row.querySelectorAll('input'),function(i){i.disabled=true});
+      Array.prototype.forEach.call(row.querySelectorAll('input,button'),function(i){i.disabled=true});
+      if(m.picker){m.picker.destroy();m.picker=null;row.querySelector('.mfp').hidden=true}
     },function(err){
       /* fichier déjà envoyé mais fiche refusée : on efface les fichiers pour ne pas laisser d'orphelins */
       return cleanFiles({video_path:up.video_path,video_url:up.video_url,thumbnail_url:up.thumb}).then(function(){throw err});
@@ -2669,10 +2848,10 @@ html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu butto
     if(!(price>=0)){amsg('Prix invalide.',true);return}
     var btn=$('#asubmit');btn.disabled=true;amsg(file?'Analyse puis envoi du fichier, patientez…':'Enregistrement…');
     var priv=!!file&&price>0;
-    var media=file?getCover(file).then(function(info){
+    var media=file?coverWith(file,singlePicker,null).then(function(info){
       return (priv?uploadFile(file,null,'videos-private'):uploadFile(file)).then(function(u){
         return upThumb(info,priv).then(function(tu){
-          return priv?{path:u,thumb:tu,dur:info.dur||null}:{url:u,dur:info.dur||null};
+          return priv?{path:u,thumb:tu,dur:info.dur||null}:{url:u,thumb:tu,dur:info.dur||null};
         });
       });
     }):Promise.resolve(link?{url:link}:null);
