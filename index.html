@@ -479,6 +479,37 @@ body{font:400 14px/1.5 var(--body)}
 .switch .flink{display:inline;padding:0;color:var(--accent);font-weight:600}
 @media (prefers-reduced-motion:reduce){.sheet.glass{animation:none}}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.sheet.glass{background:#17171c}}
+
+/* ===== V9 : fenêtres connexion/inscription raffinées, pied de page global, grille 1 colonne ===== */
+.logo{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.logo:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:6px}
+.grid{grid-template-columns:minmax(0,1fr);gap:22px}
+.more{margin:22px 0 4px}
+.sitefoot{margin-top:34px;padding:6px 0 30px;border-top:1px solid var(--line)}
+.sitefoot .flinks{margin-top:10px}
+.modal.center{background:radial-gradient(520px 380px at 50% 0%,rgba(255,178,30,.12),transparent 70%),rgba(4,4,8,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.sheet.glass{max-width:392px;padding:28px 22px 22px;border-radius:24px;border:1px solid transparent;
+  background:linear-gradient(160deg,rgba(30,30,38,.86),rgba(14,14,19,.9)) padding-box,linear-gradient(160deg,rgba(255,200,90,.55),rgba(255,255,255,.08) 38%,rgba(124,77,255,.4)) border-box;
+  -webkit-backdrop-filter:blur(26px) saturate(150%);backdrop-filter:blur(26px) saturate(150%);
+  box-shadow:0 30px 90px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.03) inset,0 0 60px rgba(255,178,30,.07)}
+.sheet.glass h2{font:700 22px/1.2 var(--display);letter-spacing:.01em;margin:0 0 4px;padding-right:44px}
+.sheet.glass .xclose{top:16px;right:16px;width:36px;height:36px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
+.sheet.glass .aform{display:flex;flex-direction:column;gap:0}
+.sheet.glass .label{margin:16px 0 7px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+.sheet.glass .field{height:48px;width:100%;box-sizing:border-box;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.055);font-size:15px;letter-spacing:0;color:var(--fg);transition:border-color .15s,box-shadow .15s,background .15s}
+.sheet.glass select.field{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--soft) 50%),linear-gradient(135deg,var(--soft) 50%,transparent 50%);background-position:calc(100% - 20px) 21px,calc(100% - 15px) 21px;background-size:5px 5px;background-repeat:no-repeat;padding-right:34px}
+.sheet.glass select.field option{background:#17171c;color:var(--fg)}
+.sheet.glass .field:focus{outline:0;border-color:rgba(255,178,30,.75);background:rgba(255,255,255,.08);box-shadow:0 0 0 3px rgba(255,178,30,.16)}
+.sheet.glass .stack{margin-top:20px;gap:10px;align-items:stretch}
+.sheet.glass .btn{min-height:48px;border-radius:12px;font-size:15px;font-weight:600;width:100%}
+.sheet.glass .btn-primary{box-shadow:0 8px 24px rgba(255,178,30,.25)}
+.sheet.glass .btn-ghost{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05)}
+.sheet.glass .stack .flink{align-self:center;font-size:13px}
+.sheet.glass .hint{font-size:13px;line-height:1.45;margin-top:10px}
+.sheet.glass #authmsg,.sheet.glass #signmsg{min-height:0}
+.sheet.glass #otpcode{text-align:center;font-size:20px;letter-spacing:.3em;font-variant-numeric:tabular-nums}
+.sheet.glass .switch{margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
+.sheet.glass #loginbox>.stack{margin-top:12px}
 </style>
 
 </head>
@@ -505,7 +536,7 @@ body{font:400 14px/1.5 var(--body)}
   <!-- Écran 1 : accueil -->
   <section id="home">
     <header class="bar">
-      <div class="logo">TOP<span>LEAKS</span></div>
+      <div class="logo" id="logo" role="button" tabindex="0" aria-label="Accueil TOPLEAKS">TOP<span>LEAKS</span></div>
       <div class="search">
         <svg class="ic lead"><use href="#i-search"/></svg>
         <input id="q" type="search" data-i18n-ph="search" aria-label="Rechercher" autocomplete="off">
@@ -533,17 +564,6 @@ body{font:400 14px/1.5 var(--body)}
         <div id="contactlinks" class="contact-links"></div>
       </section>
 
-      <nav class="flinks" aria-label="Informations">
-        <button class="flink" type="button" data-doc="about" data-i18n="about"></button>
-        <button class="flink" type="button" data-doc="terms" data-i18n="terms"></button>
-        <button class="flink" type="button" data-doc="privacy" data-i18n="privacy"></button>
-        <button class="flink" type="button" id="adminopen">Admin</button>
-      </nav>
-      <div class="prefs">
-        <label class="sw"><input id="saver" type="checkbox" role="switch"><span class="sw-ui" aria-hidden="true"></span><span data-i18n="data_saver"></span></label>
-        <div id="lchips" class="lchips" role="group" aria-label="Langue"></div>
-      </div>
-      <p class="foot" id="status">…</p>
     </main>
   </section>
 
@@ -710,6 +730,18 @@ body{font:400 14px/1.5 var(--body)}
     </header>
     <div id="libbody"></div>
   </section>
+  <footer id="sitefoot" class="sitefoot">
+      <nav class="flinks" aria-label="Informations">
+      <button class="flink" type="button" data-doc="about" data-i18n="about"></button>
+      <button class="flink" type="button" data-doc="terms" data-i18n="terms"></button>
+      <button class="flink" type="button" data-doc="privacy" data-i18n="privacy"></button>
+      <button class="flink" type="button" id="adminopen" hidden>Admin</button>
+    </nav>
+    <div class="prefs">
+      <label class="sw"><input id="saver" type="checkbox" role="switch"><span class="sw-ui" aria-hidden="true"></span><span data-i18n="data_saver"></span></label>
+      <div id="lchips" class="lchips" role="group" aria-label="Langue"></div>
+    </div>
+  </footer>
 </div>
 
 <div id="comm" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="comtitle">
@@ -724,6 +756,8 @@ body{font:400 14px/1.5 var(--body)}
     </form>
     <p id="commsg" class="hint" role="status"></p>
   </div>
+
+
 </div>
 
 <div id="authm" class="modal center" hidden role="dialog" aria-modal="true" aria-labelledby="authtitle">
@@ -865,6 +899,7 @@ body{font:400 14px/1.5 var(--body)}
   I.fr.pw_label='Mot de passe';I.fr.no_account='Pas encore de compte ?';I.fr.have_account='Déjà un compte ?';I.fr.otp_copy='Un code de confirmation vient d’être envoyé à {e}. Saisissez-le ici pour activer votre compte.';I.fr.e_nouser='Aucun compte avec cette adresse. Choisissez « Créer un compte ».';
   ['sw','ln'].forEach(function(l){delete I[l].otp_copy;delete I[l].send_code});
   I.fr.priv_demo='Démo : aucun accès réel. Cette vidéo est protégée : elle ne s’ouvre qu’après un achat confirmé par le serveur.';
+  I.fr.more='Charger plus';I.sw.more='Pakia zaidi';I.ln.more='Bimisa mosusu';
   I.fr.priv_fail='Lecture protégée indisponible pour le moment.';
   delete I.sw.ok_title;delete I.ln.ok_title;delete I.sw.wait_title;delete I.ln.wait_title;delete I.sw.secure;delete I.ln.secure;
   var LANGS=['fr','sw','ln'],LABEL={fr:'FR',sw:'SW',ln:'LN'};
@@ -943,7 +978,7 @@ body{font:400 14px/1.5 var(--body)}
     $('#dots').innerHTML=FEATURED.map(function(_,i){return '<i'+(i===0?' class="on"':'')+'></i>'}).join('');
     $('#hero').style.display=V.length?'':'none';
     $('#rows').innerHTML=V.length
-      ?'<section class="row"><h2>'+t('all')+'<small id="rowcount">'+V.length+'</small></h2><div id="filters" class="filters"></div><div id="gridbox" class="grid">'+V.map(cardHTML).join('')+'</div></section>'
+      ?'<section class="row"><h2>'+t('all')+'<small id="rowcount">'+V.length+'</small></h2><div id="filters" class="filters"></div><div id="gridbox" class="grid"></div><div id="morebox" class="more"></div></section>'
       :'<div class="empty"><p>'+esc(failed?t('fail'):t('none'))+'</p>'+(failed?'<button id="retry" class="btn btn-ghost" type="button">'+t('retry')+'</button>':'')+'</div>';
     if(V.length){renderFilters();renderGrid()}
   }
@@ -962,17 +997,20 @@ body{font:400 14px/1.5 var(--body)}
     if(arts.length>1)h+='<select id="fart" class="fsel" aria-label="Artiste"><option value="">'+esc(t('f_artist'))+'</option>'+arts.map(function(a){return '<option value="'+esc(a)+'"'+(FIL.artist===a?' selected':'')+'>'+esc(a)+'</option>'}).join('')+'</select>';
     box.innerHTML=h;
   }
+  var PER=6,SHOWN=PER;
   function renderGrid(){
     var rows=filtered(),g=$('#gridbox');if(!g)return;
-    g.innerHTML=rows.length?rows.map(cardHTML).join(''):'<p class="hint" style="grid-column:1/-1">'+esc(t('f_none'))+'</p>';
+    g.innerHTML=rows.length?rows.slice(0,SHOWN).map(cardHTML).join(''):'<p class="hint" style="grid-column:1/-1">'+esc(t('f_none'))+'</p>';
+    var mb=$('#morebox');if(mb)mb.innerHTML=rows.length>SHOWN?'<button id="moreb" class="btn btn-ghost" type="button">'+esc(t('more'))+' ('+(rows.length-SHOWN)+')</button>':'';
     var c=$('#rowcount');if(c)c.textContent=rows.length===V.length?V.length:rows.length+' / '+V.length;
   }
   $('#rows').addEventListener('click',function(e){
+    if(e.target.closest('#moreb')){SHOWN+=PER;renderGrid();return}
     var b=e.target.closest('[data-f]');if(!b)return;
-    var p=b.getAttribute('data-f').split(':');
+    var p=b.getAttribute('data-f').split(':');SHOWN=PER;
     FIL[p[0]]=(p[0]==='dur'&&FIL.dur===p[1])?'all':p[1];renderFilters();renderGrid();
   });
-  $('#rows').addEventListener('change',function(e){if(e.target.id==='fart'){FIL.artist=e.target.value;renderGrid()}});
+  $('#rows').addEventListener('change',function(e){if(e.target.id==='fart'){FIL.artist=e.target.value;SHOWN=PER;renderGrid()}});
   /* ---------- Bannière ---------- */
   var slides=$('#slides'),auto=null,reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   function dotIndex(){return Math.round(slides.scrollLeft/Math.max(1,slides.clientWidth))}
@@ -1022,6 +1060,12 @@ body{font:400 14px/1.5 var(--body)}
     $('#resgrid').innerHTML=list.length?list.map(cardHTML).join(''):'<p class="empty" style="grid-column:1/-1">'+esc(t('no_result',{q:raw}))+'</p>';
   }
   q.addEventListener('input',search);
+  function goHome(){
+    q.value='';FIL.price='all';FIL.dur='all';FIL.artist='';SHOWN=PER;search();renderFilters();renderGrid();
+    homeY=0;show('home');window.scrollTo(0,0);
+  }
+  $('#logo').addEventListener('click',goHome);
+  $('#logo').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();goHome()}});
   $('#qclear').addEventListener('click',function(){q.value='';search();q.focus()});
 
   /* ---------- Détail et lecteur ---------- */
@@ -1315,7 +1359,7 @@ body{font:400 14px/1.5 var(--body)}
 
   /* ---------- Supabase : lecture des vidéos publiées ---------- */
   function hue(str){var h=0;for(var i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))%360;return h}
-  function setStatus(x){var el=$('#status');if(el)el.textContent=x}
+  function setStatus(x){}
   function https(u){return u&&/^https:\/\//.test(u)?u:''}
   function loadVideos(){
     loading=true;failed=false;renderHome();
@@ -1441,6 +1485,7 @@ body{font:400 14px/1.5 var(--body)}
     $('#authuser').textContent=on?t('logged_as',{e:mail}):'';
     $('#authtitle').textContent=t(on?'acct_title':'login');
     $('#loginbox').hidden=on;$('#signout').hidden=!on;$('#comlogin').hidden=on;
+    syncAdminBtn();
   }
   function afterLogin(j,msg){
     var x=normSession(j);if(!x)throw new Error('session');
@@ -1673,6 +1718,11 @@ body{font:400 14px/1.5 var(--body)}
     if(n)setTimeout(function(){toast(t('new_videos',{n:n}))},600);
   }
   var admCache=null;
+  function syncAdminBtn(){
+    var b=$('#adminopen');if(!b)return;
+    if(!session||!session.user){b.hidden=true;if(views.admin&&!views.admin.hidden)show('home');return}
+    isAdmin().then(function(v){b.hidden=!v;if(!v&&views.admin&&!views.admin.hidden)show('home')});
+  }
   function isAdmin(){
     if(!session||!session.user)return Promise.resolve(false);
     if(admCache&&admCache.uid===session.user.id)return Promise.resolve(admCache.v);
