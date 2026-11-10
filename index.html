@@ -925,6 +925,7 @@ video{-webkit-filter:none;filter:none}
 
   /* ---------- Réglages à modifier ---------- */
   var CONTACT={whatsapp:'243845629514',phone:'243845629514',email:'',display:'0845629514'};
+  var DEMO_MODE=false; /* false : aucun déblocage simulé ; le paiement est confirmé par WhatsApp puis validé dans l'Espace admin (Valider un achat) */
   var PAY_NUMBER='0972494288'; /* numéro de paiement officiel : affiché au paiement et dans le filigrane des vidéos payantes */
   var PROMOS={LANCEMENT:20,BIENVENUE:10}; /* démonstration : à valider côté serveur pour de vrai */
   var NEW_DAYS=14;
@@ -982,7 +983,7 @@ video{-webkit-filter:none;filter:none}
     admin_need:'Connectez-vous avec le compte administrateur pour gérer les vidéos.',admin_not:'Ce compte n’est pas administrateur. Ajoutez-le dans la table admins.',
     demo_banner:'MODE DÉMO : le paiement est simulé. Aucun argent n’est débité et rien n’est vérifié par un serveur.',
     ok_title:'Simulation terminée (démo)',ok_video:'Simulation de {p} avec {op}. « {i} » est débloqué en mode démo.',ok_other:'Simulation de {p} avec {op}. {i} est activé en mode démo.',
-    wait_title:'Simulation en cours…',wait_txt:'Mode démo : aucune demande n’est envoyée à {op} ({num}) et aucun argent n’est débité.',secure:'Démo'};
+    wait_title:'Simulation en cours…',wait_txt:'Mode démo : aucune demande n’est envoyée à {op} ({num}) et aucun argent n’est débité.',secure:(DEMO_MODE?'Démo':'Sécurisé')};
   for(var nk in NEWFR)I.fr[nk]=NEWFR[nk];
   var V7={lib_title:'Ma bibliothèque',lib_bought:'Mes achats',lib_favs:'Mes favoris',lib_none_b:'Aucun spectacle débloqué pour le moment.',lib_none_f:'Aucun favori pour le moment.',
     lib_note:'Les favoris et les déblocages en mode démo sont enregistrés sur cet appareil uniquement. Les achats confirmés par le serveur suivent votre compte.',
@@ -994,7 +995,14 @@ video{-webkit-filter:none;filter:none}
   I.fr.pw_label='Mot de passe';I.fr.no_account='Pas encore de compte ?';I.fr.have_account='Déjà un compte ?';I.fr.otp_copy='Un code de confirmation vient d’être envoyé à {e}. Saisissez-le ici pour activer votre compte.';I.fr.e_nouser='Aucun compte avec cette adresse. Choisissez « Créer un compte ».';
   ['sw','ln'].forEach(function(l){delete I[l].otp_copy;delete I[l].send_code});
   I.fr.priv_demo='Démo : aucun accès réel. Cette vidéo est protégée : elle ne s’ouvre qu’après un achat confirmé par le serveur.';
-  I.fr.pay_to='Numéro de paiement';I.fr.more='Charger plus';I.sw.more='Pakia zaidi';I.ln.more='Bimisa mosusu';
+  I.fr.pay_to='Numéro de paiement';
+  I.fr.pay_manual_note='Payez par Mobile Money au numéro indiqué, puis confirmez sur WhatsApp. L’accès est activé sur votre compte après vérification.';
+  I.fr.pay_sent_title='Demande enregistrée';
+  I.fr.pay_sent_txt='Envoyez {p} par {op} au {n}, puis confirmez sur WhatsApp avec votre référence de paiement. L’accès est activé après vérification.';
+  I.fr.pay_wa='Confirmer sur WhatsApp';
+  I.fr.pay_login='Connectez-vous pour acheter : l’accès sera activé sur votre compte.';
+  I.fr.pay_wa_msg='Bonjour TOPLEAKS, je souhaite débloquer « {i} » ({p}). Opérateur : {op}. Mon numéro : {num}. E-mail de mon compte : {e}. Référence du paiement : ';
+  if(!DEMO_MODE)I.fr.lib_note='Vos favoris sont enregistrés sur cet appareil uniquement. Les achats validés suivent votre compte.';I.fr.more='Charger plus';I.sw.more='Pakia zaidi';I.ln.more='Bimisa mosusu';
   I.fr.priv_fail='Lecture protégée indisponible pour le moment.';
   delete I.sw.ok_title;delete I.ln.ok_title;delete I.sw.wait_title;delete I.ln.wait_title;delete I.sw.secure;delete I.ln.secure;
   var LANGS=['fr','sw','ln'],LABEL={fr:'FR',sw:'SW',ln:'LN'};
@@ -1230,6 +1238,8 @@ video{-webkit-filter:none;filter:none}
     if(cur.video_url){
       if(locked()&&vid.currentTime>=limit()){showGate();return}
       $('#gate').hidden=true;
+      /* Mobile : le fichier vidéo n'est chargé qu'ici, au clic sur lecture ; avant, seule l'image de couverture est affichée */
+      if(!vid.getAttribute('src'))vid.src=cur.video_url;
       var pr=vid.play();if(pr&&pr.catch)pr.catch(function(){});
       return;
     }
@@ -1372,7 +1382,7 @@ video{-webkit-filter:none;filter:none}
     vid.hidden=!hv;$('#pplay').hidden=hv;document.querySelector('.p-ctl').hidden=hv;
     $('#vctl').hidden=!hv;$('#vbig').hidden=!hv;vid.classList.remove('live');$('#player').classList.remove('vplaying','idle');$('#vnow').textContent='0:00';$('#vtot').textContent=fmt(cur.dur);$('#vseek').value=0;$('#vseek').style.setProperty('--p','0%');
     vid.preload=(ST.saver||LITE)?'none':'metadata';
-    if(hv){vid.controls=false;vid.poster=cur.img||'';vid.src=cur.video_url}else{vid.removeAttribute('poster');vid.removeAttribute('src');vid.load()}
+    if(hv){vid.controls=false;vid.poster=cur.img||'';if(LITE){vid.removeAttribute('src');vid.load()}else vid.src=cur.video_url}else{vid.removeAttribute('poster');vid.removeAttribute('src');vid.load()}
     $('#ttot').textContent=fmt(cur.dur);
     $('#gate').hidden=true;
     $('#dtitle').textContent=cur.t;
@@ -1397,7 +1407,7 @@ video{-webkit-filter:none;filter:none}
         if(!cur||cur.id!==id)return;
         cur.video_url=SB_URL+'/storage/v1'+j.signedURL;
         $('#gate').hidden=true;vid.hidden=false;$('#pplay').hidden=true;document.querySelector('.p-ctl').hidden=true;
-        vid.controls=false;$('#vctl').hidden=false;$('#vbig').hidden=false;vid.poster=cur.img||'';vid.src=cur.video_url;
+        vid.controls=false;$('#vctl').hidden=false;$('#vbig').hidden=false;vid.poster=cur.img||'';if(!LITE)vid.src=cur.video_url;
       });
     }).catch(function(){if(cur&&cur.id===id&&!locked())toast(t('priv_fail'))});
   }
@@ -1448,6 +1458,7 @@ video{-webkit-filter:none;filter:none}
     $('#promo').value='';$('#promomsg').textContent='';$('#promomsg').className='hint';
     $('#perr').textContent='';$('#phone').classList.remove('bad');
     if(ST.phone&&!$('#phone').value)$('#phone').value=ST.phone;
+    $('#watch').removeAttribute('data-wa');
     renderPaySum();payState('form');show('pay');
   }
   function backFromPay(){clearTimeout(payT);show(payFrom==='detail'&&cur?'detail':'home')}
@@ -1461,6 +1472,21 @@ video{-webkit-filter:none;filter:none}
     else{promoPct=0;promoCode='';m.textContent=t('promo_bad');m.className='hint bad'}
     renderPaySum();
   });
+  /* Paiement réel : aucune simulation. L'acheteur paie au numéro officiel, confirme sur WhatsApp, puis l'admin accorde l'accès à son compte. */
+  function manualPay(op,num){
+    var it=payItem;
+    freshSession().then(function(x){
+      if(!x){$('#perr').textContent=t('pay_login');openAuth(t('pay_login'),null);return}
+      ST.phone=num;saveState();
+      var amount=FC(payTotal()),wa=String(CONTACT.whatsapp||'').replace(/\D/g,'');
+      var msg=t('pay_wa_msg',{i:it.title,p:amount,op:op,num:num,e:(x.user&&x.user.email)||''});
+      $('#oktxt').textContent=t('pay_sent_txt',{p:amount,op:op,n:PAY_NUMBER});
+      $('#okref').textContent='';
+      $('#watch').innerHTML=esc(t('pay_wa'));
+      if(wa)$('#watch').setAttribute('data-wa','https://wa.me/'+wa+'?text='+encodeURIComponent(msg));else $('#watch').removeAttribute('data-wa');
+      payState('ok');window.scrollTo(0,0);
+    },function(){$('#perr').textContent=t('e_net')});
+  }
   $('#confirm').addEventListener('click',function(){
     var opEl=document.querySelector('input[name=op]:checked');
     var num=$('#phone').value.replace(/[\s.\-]/g,'');
@@ -1468,6 +1494,7 @@ video{-webkit-filter:none;filter:none}
     if(!/^0[89]\d{8}$/.test(num)){
       $('#phone').classList.add('bad');$('#perr').textContent=t('err_phone');$('#phone').focus();return;
     }
+    if(!DEMO_MODE){manualPay(opEl.value,num);return}
     var amount=FC(payTotal());
     $('#waittxt').textContent=t('wait_txt',{p:amount,op:opEl.value,num:num});
     payState('wait');window.scrollTo(0,0);
@@ -1483,8 +1510,10 @@ video{-webkit-filter:none;filter:none}
     },3500);
   });
   $('#watch').addEventListener('click',function(){
+    var waUrl=this.getAttribute('data-wa');
+    if(waUrl){try{window.open(waUrl,'_blank','noopener')}catch(e){location.href=waUrl}return}
     if(payItem&&payItem.kind==='video'&&cur){
-      show('detail');renderMeta();$('#gate').hidden=true;setPos(0);if(cur.video_url)vid.currentTime=0;play();
+      show('detail');renderMeta();$('#gate').hidden=true;setPos(0);if(cur.video_url&&vid.getAttribute('src')){try{vid.currentTime=0}catch(e){}}play();
     }else show('home');
   });
 
@@ -2167,6 +2196,11 @@ video{-webkit-filter:none;filter:none}
   /* ---------- Démarrage ---------- */
   $('#saver').checked=!!ST.saver;
   hydrateCovers();
+  if(!DEMO_MODE){
+    var dbn=document.querySelector('.demo-banner');if(dbn)dbn.hidden=true;
+    var dn=document.querySelector('[data-i18n="demo_note"]');if(dn)dn.setAttribute('data-i18n','pay_manual_note');
+    var okh=document.querySelector('#payok h3');if(okh)okh.setAttribute('data-i18n','pay_sent_title');
+  }
   applyLang();renderContact();
   loadSession();renderAccount();
   consumeHash().then(function(){renderAccount();loadCats();loadVideos();loadPurchases()});
