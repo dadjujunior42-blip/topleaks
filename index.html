@@ -589,6 +589,11 @@ video{-webkit-filter:none;filter:none}
 .thumb-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0;background:transparent}
 .thumb,.slide,.card,.slide-body,.dur,.vip,.new,.tag{-webkit-backdrop-filter:none;backdrop-filter:none;-webkit-filter:none;filter:none;mix-blend-mode:normal}
 .thumb,.slide{-webkit-transform:none;transform:none;isolation:auto}
+/* ===== V14 : miniatures = images statiques seulement (aucune vidéo, aucun dégradé par-dessus) ===== */
+@media (max-width:820px){.card video,.thumb video,.slide video{display:none!important}}
+.scrim{display:none}
+.slide-body{background:rgba(11,11,13,.8)}
+.thumb-img{background:#16161a}
 </style>
 
 </head>
@@ -1036,6 +1041,7 @@ video{-webkit-filter:none;filter:none}
   var grad=function(v){var g='linear-gradient(160deg,hsl('+v.h+' 55% 32%),hsl('+((v.h+35)%360)+' 60% 13%))';return v.img?"center/cover url('"+encodeURI(v.img).replace(/'/g,'%27')+"'),"+g:g};
   var gradBg=function(v){return 'linear-gradient(160deg,hsl('+v.h+' 55% 32%),hsl('+((v.h+35)%360)+' 60% 13%))'};
   /* Miniature : vraie image de couverture ; si elle ne charge pas, le dégradé en dessous reste visible */
+  var flatBg=function(v){return v.img?'#16161a':gradBg(v)};
   var thumbImg=function(v){return v.img?'<img class="thumb-img" src="'+esc(v.img)+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'">':''};
   var plain=function(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase()};
   var esc=function(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
@@ -1067,7 +1073,8 @@ video{-webkit-filter:none;filter:none}
       var ua=navigator.userAgent||'',c=navigator.connection||{};
       var mobile=/iPhone|iPad|iPod|Android|Mobile|Silk/i.test(ua)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform||''));
       var noAR=!(window.CSS&&CSS.supports&&CSS.supports('aspect-ratio','1/1'));
-      return mobile||noAR||!('IntersectionObserver' in window)||c.saveData===true;
+      var small=window.matchMedia&&(matchMedia('(max-width:820px)').matches||matchMedia('(pointer:coarse)').matches);
+      return mobile||small||noAR||!('IntersectionObserver' in window)||c.saveData===true;
     }catch(e){return true}
   })();
   function cover(v){return (!ST.saver&&!LITE&&!v.img&&v.video_url)?'<video class="cover-video" data-src="'+esc(v.video_url)+'#t=1" muted playsinline webkit-playsinline preload="none" disablepictureinpicture tabindex="-1" aria-hidden="true"></video>':''}
@@ -1088,7 +1095,7 @@ video{-webkit-filter:none;filter:none}
   }
   try{if(window.MutationObserver)new MutationObserver(hydrateCovers).observe(document.querySelector('.app'),{childList:true,subtree:true})}catch(e){}
   function slideHTML(v){
-    return '<article class="slide" style="--g:'+gradBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
+    return '<article class="slide" style="--g:'+flatBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
       '<div class="tags"><span class="tag'+(v.p?' tag-vip':'')+'">'+(v.p?'VIP':t('free'))+'</span>'+(isNew(v)?'<span class="tag">'+t('isnew')+'</span>':'')+'</div>'+
       '<h2 class="slide-title">'+esc(v.t)+'</h2>'+
       '<p class="slide-meta">'+esc(aName(v))+'</p>'+
@@ -1096,7 +1103,7 @@ video{-webkit-filter:none;filter:none}
   }
   function cardHTML(v){
     return '<button class="card" type="button" data-open="'+esc(v.id)+'" aria-label="'+esc(v.t)+', '+esc(aName(v))+(v.p?', VIP, '+FC(v.p):', '+t('free'))+'">'+
-      '<div class="thumb" style="--g:'+gradBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span>'+
+      '<div class="thumb" style="--g:'+flatBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span>'+
       (v.p?'<span class="vip"><svg class="ic"><use href="#i-lock"/></svg>VIP</span>':'')+
       (isNew(v)?'<span class="new">'+t('isnew')+'</span>':'')+
       '</div>'+
@@ -1453,7 +1460,7 @@ video{-webkit-filter:none;filter:none}
   function renderPaySum(){
     var it=payItem;
     var thumb=it.vid
-      ?'<div class="thumb" style="--g:'+gradBg(it.vid)+'">'+thumbImg(it.vid)+cover(it.vid)+'<span class="glyph" aria-hidden="true">“</span></div>'
+      ?'<div class="thumb" style="--g:'+flatBg(it.vid)+'">'+thumbImg(it.vid)+cover(it.vid)+'<span class="glyph" aria-hidden="true">“</span></div>'
       :'<div class="thumb offer-thumb" style="--g:linear-gradient(160deg,hsl(38 70% 40%),hsl(275 60% 16%))"><span class="glyph" aria-hidden="true">“</span></div>';
     var h='<div class="sum-top">'+thumb+'<div><b>'+esc(it.title)+'</b><span>'+esc(it.sub)+'</span></div></div>'+
       '<div class="sum-row"><span>'+t('price')+'</span><span>'+FC(it.price)+'</span></div>';
