@@ -554,6 +554,37 @@ body::before{top:0;left:0;right:0}
   @keyframes turnT{to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}
   @keyframes turnB{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 }
+/* ===== V12 : recherche (une seule loupe), lecteur personnalisé, rendu vidéo ===== */
+/* Safari ajoute sa propre loupe aux champs type=search : on la retire, seule notre icône reste */
+.search input{-webkit-appearance:none;appearance:none}
+.search input::-webkit-search-decoration,.search input::-webkit-search-cancel-button,.search input::-webkit-search-results-button,.search input::-webkit-search-results-decoration{-webkit-appearance:none;appearance:none;display:none}
+.search input::-ms-clear{display:none}
+.search .lead{z-index:1;pointer-events:none}
+/* Vidéo : pas de filtre, fond transparent tant qu'aucune image n'est décodée (le dégradé / la couverture reste visible), noir une fois en lecture */
+video{-webkit-filter:none;filter:none}
+#vid{background:transparent;-webkit-appearance:none;appearance:none}
+#vid.live{background:#000}
+#vid::-webkit-media-controls,#vid::-webkit-media-controls-enclosure,#vid::-webkit-media-controls-panel,#vid::-webkit-media-controls-overlay-play-button,#vid::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none;opacity:0;pointer-events:none}
+/* Lecteur : barre de commandes en verre dépoli, sombre et épurée */
+.vctl,.p-ctl{left:10px;right:10px;bottom:10px;padding:6px 12px;border-radius:16px;background:rgba(14,14,19,.58);border:1px solid rgba(255,255,255,.14);box-shadow:0 8px 28px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);transition:opacity .25s ease}
+.vctl{position:absolute;z-index:2;display:flex;align-items:center;gap:8px}
+.vbtn{flex:none;width:38px;height:38px;border:0;border-radius:50%;background:transparent;color:#fff;display:grid;place-items:center;padding:0;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.vbtn:active{background:rgba(255,255,255,.16)}
+.vbtn .ic{width:20px;height:20px}
+.vt{flex:none;min-width:34px;font:600 12px var(--body);font-variant-numeric:tabular-nums;color:var(--soft);text-align:center}
+#vseek{flex:1;min-width:0;width:auto}
+#vseek::-webkit-slider-runnable-track{height:4px;border-radius:2px}
+#vseek::-webkit-slider-thumb{width:14px;height:14px;margin-top:-5px;box-shadow:0 0 0 4px rgba(255,178,30,.22);transition:transform .12s}
+#vseek:active::-webkit-slider-thumb{transform:scale(1.25)}
+#vbig{z-index:2;width:68px;height:68px;border:1px solid rgba(255,255,255,.3);background:rgba(14,14,19,.5);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);transition:opacity .25s ease}
+#vbig .ic{width:30px;height:30px}
+.vplaying #vbig{opacity:0;pointer-events:none}
+.idle .vctl,.idle .p-ctl{opacity:0;pointer-events:none}
+.idle .p-back,.idle .p-chip{opacity:.0;transition:opacity .25s}
+#player:-webkit-full-screen{width:100%;height:100%;margin:0;padding:0;background:#000;-webkit-transform:none;transform:none}
+#player:fullscreen{width:100%;height:100%;margin:0;padding:0;aspect-ratio:auto;background:#000;transform:none}
+#player:-webkit-full-screen #vid{object-fit:contain}
+#player:fullscreen #vid{object-fit:contain}
 </style>
 
 </head>
@@ -573,6 +604,7 @@ body::before{top:0;left:0;right:0}
   <symbol id="i-like" viewBox="0 0 24 24"><path d="M7 11v9H4v-9zM7 11l4-7c1.5 0 2.5 1 2.5 2.5V9h5.2a1.8 1.8 0 011.8 2.1l-1.1 7A2 2 0 0117.4 20H7"/></symbol>
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1.1-4.4A8 8 0 1121 12z"/></symbol>
   <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.9" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.9" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.9" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
   <symbol id="i-smile" viewBox="0 0 24 24"><path d="M5 11c1.5 5.5 12.5 5.5 14 0z"/><path d="M8 7.5h.01M16 7.5h.01"/></symbol>
 </svg>
 
@@ -616,15 +648,23 @@ body::before{top:0;left:0;right:0}
   <section id="detail" hidden>
     <div id="player" class="player">
       <span class="glyph" aria-hidden="true">“</span>
-      <video id="vid" playsinline webkit-playsinline preload="metadata" hidden></video>
+      <video id="vid" playsinline webkit-playsinline preload="metadata" disablepictureinpicture controlslist="nodownload noremoteplayback" x-webkit-airplay="deny" hidden></video>
       <button id="pback" class="p-back" type="button" aria-label="Retour"><svg class="ic"><use href="#i-back"/></svg></button>
       <span id="pchip" class="p-chip" hidden><svg class="ic"><use href="#i-lock"/></svg><span data-i18n="preview"></span></span>
       <button id="pplay" class="p-play" type="button" aria-label="Lire"><svg class="ic f"><use id="pplayuse" href="#i-play"/></svg></button>
+      <button id="vbig" class="p-play" type="button" aria-label="Lire" hidden><svg class="ic f"><use id="vbiguse" href="#i-play"/></svg></button>
       <div id="buffer" class="buffer" hidden></div>
       <div id="wm" class="wm" hidden></div>
       <div id="gate" class="gate" hidden>
         <p data-i18n="gate"></p>
         <button id="gatebtn" class="btn btn-primary" type="button"></button>
+      </div>
+      <div id="vctl" class="vctl" hidden>
+        <button id="vplay" class="vbtn" type="button" aria-label="Lire"><svg class="ic f"><use id="vplayuse" href="#i-play"/></svg></button>
+        <span id="vnow" class="vt">0:00</span>
+        <input id="vseek" type="range" min="0" max="1000" value="0" step="1" aria-label="Position de lecture">
+        <span id="vtot" class="vt">0:00</span>
+        <button id="vfs" class="vbtn" type="button" aria-label="Plein écran"><svg class="ic"><use href="#i-full"/></svg></button>
       </div>
       <div class="p-ctl">
         <input id="seek" type="range" min="0" max="100" value="0" step="1" aria-label="Position de lecture">
@@ -885,6 +925,7 @@ body::before{top:0;left:0;right:0}
 
   /* ---------- Réglages à modifier ---------- */
   var CONTACT={whatsapp:'243845629514',phone:'243845629514',email:'',display:'0845629514'};
+  var PAY_NUMBER='0972494288'; /* numéro de paiement officiel : affiché au paiement et dans le filigrane des vidéos payantes */
   var PROMOS={LANCEMENT:20,BIENVENUE:10}; /* démonstration : à valider côté serveur pour de vrai */
   var NEW_DAYS=14;
   var SB_URL='https://ozakwmoftlassrrcdiqg.supabase.co',SB_KEY='sb_publishable_yOJOb8ba26j8KsEbjQlUMA_ntB4GNo7';
@@ -953,7 +994,7 @@ body::before{top:0;left:0;right:0}
   I.fr.pw_label='Mot de passe';I.fr.no_account='Pas encore de compte ?';I.fr.have_account='Déjà un compte ?';I.fr.otp_copy='Un code de confirmation vient d’être envoyé à {e}. Saisissez-le ici pour activer votre compte.';I.fr.e_nouser='Aucun compte avec cette adresse. Choisissez « Créer un compte ».';
   ['sw','ln'].forEach(function(l){delete I[l].otp_copy;delete I[l].send_code});
   I.fr.priv_demo='Démo : aucun accès réel. Cette vidéo est protégée : elle ne s’ouvre qu’après un achat confirmé par le serveur.';
-  I.fr.more='Charger plus';I.sw.more='Pakia zaidi';I.ln.more='Bimisa mosusu';
+  I.fr.pay_to='Numéro de paiement';I.fr.more='Charger plus';I.sw.more='Pakia zaidi';I.ln.more='Bimisa mosusu';
   I.fr.priv_fail='Lecture protégée indisponible pour le moment.';
   delete I.sw.ok_title;delete I.ln.ok_title;delete I.sw.wait_title;delete I.ln.wait_title;delete I.sw.secure;delete I.ln.secure;
   var LANGS=['fr','sw','ln'],LABEL={fr:'FR',sw:'SW',ln:'LN'};
@@ -1170,7 +1211,7 @@ body::before{top:0;left:0;right:0}
   function moveWm(){wm.style.left=(6+Math.random()*50)+'%';wm.style.top=(12+Math.random()*55)+'%'}
   function startWm(){
     if(!cur||!cur.p){wm.hidden=true;return}
-    wm.textContent='TOPLEAKS'+(ST.phone?' · '+ST.phone:'');wm.hidden=false;moveWm();
+    wm.textContent='TOPLEAKS · '+PAY_NUMBER;wm.hidden=false;moveWm();
     clearInterval(wmT);wmT=setInterval(moveWm,7000);
   }
   function stopWm(){clearInterval(wmT)}
@@ -1241,6 +1282,62 @@ body::before{top:0;left:0;right:0}
     if(cur&&cur.video_url&&isFinite(vid.duration)&&!cur.dur){cur.dur=Math.ceil(vid.duration)}
   });
 
+  /* ---------- Lecteur personnalisé (vidéo réelle) : mêmes règles d'aperçu que le lecteur natif (guardVid) ---------- */
+  var vseek=$('#vseek'),idleT=null;
+  var fsEl=function(){return document.fullscreenElement||document.webkitFullscreenElement};
+  function exitFs(){if(!fsEl())return;try{(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(e){}}
+  function vmax(){
+    var d=isFinite(vid.duration)?vid.duration:((cur&&cur.dur)||0);
+    return (cur&&locked())?Math.min(d||limit(),limit()):d;
+  }
+  function vSync(){
+    if(!cur||vid.hidden)return;
+    var m=vmax(),c=vid.currentTime||0,f=m?Math.min(1,c/m):0;
+    vseek.value=Math.round(f*1000);vseek.style.setProperty('--p',(f*100)+'%');
+    $('#vnow').textContent=fmt(m?Math.min(c,m):c);$('#vtot').textContent=fmt(m);
+  }
+  function vIcon(){
+    var on=!vid.paused&&!vid.ended,h=on?'#i-pause':'#i-play',lab=on?'Pause':'Lire';
+    $('#vplayuse').setAttribute('href',h);$('#vbiguse').setAttribute('href',h);
+    $('#vplay').setAttribute('aria-label',lab);$('#vbig').setAttribute('aria-label',lab);
+    $('#player').classList.toggle('vplaying',on);
+  }
+  function showCtl(){
+    var pl=$('#player');pl.classList.remove('idle');clearTimeout(idleT);
+    if(!vid.paused&&!vid.hidden)idleT=setTimeout(function(){pl.classList.add('idle')},3000);
+  }
+  function vToggle(){
+    if(!cur||vid.hidden)return;
+    if(vid.paused||vid.ended)play();else pause();
+    showCtl();
+  }
+  ['timeupdate','loadedmetadata','durationchange','seeked'].forEach(function(ev){vid.addEventListener(ev,vSync)});
+  ['play','pause','ended','playing'].forEach(function(ev){vid.addEventListener(ev,function(){vIcon();showCtl()})});
+  vid.addEventListener('playing',function(){vid.classList.add('live')});
+  vid.addEventListener('click',vToggle);
+  $('#vplay').addEventListener('click',vToggle);
+  $('#vbig').addEventListener('click',vToggle);
+  vseek.addEventListener('input',function(){
+    var m=vmax();if(!m)return;
+    var tt=vseek.value/1000*m;
+    try{vid.currentTime=tt}catch(e){}
+    vseek.style.setProperty('--p',(vseek.value/10)+'%');$('#vnow').textContent=fmt(tt);showCtl();
+  });
+  $('#player').addEventListener('touchstart',showCtl,{passive:true});
+  $('#player').addEventListener('mousemove',showCtl);
+  (function(){
+    var el=$('#player');
+    if(!(el.requestFullscreen||el.webkitRequestFullscreen||vid.webkitEnterFullscreen))$('#vfs').hidden=true;
+    $('#vfs').addEventListener('click',function(){
+      if(fsEl()){exitFs();return}
+      try{
+        if(el.requestFullscreen){var pr=el.requestFullscreen();if(pr&&pr.catch)pr.catch(function(){})}
+        else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();
+        else if(vid.webkitEnterFullscreen)vid.webkitEnterFullscreen(); /* iPhone : plein écran natif de la vidéo */
+      }catch(e){}
+    });
+  })();
+
   function stars(r){
     return '<span class="stars" role="img" aria-label="Note '+rate(r)+' / 5"><span class="stars-base" aria-hidden="true">★★★★★</span><span class="stars-fill" aria-hidden="true" style="width:'+(r/5*100)+'%">★★★★★</span></span>';
   }
@@ -1273,8 +1370,9 @@ body::before{top:0;left:0;right:0}
     seek.max=cur.dur||100;
     var hv=!!cur.video_url;
     vid.hidden=!hv;$('#pplay').hidden=hv;document.querySelector('.p-ctl').hidden=hv;
+    $('#vctl').hidden=!hv;$('#vbig').hidden=!hv;vid.classList.remove('live');$('#player').classList.remove('vplaying','idle');$('#vnow').textContent='0:00';$('#vtot').textContent=fmt(cur.dur);$('#vseek').value=0;$('#vseek').style.setProperty('--p','0%');
     vid.preload=(ST.saver||LITE)?'none':'metadata';
-    if(hv){vid.controls=true;vid.poster=cur.img||'';vid.src=cur.video_url}else{vid.removeAttribute('poster');vid.removeAttribute('src');vid.load()}
+    if(hv){vid.controls=false;vid.poster=cur.img||'';vid.src=cur.video_url}else{vid.removeAttribute('poster');vid.removeAttribute('src');vid.load()}
     $('#ttot').textContent=fmt(cur.dur);
     $('#gate').hidden=true;
     $('#dtitle').textContent=cur.t;
@@ -1299,11 +1397,11 @@ body::before{top:0;left:0;right:0}
         if(!cur||cur.id!==id)return;
         cur.video_url=SB_URL+'/storage/v1'+j.signedURL;
         $('#gate').hidden=true;vid.hidden=false;$('#pplay').hidden=true;document.querySelector('.p-ctl').hidden=true;
-        vid.controls=true;vid.poster=cur.img||'';vid.src=cur.video_url;
+        vid.controls=false;$('#vctl').hidden=false;$('#vbig').hidden=false;vid.poster=cur.img||'';vid.src=cur.video_url;
       });
     }).catch(function(){if(cur&&cur.id===id&&!locked())toast(t('priv_fail'))});
   }
-  $('#pback').addEventListener('click',function(){pause();show('home')});
+  $('#pback').addEventListener('click',function(){pause();exitFs();show('home')});
   $('#fav').addEventListener('click',function(){
     ST.favs[cur.id]=!ST.favs[cur.id];saveState();renderFav();
     toast(ST.favs[cur.id]?t('fav_add'):t('fav_del'));
@@ -1339,6 +1437,7 @@ body::before{top:0;left:0;right:0}
       :'<div class="thumb offer-thumb" style="--g:linear-gradient(160deg,hsl(38 70% 40%),hsl(275 60% 16%))"><span class="glyph" aria-hidden="true">“</span></div>';
     var h='<div class="sum-top">'+thumb+'<div><b>'+esc(it.title)+'</b><span>'+esc(it.sub)+'</span></div></div>'+
       '<div class="sum-row"><span>'+t('price')+'</span><span>'+FC(it.price)+'</span></div>';
+    h+='<div class="sum-row"><span>'+t('pay_to')+'</span><span>'+esc(PAY_NUMBER)+'</span></div>';
     if(promoPct)h+='<div class="sum-row"><span>'+t('promo_label')+' '+esc(promoCode)+'</span><span>−'+promoPct+' %</span></div>';
     h+='<div class="sum-row total"><span>'+t('total')+'</span><span class="amount">'+FC(payTotal())+'</span></div>';
     $('#psum').innerHTML=h;
