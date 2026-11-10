@@ -594,6 +594,16 @@ video{-webkit-filter:none;filter:none}
 .scrim{display:none}
 .slide-body{background:rgba(11,11,13,.8)}
 .thumb-img{background:#16161a}
+/* ===== V15 : cartes vidéo 16/9, miniature <img> en object-fit:cover, bouton Play en surimpression ===== */
+.thumb,.thumb-sk{aspect-ratio:16/9}
+.thumb{background-color:#16161a}
+.thumb-img.thumbnail-img{object-fit:cover}
+.play-ov{position:absolute;left:50%;top:50%;z-index:2;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;display:grid;place-items:center;background:rgba(11,11,13,.62);border:1.5px solid rgba(255,255,255,.75);color:#fff;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.45);-webkit-transition:-webkit-transform .18s ease,background-color .18s ease;transition:transform .18s ease,background-color .18s ease}
+.play-ov .ic{width:20px;height:20px;margin-left:2px}
+.card:active .play-ov,.card:focus-visible .play-ov{-webkit-transform:scale(1.12);transform:scale(1.12);background-color:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (hover:hover){.card:hover .play-ov{-webkit-transform:scale(1.12);transform:scale(1.12);background-color:var(--accent);border-color:var(--accent);color:var(--accent-ink)}}
+@media (prefers-reduced-motion:reduce){.play-ov{transition:none}}
+@supports not (aspect-ratio:1/1){.thumb,.thumb-sk{padding-top:56.25%}}
 </style>
 
 </head>
@@ -1042,7 +1052,7 @@ video{-webkit-filter:none;filter:none}
   var gradBg=function(v){return 'linear-gradient(160deg,hsl('+v.h+' 55% 32%),hsl('+((v.h+35)%360)+' 60% 13%))'};
   /* Miniature : vraie image de couverture ; si elle ne charge pas, le dégradé en dessous reste visible */
   var flatBg=function(v){return v.img?'#16161a':gradBg(v)};
-  var thumbImg=function(v){return v.img?'<img class="thumb-img" src="'+esc(v.img)+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'">':''};
+  var thumbImg=function(v){return v.img?'<img class="thumb-img thumbnail-img" src="'+esc(v.img)+'" alt="" loading="lazy" decoding="async" onerror="this.style.display=\'none\'">':''};
   var plain=function(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase()};
   var esc=function(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
   var toastT;
@@ -1103,7 +1113,7 @@ video{-webkit-filter:none;filter:none}
   }
   function cardHTML(v){
     return '<button class="card" type="button" data-open="'+esc(v.id)+'" aria-label="'+esc(v.t)+', '+esc(aName(v))+(v.p?', VIP, '+FC(v.p):', '+t('free'))+'">'+
-      '<div class="thumb" style="--g:'+flatBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span>'+
+      '<div class="thumb" style="--g:'+flatBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span><span class="play-ov" aria-hidden="true"><svg class="ic f"><use href="#i-play"/></svg></span>'+
       (v.p?'<span class="vip"><svg class="ic"><use href="#i-lock"/></svg>VIP</span>':'')+
       (isNew(v)?'<span class="new">'+t('isnew')+'</span>':'')+
       '</div>'+
