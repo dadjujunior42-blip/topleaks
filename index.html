@@ -461,6 +461,15 @@ body{font:400 14px/1.5 var(--body)}
 .abtns{display:flex;gap:6px;flex:none}
 .abtns .btn{min-height:34px;padding:0 10px;font-size:12px}
 .arow{flex-wrap:wrap}
+.multi{display:grid;gap:10px;margin:12px 0}
+.mhead{font-size:12px;color:var(--muted)}
+.mrow{display:grid;grid-template-columns:1fr 100px;gap:6px 8px;padding:10px;border:1px solid var(--line);border-radius:10px}
+.mrow .field{height:42px;font-size:14px}
+.mrow small{grid-column:1/-1;color:var(--muted);font-size:11px;word-break:break-all}
+.mrow .mst{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.mrow[data-state=ok] .mst{color:var(--ok)}
+.mrow[data-state=err] .mst{color:var(--bad)}
+.mrow[data-state=busy] .mst{color:var(--accent)}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.bar,.pbar,.actions{background:var(--bg)}}
 /* ===== V8 : fenêtres de connexion et d'inscription (cartes centrées, verre dépoli) ===== */
 .modal.center{align-items:center;padding:20px;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
@@ -665,8 +674,9 @@ body{font:400 14px/1.5 var(--body)}
         <input id="aprice" class="field aemail" type="number" inputmode="numeric" min="0" step="100" value="0" required>
         <label class="label" for="adesc">Description (facultatif)</label>
         <input id="adesc" class="field aemail" type="text" maxlength="400">
-        <label class="label" for="afile">Fichier vidéo (mp4)</label>
-        <input id="afile" class="field aemail afile" type="file" accept="video/mp4,video/webm">
+        <label class="label" for="afile">Fichier vidéo (mp4) : vous pouvez en choisir plusieurs</label>
+        <input id="afile" class="field aemail afile" type="file" accept="video/mp4,video/webm" multiple>
+        <div id="amulti" class="multi" hidden></div>
         <label class="label" for="aurl">ou lien https de la vidéo</label>
         <input id="aurl" class="field aemail" type="url" placeholder="https://…">
         <label class="label" for="apreview">Extrait gratuit (facultatif, mp4 court, pour une vidéo payante)</label>
@@ -1716,12 +1726,12 @@ body{font:400 14px/1.5 var(--body)}
       $('#agrant').reset();amsg('Accès accordé : l’acheteur peut regarder la vidéo.');loadStats();
     }).catch(function(err){amsg('Échec : '+(err.noSession?t('admin_need'):err.message),true)}).then(function(){btn.disabled=false});
   });
-  function stopEdit(){editId=null;$('#aadd').reset();$('#asubmit').textContent='Publier la vidéo';$('#acancel').hidden=true}
+  function stopEdit(){editId=null;$('#aadd').reset();resetMulti();$('#asubmit').textContent='Publier la vidéo';$('#acancel').hidden=true}
   function startEdit(id){
     amsg('Chargement…');
     authedFetch(REST+'videos?select=title,artist,description,price_fc&id=eq.'+enc(id)).then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
       var v=rows[0];if(!v){amsg('Vidéo introuvable.',true);return}
-      editId=id;$('#atitle').value=v.title||'';$('#aartist').value=v.artist||'';$('#aprice').value=v.price_fc||0;$('#adesc').value=v.description||'';
+      resetMulti();editId=id;$('#atitle').value=v.title||'';$('#aartist').value=v.artist||'';$('#aprice').value=v.price_fc||0;$('#adesc').value=v.description||'';
       $('#afile').value='';$('#aurl').value='';$('#asubmit').textContent='Enregistrer les modifications';$('#acancel').hidden=false;
       amsg('Modification en cours. Laissez fichier et lien vides pour garder la vidéo actuelle.');
       try{$('#aadd').scrollIntoView({behavior:'smooth'})}catch(e){}
@@ -1774,8 +1784,77 @@ body{font:400 14px/1.5 var(--body)}
       v.src=u;
     });
   }
+  /* ---------- Envoi de plusieurs vidéos à la fois ----------
+     Chaque fichier a son titre et son prix. Envoi un par un : analyse (couverture + durée), fichier,
+     puis fiche dans la table. Un échec n'arrête pas les autres ; un nouveau clic ne renvoie que les échecs. */
+  var multi=[];
+  function baseTitle(n){return n.replace(/\.[^.]+$/,'').replace(/^\d{8,}-/,'').replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim()}
+  function sizeMb(f){return (f.size/1048576).toFixed(1)+' Mo'}
+  function resetMulti(){
+    multi=[];var box=$('#amulti');if(box){box.hidden=true;box.innerHTML=''}
+    $('#atitle').required=true;$('#apreview').hidden=false;var l=document.querySelector('label[for=apreview]');if(l)l.hidden=false;
+    $('#asubmit').textContent='Publier la vidéo';
+  }
+  function renderMulti(){
+    var box=$('#amulti'),price=$('#aprice').value||'0';
+    box.innerHTML='<p class="mhead">'+multi.length+' vidéos : titre et prix pour chacune. L’artiste et la description ci-dessus sont communs. Prix 0 = gratuite, sinon la vidéo part dans le stockage privé.</p>'+
+      multi.map(function(m,i){return '<div class="mrow" data-i="'+i+'" data-state="wait"><input class="field mt" type="text" maxlength="120" aria-label="Titre" value="'+esc(m.title)+'"><input class="field mp" type="number" inputmode="numeric" min="0" step="100" aria-label="Prix en FC" value="'+esc(price)+'"><small>'+esc(m.file.name)+' · '+sizeMb(m.file)+'</small><span class="mst">En attente</span></div>'}).join('');
+    box.hidden=false;
+  }
+  $('#afile').addEventListener('change',function(){
+    var fs=Array.prototype.slice.call(this.files||[]);
+    if(editId||fs.length<2){resetMulti();return}
+    multi=fs.map(function(f){return {file:f,title:baseTitle(f.name)}});
+    $('#atitle').required=false;$('#apreview').hidden=true;var l=document.querySelector('label[for=apreview]');if(l)l.hidden=true;
+    $('#asubmit').textContent='Publier '+fs.length+' vidéos';
+    renderMulti();
+  });
+  $('#aprice').addEventListener('input',function(){
+    if(!multi.length)return;
+    Array.prototype.forEach.call(document.querySelectorAll('#amulti .mrow:not([data-state=ok]) .mp'),function(i){i.value=$('#aprice').value});
+  });
+  function markRow(row,state,txt){row.setAttribute('data-state',state);row.querySelector('.mst').textContent=txt}
+  function uploadOne(row){
+    var m=multi[+row.getAttribute('data-i')],title=row.querySelector('.mt').value.trim(),price=parseInt(row.querySelector('.mp').value,10);
+    if(title.length<2)return Promise.reject(new Error('Titre trop court'));
+    if(!(price>=0))return Promise.reject(new Error('Prix invalide'));
+    var priv=price>0,up={};
+    markRow(row,'busy','Analyse de la vidéo…');
+    return probeVideo(m.file).then(function(info){
+      markRow(row,'busy','Envoi du fichier…');
+      return (priv?uploadFile(m.file,null,'videos-private'):uploadFile(m.file)).then(function(u){
+        if(priv)up.video_path=u;else up.video_url=u;
+        return (info.blob?uploadFile(info.blob,'cover.jpg').catch(function(){return null}):Promise.resolve(null)).then(function(th){
+          up.thumbnail_url=th;markRow(row,'busy','Enregistrement…');
+          var body={title:title,artist:$('#aartist').value.trim()||null,description:$('#adesc').value.trim()||null,price_fc:price,is_published:true,thumbnail_url:th||null};
+          if(priv)body.video_path=up.video_path;else body.video_url=up.video_url;
+          if(info.dur)body.duration_seconds=info.dur;
+          return authedFetch(REST+'videos',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)}).then(function(r){if(!r.ok)return restErr(r)});
+        });
+      });
+    }).then(function(){
+      markRow(row,'ok','Publiée'+(priv?' (protégée)':''));
+      Array.prototype.forEach.call(row.querySelectorAll('input'),function(i){i.disabled=true});
+    },function(err){
+      /* fichier déjà envoyé mais fiche refusée : on efface les fichiers pour ne pas laisser d'orphelins */
+      return cleanFiles({video_path:up.video_path,video_url:up.video_url,thumbnail_url:up.thumbnail_url}).then(function(){throw err});
+    });
+  }
+  function runBatch(){
+    var rows=Array.prototype.slice.call(document.querySelectorAll('#amulti .mrow')).filter(function(r){return r.getAttribute('data-state')!=='ok'});
+    if(!rows.length)return;
+    var btn=$('#asubmit'),okN=0,failN=0;btn.disabled=true;amsg('Envoi de '+rows.length+' vidéo(s), un fichier après l’autre. Gardez cette page ouverte.');
+    rows.reduce(function(p,row){
+      return p.then(function(){return uploadOne(row)}).then(function(){okN++},function(err){failN++;markRow(row,'err','Échec : '+(err.noSession?t('admin_need'):err.message))});
+    },Promise.resolve()).then(function(){
+      loadStats();loadVideos();
+      if(!failN){$('#aadd').reset();resetMulti();amsg(okN+' vidéo(s) publiée(s).')}
+      else amsg(okN+' publiée(s), '+failN+' en échec. Corrigez si besoin puis cliquez à nouveau : seules les vidéos en échec sont renvoyées.',true);
+    }).then(function(){btn.disabled=false});
+  }
   $('#aadd').addEventListener('submit',function(e){
     e.preventDefault();
+    if(multi.length>1&&!editId){runBatch();return}
     var file=$('#afile').files[0],link=$('#aurl').value.trim(),price=parseInt($('#aprice').value,10),eid=editId;
     if(!eid&&!file&&!/^https:\/\//.test(link)){amsg('Choisissez un fichier vidéo ou collez un lien https.',true);return}
     if(link&&!file&&!/^https:\/\//.test(link)){amsg('Le lien doit commencer par https://',true);return}
