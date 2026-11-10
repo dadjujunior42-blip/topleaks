@@ -521,6 +521,39 @@ body{font:400 14px/1.5 var(--body)}
 .kmenu button{min-height:40px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:var(--fg);text-align:left;font-size:14px;font-weight:500}
 .kmenu button:hover,.kmenu button:focus-visible{background:rgba(255,255,255,.08)}
 .kmenu button.danger{color:var(--bad)}
+/* ===== V11 : compatibilité Safari mobile et anciens WebKit ===== */
+/* inset, margin-inline et translate ne sont pas reconnus avant Safari 14.1 : équivalents en propriétés classiques */
+body::before{top:0;left:0;right:0}
+.scrim,.slide-body,.p-ctl{left:0;right:0;bottom:0}
+.gate,.modal,.op input{top:0;left:0;right:0;bottom:0}
+#vid,.cover-video{top:0;left:0}
+.bar,.pbar,.player,.rail{margin-left:calc(-1*var(--gl));margin-right:calc(-1*var(--gr))}
+.thumb,.slide,.player{-webkit-transform:translateZ(0);transform:translateZ(0)}
+.thumb{width:100%;min-height:90px;isolation:isolate}
+.cover-video{-webkit-transform:translateZ(0);transform:translateZ(0)}
+.grid{grid-gap:22px}
+@supports not (aspect-ratio:1/1){
+  /* Sans aspect-ratio : hauteur obtenue par un remplissage proportionnel à la largeur */
+  .thumb,.thumb-sk{height:0;min-height:0;padding-top:62.5%}
+  .slide{height:0;padding-top:68.75%}
+  .slide-sk{height:0;padding-top:125%}
+  .player{height:0;padding-top:56.25%}
+  .sum-top .thumb{height:65px;padding-top:0}
+  /* Les anciens Safari ignorent display:flex sur un <button> : la carte devient un bloc */
+  .card{display:block}
+  .card .c-meta{display:block;margin-top:6px}
+  .card .c-title{margin-top:6px}
+}
+@supports not (translate:0){
+  .toast{-webkit-transform:translate(-50%,20px);transform:translate(-50%,20px)}
+  .toast.show{-webkit-transform:translate(-50%,0);transform:translate(-50%,0)}
+  .p-play{-webkit-transform:translate(-50%,-60%);transform:translate(-50%,-60%)}
+  .search .lead,.search .clear{-webkit-transform:translateY(-50%);transform:translateY(-50%)}
+  .spin{animation-name:turnT}
+  .buffer{-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);animation-name:turnB}
+  @keyframes turnT{to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}
+  @keyframes turnB{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+}
 </style>
 
 </head>
@@ -583,7 +616,7 @@ body{font:400 14px/1.5 var(--body)}
   <section id="detail" hidden>
     <div id="player" class="player">
       <span class="glyph" aria-hidden="true">“</span>
-      <video id="vid" playsinline preload="metadata" hidden></video>
+      <video id="vid" playsinline webkit-playsinline preload="metadata" hidden></video>
       <button id="pback" class="p-back" type="button" aria-label="Retour"><svg class="ic"><use href="#i-back"/></svg></button>
       <span id="pchip" class="p-chip" hidden><svg class="ic"><use href="#i-lock"/></svg><span data-i18n="preview"></span></span>
       <button id="pplay" class="p-play" type="button" aria-label="Lire"><svg class="ic f"><use id="pplayuse" href="#i-play"/></svg></button>
@@ -971,7 +1004,32 @@ body{font:400 14px/1.5 var(--body)}
   }
 
   /* ---------- Couvertures et cartes ---------- */
-  function cover(v){return (!ST.saver&&!v.img&&v.video_url)?'<video class="cover-video" src="'+esc(v.video_url)+'#t=1" muted playsinline preload="metadata" tabindex="-1" aria-hidden="true"></video>':''}
+  /* Appareil limité (mobile, ancien WebKit, Data Saver) : pas de <video> en arrière-plan des cartes, on garde l'image de couverture ou le dégradé de secours */
+  var LITE=(function(){
+    try{
+      var ua=navigator.userAgent||'',c=navigator.connection||{};
+      var mobile=/iPhone|iPad|iPod|Android|Mobile|Silk/i.test(ua)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform||''));
+      var noAR=!(window.CSS&&CSS.supports&&CSS.supports('aspect-ratio','1/1'));
+      return mobile||noAR||!('IntersectionObserver' in window)||c.saveData===true;
+    }catch(e){return true}
+  })();
+  function cover(v){return (!ST.saver&&!LITE&&!v.img&&v.video_url)?'<video class="cover-video" data-src="'+esc(v.video_url)+'#t=1" muted playsinline webkit-playsinline preload="none" disablepictureinpicture tabindex="-1" aria-hidden="true"></video>':''}
+  /* Sur ordinateur : la mini-vidéo ne se charge que lorsqu'elle approche de l'écran ; en cas d'erreur elle disparaît et le dégradé reste visible */
+  var coverIO=null;
+  function hydrateCovers(){
+    var list=document.querySelectorAll('video.cover-video[data-src]');
+    if(!list.length||!('IntersectionObserver' in window))return;
+    if(!coverIO)coverIO=new IntersectionObserver(function(es){es.forEach(function(en){
+      if(!en.isIntersecting)return;
+      var el=en.target,src=el.getAttribute('data-src');coverIO.unobserve(el);
+      if(!src)return;
+      el.removeAttribute('data-src');el.muted=true;
+      el.addEventListener('error',function(){el.style.display='none'});
+      el.preload='metadata';el.src=src;
+    })},{rootMargin:'200px'});
+    Array.prototype.forEach.call(list,function(el){coverIO.observe(el)});
+  }
+  try{if(window.MutationObserver)new MutationObserver(hydrateCovers).observe(document.querySelector('.app'),{childList:true,subtree:true})}catch(e){}
   function slideHTML(v){
     return '<article class="slide" style="--g:'+grad(v)+'">'+cover(v)+'<span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
       '<div class="tags"><span class="tag'+(v.p?' tag-vip':'')+'">'+(v.p?'VIP':t('free'))+'</span>'+(isNew(v)?'<span class="tag">'+t('isnew')+'</span>':'')+'</div>'+
@@ -1215,7 +1273,7 @@ body{font:400 14px/1.5 var(--body)}
     seek.max=cur.dur||100;
     var hv=!!cur.video_url;
     vid.hidden=!hv;$('#pplay').hidden=hv;document.querySelector('.p-ctl').hidden=hv;
-    vid.preload=ST.saver?'none':'metadata';
+    vid.preload=(ST.saver||LITE)?'none':'metadata';
     if(hv){vid.controls=true;vid.poster=cur.img||'';vid.src=cur.video_url}else{vid.removeAttribute('poster');vid.removeAttribute('src');vid.load()}
     $('#ttot').textContent=fmt(cur.dur);
     $('#gate').hidden=true;
@@ -1663,7 +1721,7 @@ body{font:400 14px/1.5 var(--body)}
     }).then(function(rows){return isAdmin().then(function(adm){return {rows:rows,adm:adm}})}).then(function(o){
       var rows=o.rows,adm=o.adm;
       if(!cur||cur.id!==id)return;
-      list.replaceChildren();
+      list.innerHTML='';
       if(!rows.length){list.textContent=t('com_none');return}
       rows.forEach(function(row){
         var a=document.createElement('article'),sm=document.createElement('small'),bd=document.createElement('div');
@@ -1892,7 +1950,7 @@ body{font:400 14px/1.5 var(--body)}
     return new Promise(function(res){
       var v=document.createElement('video'),u=URL.createObjectURL(file),done=false;
       function fin(o){if(done)return;done=true;try{URL.revokeObjectURL(u)}catch(e){}res(o||{})}
-      v.muted=true;v.playsInline=true;v.preload='metadata';v.onerror=function(){fin()};setTimeout(function(){fin()},12000);
+      v.muted=true;v.playsInline=true;v.setAttribute('webkit-playsinline','');v.preload='metadata';v.onerror=function(){fin()};setTimeout(function(){fin()},12000);
       v.onloadedmetadata=function(){
         var d=isFinite(v.duration)?Math.round(v.duration):0;
         v.onseeked=function(){
@@ -2009,6 +2067,7 @@ body{font:400 14px/1.5 var(--body)}
 
   /* ---------- Démarrage ---------- */
   $('#saver').checked=!!ST.saver;
+  hydrateCovers();
   applyLang();renderContact();
   loadSession();renderAccount();
   consumeHash().then(function(){renderAccount();loadCats();loadVideos();loadPurchases()});
