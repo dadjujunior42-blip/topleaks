@@ -723,6 +723,11 @@ html[data-theme=light] .avatar{color:#fff}
 html[data-theme=light] ::selection{background:rgba(179,105,10,.22)}
 @media (min-width:560px){html[data-theme=light] .app{box-shadow:0 0 0 1px var(--line),0 40px 90px -40px rgba(60,40,10,.35)}}
 @media (hover:hover){html[data-theme=light] .card:hover{transform:translateY(-3px);border-color:rgba(179,105,10,.28);box-shadow:0 2px 4px rgba(40,28,8,.06),0 22px 40px -18px rgba(40,28,8,.32)}}
+
+/* ===== V12 : miniatures extraites de la vidéo ===== */
+.cap-slot{position:absolute;inset:0;z-index:0;border-radius:0}
+.thumb-img.cap-in{animation:tlFade .4s ease both}
+@media (prefers-reduced-motion:reduce){.thumb-img.cap-in{animation:none}}
 </style>
 
 </head>
@@ -1223,18 +1228,107 @@ html[data-theme=light] ::selection{background:rgba(179,105,10,.22)}
   var gradBg=function(v){return 'linear-gradient(160deg,hsl('+v.h+' 55% 32%),hsl('+((v.h+35)%360)+' 60% 13%))'};
   /* Miniature : vraie image de couverture ; si elle ne charge pas, le dégradé en dessous reste visible */
   var flatBg=function(v){return v.img?'#16161a':gradBg(v)};
-  /* Miniature : image ImgBB quand elle existe ; sinon une jaquette typographique (dégradé aux teintes du site + titre lisible).
-     Jamais d'image générique, jamais de bloc vide. */
-  function phHTML(v,nt){
-    var h=((+v.h)||0)%360,h2=(h+40)%360;
-    return '<div class="ph" role="img" aria-label="'+esc(v.t||'')+'" style="--h1:'+h+';--h2:'+h2+'"><span class="ph-ring" aria-hidden="true"></span>'+(nt?'':'<span class="ph-k">TOPLEAKS</span><span class="ph-t">'+esc(v.t||'')+'</span>')+'</div>';
+  /* Miniature d'une carte, par ordre de priorité :
+     1) thumbnail_url (ImgBB) ; 2) image déjà extraite de la vidéo et gardée sur l'appareil ;
+     3) sinon extraction automatique : vidéo temporaire hors écran -> 1re seconde -> canvas 480 px -> image injectée.
+     Aucune balise <video> n'est insérée dans la page : seule l'image finale est affichée. */
+  var CAPKEY='tl_caps_v1',CAPS={},CAPMAX=60,FAILTTL=864e5,capPend={},capQ=[],capBusy=0;
+  try{CAPS=JSON.parse(localStorage.getItem(CAPKEY)||'{}')||{}}catch(e){CAPS={}}
+  function capSave(){
+    var ks=Object.keys(CAPS);
+    if(ks.length>CAPMAX){ks.sort(function(a,b){return (CAPS[a].t||0)-(CAPS[b].t||0)}).slice(0,ks.length-CAPMAX).forEach(function(k){delete CAPS[k]})}
+    try{localStorage.setItem(CAPKEY,JSON.stringify(CAPS))}
+    catch(e){ /* quota ou mode privé : on garde la moitié la plus récente, sinon uniquement en mémoire */
+      try{var a=Object.keys(CAPS).sort(function(x,y){return (CAPS[x].t||0)-(CAPS[y].t||0)});a.slice(0,Math.ceil(a.length/2)).forEach(function(k){delete CAPS[k]});localStorage.setItem(CAPKEY,JSON.stringify(CAPS))}catch(e2){}
+    }
   }
-  var thumbImg=function(v,nt){
-    if(!v.img)return phHTML(v,nt);
-    return '<img class="thumb-img thumbnail-img" src="'+esc(v.img)+'" data-h="'+(v.h|0)+'" data-t="'+esc(v.t||'')+'"'+(nt?' data-nt="1"':'')+' alt="'+esc(v.t||'')+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">';
+  function capOf(v){var c=CAPS[v.id];return c&&c.u&&c.s===v.video_url?c.u:''}
+  function capFailed(v){var c=CAPS[v.id];return !!(c&&c.f&&c.s===v.video_url&&Date.now()-c.f<FAILTTL)}
+  function canCap(v){return !!v.video_url&&!ST.saver&&!capFailed(v)&&('IntersectionObserver' in window)}
+  /* Cas sans issue (vidéo payante sans extrait, source qui refuse la lecture, économie de data) : motif discret, sans texte */
+  function phHTML(v){
+    var h=((+v.h)||0)%360,h2=(h+40)%360;
+    return '<div class="ph" role="img" aria-label="'+esc(v.t||'')+'" style="--h1:'+h+';--h2:'+h2+'"><span class="ph-ring" aria-hidden="true"></span></div>';
+  }
+  function imgTag(v,src,fade){
+    return '<img class="thumb-img thumbnail-img'+(fade?' cap-in':'')+'" src="'+esc(src)+'" data-id="'+esc(v.id)+'" alt="'+esc(v.t||'')+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">';
+  }
+  function slotHTML(v){return '<div class="sk cap-slot" data-cap="'+esc(v.id)+'" role="img" aria-label="'+esc(v.t||'')+'"></div>'}
+  var thumbImg=function(v){
+    if(v.img)return imgTag(v,v.img);
+    var c=capOf(v);if(c)return imgTag(v,c);
+    return canCap(v)?slotHTML(v):phHTML(v);
   };
-  /* Image qui ne charge pas (lien mort, réseau bloqué, mode privé) : on la remplace par la jaquette au lieu d'un bloc vide */
-  document.addEventListener('error',function(e){var im=e.target;if(im&&im.tagName==='IMG'&&im.classList&&im.classList.contains('thumb-img')){var par=im.parentNode;im.insertAdjacentHTML('afterend',phHTML({h:+im.getAttribute('data-h')||0,t:im.getAttribute('data-t')||''},im.hasAttribute('data-nt')));par.removeChild(im);if(par.classList)par.classList.add('thumb-ph')}},true);
+  /* Extraction : vidéo temporaire (jamais ajoutée à la page), 1re seconde, canvas 480 px max, WebP 65 % (repli JPEG) */
+  function grabFrame(url){
+    return new Promise(function(res,rej){
+      var vd=document.createElement('video'),done=false,tm;
+      function fin(err,u){
+        if(done)return;done=true;clearTimeout(tm);
+        try{vd.onloadedmetadata=vd.onseeked=vd.onerror=null;vd.removeAttribute('src');vd.load()}catch(e){}
+        err?rej(err):res(u);
+      }
+      vd.muted=true;vd.defaultMuted=true;vd.playsInline=true;vd.preload='metadata';vd.crossOrigin='anonymous';
+      vd.setAttribute('playsinline','');vd.setAttribute('webkit-playsinline','');
+      vd.onerror=function(){fin(new Error('lecture impossible'))};
+      tm=setTimeout(function(){fin(new Error('délai dépassé'))},15000);
+      vd.onloadedmetadata=function(){
+        var d=isFinite(vd.duration)?vd.duration:0;
+        vd.onseeked=function(){
+          try{
+            var w=Math.min(480,vd.videoWidth||480),h=Math.round(w*(vd.videoHeight||270)/(vd.videoWidth||480));
+            if(!(w>0&&h>0))throw new Error('image vide');
+            var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(vd,0,0,w,h);
+            var u=c.toDataURL('image/webp',.65);if(u.indexOf('data:image/webp')!==0)u=c.toDataURL('image/jpeg',.7);
+            fin(null,u);
+          }catch(e){fin(e)}
+        };
+        try{vd.currentTime=(d>0&&d<1.5)?d/2:1}catch(e){fin(e)}
+      };
+      vd.src=url;
+    });
+  }
+  function paintSlots(id,html,v){
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cap]'),function(el){
+      if(el.getAttribute('data-cap')!==id)return;
+      el.insertAdjacentHTML('afterend',html);el.parentNode.removeChild(el);
+    });
+  }
+  /* File d'attente : 2 extractions à la fois, uniquement pour les cartes réellement affichées à l'écran */
+  function capPump(){
+    while(capBusy<2&&capQ.length){
+      var id=capQ.shift(),v=byId[id];
+      if(!v||!document.querySelector('[data-cap="'+id.replace(/["\\]/g,'')+'"]')){delete capPend[id];continue}
+      capBusy++;
+      (function(id,v){
+        grabFrame(v.video_url).then(function(u){
+          CAPS[id]={u:u,s:v.video_url,t:Date.now()};capSave();
+          paintSlots(id,imgTag(v,u,true),v);
+        },function(err){
+          CAPS[id]={f:Date.now(),s:v.video_url,t:Date.now()};capSave();
+          console.warn('Miniature automatique impossible :',v.t,err&&err.message);
+          paintSlots(id,phHTML(v),v);
+        }).then(function(){capBusy--;delete capPend[id];capPump()});
+      })(id,v);
+    }
+  }
+  function capEnqueue(id){if(capPend[id])return;capPend[id]=1;capQ.push(id);capPump()}
+  var capIO=null;
+  function hydrateCaps(){
+    var list=document.querySelectorAll('.cap-slot[data-cap]:not([data-obs])');
+    if(!list.length)return;
+    if(!('IntersectionObserver' in window)){Array.prototype.forEach.call(list,function(el){var v=byId[el.getAttribute('data-cap')];if(v)paintSlots(v.id,phHTML(v),v)});return}
+    if(!capIO)capIO=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){capIO.unobserve(en.target);capEnqueue(en.target.getAttribute('data-cap'))}})},{rootMargin:'300px'});
+    Array.prototype.forEach.call(list,function(el){el.setAttribute('data-obs','1');capIO.observe(el)});
+  }
+  /* Image ImgBB qui ne charge pas : on retombe sur l'extraction depuis la vidéo */
+  document.addEventListener('error',function(e){
+    var im=e.target;
+    if(!(im&&im.tagName==='IMG'&&im.classList&&im.classList.contains('thumb-img')))return;
+    var v=byId[im.getAttribute('data-id')];if(!v)return;
+    var c=capOf(v),html=c&&c!==im.getAttribute('src')?imgTag(v,c):(canCap(v)?slotHTML(v):phHTML(v));
+    im.insertAdjacentHTML('afterend',html);im.parentNode.removeChild(im);
+  },true);
   var plain=function(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase()};
   var esc=function(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
   var toastT;
@@ -1288,9 +1382,9 @@ html[data-theme=light] ::selection{background:rgba(179,105,10,.22)}
     })},{rootMargin:'200px'});
     Array.prototype.forEach.call(list,function(el){coverIO.observe(el)});
   }
-  try{if(window.MutationObserver)new MutationObserver(hydrateCovers).observe(document.querySelector('.app'),{childList:true,subtree:true})}catch(e){}
+  try{if(window.MutationObserver)new MutationObserver(function(){hydrateCovers();hydrateCaps()}).observe(document.querySelector('.app'),{childList:true,subtree:true})}catch(e){}
   function slideHTML(v){
-    return '<article class="slide" style="--g:'+flatBg(v)+'">'+thumbImg(v,1)+cover(v)+'<span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
+    return '<article class="slide" style="--g:'+flatBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
       '<div class="tags"><span class="tag'+(v.p?' tag-vip':'')+'">'+(v.p?'VIP':t('free'))+'</span>'+(isNew(v)?'<span class="tag">'+t('isnew')+'</span>':'')+'</div>'+
       '<h2 class="slide-title">'+esc(v.t)+'</h2>'+
       '<p class="slide-meta">'+esc(aName(v))+'</p>'+
@@ -1304,7 +1398,7 @@ html[data-theme=light] ::selection{background:rgba(179,105,10,.22)}
   function cardHTML(v){
     return '<div class="card">'+
       '<button class="card-hit" type="button" data-open="'+esc(v.id)+'" aria-label="'+esc(v.t)+', '+esc(aName(v))+(v.p?', VIP, '+FC(v.p):', '+t('free'))+'">'+
-      '<div class="thumb'+(v.img?'':' thumb-ph')+'" style="--g:'+flatBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span><span class="play-ov" aria-hidden="true"><svg class="ic f"><use href="#i-play"/></svg></span>'+
+      '<div class="thumb" style="--g:'+flatBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span><span class="play-ov" aria-hidden="true"><svg class="ic f"><use href="#i-play"/></svg></span>'+
       (v.p?'<span class="vip"><svg class="ic"><use href="#i-lock"/></svg>VIP</span>':'')+
       (isNew(v)?'<span class="new">'+t('isnew')+'</span>':'')+
       '</div>'+
@@ -1617,7 +1711,7 @@ html[data-theme=light] ::selection{background:rgba(179,105,10,.22)}
     vid.hidden=!hv;$('#pplay').hidden=hv;document.querySelector('.p-ctl').hidden=hv;
     $('#vctl').hidden=!hv;$('#vbig').hidden=!hv;vid.classList.remove('live');$('#player').classList.remove('vplaying','idle');$('#vnow').textContent='0:00';$('#vtot').textContent=fmt(cur.dur);$('#vseek').value=0;$('#vseek').style.setProperty('--p','0%');
     vid.preload=(ST.saver||LITE)?'none':'metadata';
-    if(hv){vid.controls=false;vid.poster=cur.img||'';if(LITE){vid.removeAttribute('src');vid.load()}else vid.src=cur.video_url}else{vid.removeAttribute('poster');vid.removeAttribute('src');vid.load()}
+    if(hv){vid.controls=false;vid.poster=cur.img||capOf(cur)||'';if(LITE){vid.removeAttribute('src');vid.load()}else vid.src=cur.video_url}else{vid.removeAttribute('poster');vid.removeAttribute('src');vid.load()}
     $('#ttot').textContent=fmt(cur.dur);
     $('#gate').hidden=true;
     $('#dtitle').textContent=cur.t;
@@ -1642,7 +1736,7 @@ html[data-theme=light] ::selection{background:rgba(179,105,10,.22)}
         if(!cur||cur.id!==id)return;
         cur.video_url=SB_URL+'/storage/v1'+j.signedURL;
         $('#gate').hidden=true;vid.hidden=false;$('#pplay').hidden=true;document.querySelector('.p-ctl').hidden=true;
-        vid.controls=false;$('#vctl').hidden=false;$('#vbig').hidden=false;vid.poster=cur.img||'';if(!LITE)vid.src=cur.video_url;
+        vid.controls=false;$('#vctl').hidden=false;$('#vbig').hidden=false;vid.poster=cur.img||capOf(cur)||'';if(!LITE)vid.src=cur.video_url;
       });
     }).catch(function(){if(cur&&cur.id===id&&!locked())toast(t('priv_fail'))});
   }
