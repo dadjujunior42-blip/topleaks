@@ -7,6 +7,47 @@
 <script>(function(){try{if(localStorage.getItem("tl_theme")==="light"){document.documentElement.setAttribute("data-theme","light");var m=document.querySelector("meta[name=theme-color]");if(m)m.setAttribute("content","#faf8f4")}}catch(e){}})()</script>
 <style>html{background:#0b0b0d}html[data-theme=light]{background:#faf8f4}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>TOPLEAKS</title>
+<meta name="application-name" content="TOPLEAKS">
+<meta name="apple-mobile-web-app-title" content="TOPLEAKS">
+<meta property="og:site_name" content="TOPLEAKS">
+<meta property="og:title" content="TOPLEAKS">
+<!-- PWA : manifest, icônes, mode application -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- PWA : service worker (cache et hors-ligne minimal) -->
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(e){console.warn('Service worker non enregistré :',e)});
+  });
+}
+</script>
+<style>
+/* ===== Bannière de téléchargement APK (glisse du haut) ===== */
+.apkb{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;justify-content:center;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 0;pointer-events:none;visibility:hidden;opacity:0;-webkit-transform:translateY(-130%);transform:translateY(-130%);transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .4s ease,visibility 0s linear .55s}
+.apkb.show{visibility:visible;opacity:1;-webkit-transform:none;transform:none;transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .4s ease,visibility 0s}
+.apkb-in{pointer-events:auto;width:100%;max-width:500px;display:flex;align-items:center;gap:10px;padding:10px 8px 10px 12px;border-radius:16px;background:rgba(14,14,19,.96);border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 40px rgba(0,0,0,.55);color:#f2f0eb}
+.apkb-ic{flex:none;width:38px;height:38px;border-radius:50%;background:#ffb21e;color:#1a1100;display:grid;place-items:center}
+.apkb-ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.apkb-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.apkb-tx b{font:600 14px/1.25 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.apkb-how{align-self:flex-start;padding:0;border:0;background:none;color:#a09da8;font-size:12px;text-decoration:underline;text-underline-offset:2px}
+.apkb-dl{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 14px;border-radius:10px;background:#ffb21e;color:#1a1100;font-weight:700;font-size:13px;text-decoration:none}
+.apkb-x{flex:none;width:34px;height:34px;border:0;border-radius:50%;background:transparent;color:#a09da8;display:grid;place-items:center;padding:0}
+.apkb-x .ic{width:16px;height:16px}
+.apkb-dl:focus-visible,.apkb-x:focus-visible,.apkb-how:focus-visible{outline:2px solid #f2f0eb;outline-offset:2px}
+.apk-steps{list-style:none;counter-reset:apk;margin:14px 0 6px;padding:0;display:grid;gap:14px}
+.apk-steps li{counter-increment:apk;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+.apk-steps li::before{content:counter(apk);width:28px;height:28px;border-radius:50%;border:1px solid var(--accent);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:13px}
+.apk-steps b{display:block;font-size:14px;margin-bottom:2px}
+.apk-steps span{display:block;color:var(--soft);font-size:13px;line-height:1.45}
+.apk-dl{margin-top:14px;text-decoration:none}
+.foot-brand{margin:0;font:600 13px/1.2 var(--display);letter-spacing:.04em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.apkb,.apkb.show{transition:opacity .2s ease,visibility 0s}}
+</style>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0b0d'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23ffb21e'/%3E%3Cpath d='M26 21l18 11-18 11z' fill='%231a1100'/%3E%3C/svg%3E">
 <!-- Pour utiliser votre propre logo : remplacez la ligne ci-dessus par <link rel="icon" href="logo.png"> et ajoutez <link rel="apple-touch-icon" href="logo.png"> (fichier à la racine du dépôt) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -796,6 +837,18 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
 
 </head>
 <body>
+<!-- Bannière de téléchargement APK : glisse du haut 1,5 s après l'arrivée, reste 6 s -->
+<div id="apkb" class="apkb" role="region" aria-label="Application TOPLEAKS" aria-hidden="true">
+  <div class="apkb-in">
+    <span class="apkb-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 20h14"/></svg></span>
+    <div class="apkb-tx">
+      <b data-i18n="apk_title"></b>
+      <button id="apkhow" class="apkb-how" type="button" data-i18n="apk_how"></button>
+    </div>
+    <a id="apkdl" class="apkb-dl" href="./topleaks.apk" download data-i18n="apk_dl"></a>
+    <button id="apkclose" class="apkb-x" type="button" aria-label="Fermer"><svg class="ic"><use href="#i-close"/></svg></button>
+  </div>
+</div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
   <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></symbol>
@@ -979,6 +1032,13 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     </div>
 
     <div id="apanel" hidden>
+      <h3 class="ah">Numéro de paiement</h3>
+      <form id="apayform" class="aform">
+        <p class="hint">Numéro officiel affiché à l’écran de paiement et dans le filigrane des vidéos payantes. Le changement s’applique à tous les utilisateurs.</p>
+        <label class="label" for="apaynum">Numéro Mobile Money</label>
+        <div class="cnumrow"><input id="apaynum" class="field aemail" type="tel" inputmode="tel" maxlength="20" autocomplete="off"><button id="apaysave" class="clink main" type="submit">Enregistrer</button></div>
+      </form>
+
       <h3 class="ah">Catégories</h3>
       <form id="acatform" class="aform">
         <label class="label" for="acatname">Nouvelle catégorie</label>
@@ -1034,6 +1094,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     <div id="libbody"></div>
   </section>
   <footer id="sitefoot" class="sitefoot">
+      <p class="foot-brand">© <span id="yr">2026</span> TOPLEAKS</p>
       <nav class="flinks" aria-label="Informations">
       <button class="flink" type="button" data-doc="about" data-i18n="about"></button>
       <button class="flink" type="button" data-doc="terms" data-i18n="terms"></button>
@@ -1074,7 +1135,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     </section>
     <section class="set-sec">
       <h3 data-i18n="about"></h3>
-      <p class="set-about"><b>TOPLEAKS VOD</b><span><span data-i18n="set_version"></span> <span id="appver"></span></span></p>
+      <p class="set-about"><b>TOPLEAKS</b><span><span data-i18n="set_version"></span> <span id="appver"></span></span></p>
       <div class="flinks" style="margin-top:6px">
         <button class="flink" type="button" data-doc="about" data-i18n="about"></button>
         <button class="flink" type="button" data-doc="terms" data-i18n="terms"></button>
@@ -1186,6 +1247,22 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
       <div class="stack"><button id="qesave" class="btn btn-primary" type="submit">Enregistrer</button><button id="qecancel" class="btn btn-ghost" type="button">Annuler</button></div>
     </form>
     <p id="qemsg" class="hint" role="status" aria-live="polite"></p>
+  </div>
+</div>
+
+<div id="apkm" class="modal center" hidden role="dialog" aria-modal="true" aria-labelledby="apkmtitle">
+  <div class="sheet glass">
+    <button id="apkmclose" class="xclose" type="button" aria-label="Fermer"><svg class="ic"><use href="#i-close"/></svg></button>
+    <h2 id="apkmtitle" data-i18n="apk_help_title"></h2>
+    <p class="hint" data-i18n="apk_help_intro"></p>
+    <ol class="apk-steps">
+      <li><div><b data-i18n="apk_s1_t"></b><span data-i18n="apk_s1"></span></div></li>
+      <li><div><b data-i18n="apk_s2_t"></b><span data-i18n="apk_s2"></span></div></li>
+      <li><div><b data-i18n="apk_s3_t"></b><span data-i18n="apk_s3"></span></div></li>
+      <li><div><b data-i18n="apk_s4_t"></b><span data-i18n="apk_s4"></span></div></li>
+    </ol>
+    <p class="hint" data-i18n="apk_note"></p>
+    <a id="apkmdl" class="btn btn-primary apk-dl" href="./topleaks.apk" download data-i18n="apk_dl"></a>
   </div>
 </div>
 
@@ -1974,7 +2051,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     $('#perr').textContent='';$('#phone').classList.remove('bad');
     if(ST.phone&&!$('#phone').value)$('#phone').value=ST.phone;
     $('#watch').removeAttribute('data-wa');
-    renderPaySum();payState('form');show('pay');
+    renderPaySum();payState('form');show('pay');loadPayNumber();
   }
   function backFromPay(){clearTimeout(payT);show(payFrom==='detail'&&cur?'detail':'home')}
   ['#payclose','#cancel','#waitcancel'].forEach(function(s){$(s).addEventListener('click',backFromPay)});
@@ -2178,7 +2255,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     });
   }
   function authMsg(x,bad){var el=$('#signm').hidden?$('#authmsg'):$('#signmsg');el.textContent=x||'';el.className='hint'+(x&&bad?' bad':'')}
-  var MODALS=['#authm','#signm','#comm','#qedit'];
+  var MODALS=['#authm','#signm','#comm','#qedit','#apkm'];
   function openModal(sel){
     lastFocus=document.activeElement;$(sel).hidden=false;document.body.style.overflow='hidden';
     setTimeout(function(){var f=null,q2=$(sel).querySelectorAll('input,textarea');for(var i=0;i<q2.length;i++){if(!q2[i].closest('[hidden]')){f=q2[i];break}}if(!f)f=$(sel).querySelector('.xclose');if(f)try{f.focus()}catch(e){}},40);
@@ -2470,7 +2547,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
       if(!x)return;
       return authedFetch(REST+'admins?select=user_id&user_id=eq.'+enc(x.user.id)).then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
         if(!rows.length){$('#aneed').hidden=false;$('#aneedtxt').textContent=t('admin_not');$('#aopenauth').hidden=true;return}
-        $('#apanel').hidden=false;loadStats();loadCats();
+        $('#apanel').hidden=false;$('#apaynum').value=PAY_NUMBER;loadPayNumber();loadStats();loadCats();
       });
     }).catch(function(err){$('#aneed').hidden=false;amsg(friendlyErr(err),true)});
   }
@@ -3051,6 +3128,90 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   $('#appver').textContent=APP_VERSION+' · '+APP_BUILD;
   syncThemeUI();
 
+  /* ---------- Numéro de paiement officiel : table Supabase « app_settings » (key = payment_number) ----------
+     La valeur de PAY_NUMBER tout en haut du script ne sert que de secours (réseau coupé ou table absente). */
+  var PAYNUM_CACHE='tl_paynum_v1',payNumLoaded=false;
+  function cleanPayNum(s){return String(s||'').replace(/[^\d+\s.\-]/g,'').replace(/\s+/g,' ').trim()}
+  function validPayNum(s){var d=String(s).replace(/\D/g,'');return d.length>=9&&d.length<=15}
+  function applyPayNum(n){
+    n=cleanPayNum(n);if(!validPayNum(n))return;
+    PAY_NUMBER=n;
+    if(wm&&!wm.hidden)wm.textContent='TOPLEAKS · '+PAY_NUMBER;
+    if(payItem&&!views.pay.hidden&&!$('#payform').hidden)renderPaySum();
+    var inp=$('#apaynum');if(inp&&document.activeElement!==inp)inp.value=PAY_NUMBER;
+  }
+  function payNumFallback(){
+    if(payNumLoaded)return;
+    var c=null;try{c=localStorage.getItem(PAYNUM_CACHE)}catch(e){}
+    if(c)applyPayNum(c);
+  }
+  function loadPayNumber(){
+    return fetch(REST+'app_settings?select=value&key=eq.payment_number',{headers:{apikey:SB_KEY},cache:'no-store'})
+    .then(function(r){return r.ok?r.json():[]})
+    .then(function(rows){
+      if(rows&&rows[0]&&rows[0].value){
+        payNumLoaded=true;applyPayNum(rows[0].value);
+        try{localStorage.setItem(PAYNUM_CACHE,PAY_NUMBER)}catch(e){}
+      }else payNumFallback();
+    }).catch(payNumFallback);
+  }
+  $('#apayform').addEventListener('submit',function(e){
+    e.preventDefault();
+    var n=cleanPayNum($('#apaynum').value),btn=$('#apaysave');
+    if(!validPayNum(n)){amsg('Numéro invalide : entrez 9 à 15 chiffres.',true);return}
+    btn.disabled=true;amsg('Enregistrement…');
+    authedFetch(REST+'app_settings?on_conflict=key',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({key:'payment_number',value:n,updated_at:new Date().toISOString()})}).then(function(r){
+      if(!r.ok)return restErr(r);
+      payNumLoaded=true;applyPayNum(n);
+      try{localStorage.setItem(PAYNUM_CACHE,n)}catch(e){}
+      amsg('Numéro de paiement enregistré : '+n+'. Il s’affiche maintenant pour tous les utilisateurs.');
+    }).catch(function(err){
+      amsg('Échec : '+(err.noSession?t('admin_need'):(err.network?t('e_net'):err.message))+' (table « app_settings » installée ? voir le script SQL)',true);
+    }).then(function(){btn.disabled=false});
+  });
+
+  /* ---------- Bannière de téléchargement APK ----------
+     Apparaît 1,5 s après l'arrivée, reste 6 s, puis disparaît. Une fois fermée (×) ou cliquée (Télécharger), elle ne revient plus (localStorage).
+     Non affichée sur iPhone/iPad (pas d'APK) ni dans l'application installée elle-même. */
+  var APK_KEY='tl_apk_banner_v1',apkT1=null,apkT2=null;
+  var APKT={
+    apk_title:'Application TOPLEAKS pour Android',apk_how:'Comment installer ?',apk_dl:'Télécharger',
+    apk_help_title:'Installer l’application sur Android',
+    apk_help_intro:'L’installation prend moins d’une minute. Suivez ces étapes :',
+    apk_s1_t:'Téléchargez le fichier',apk_s1:'Touchez « Télécharger ». Si Chrome demande une confirmation, choisissez « Télécharger quand même ».',
+    apk_s2_t:'Ouvrez topleaks.apk',apk_s2:'Touchez la notification de téléchargement, ou ouvrez l’appli Fichiers puis le dossier Téléchargements.',
+    apk_s3_t:'Autorisez l’installation',apk_s3:'Si Android affiche « Installation bloquée », touchez Paramètres et activez « Autoriser depuis cette source » pour Chrome (ou pour Fichiers), puis revenez en arrière.',
+    apk_s4_t:'Installez',apk_s4:'Touchez Installer, puis Ouvrir. Si Play Protect affiche un avertissement, touchez « Plus de détails » puis « Installer quand même ».',
+    apk_note:'Téléchargez l’APK uniquement depuis le site officiel TOPLEAKS.'
+  };
+  for(var ak in APKT)I.fr[ak]=APKT[ak];
+  function apkSeen(){try{return !!localStorage.getItem(APK_KEY)}catch(e){return false}}
+  function apkDone(){try{localStorage.setItem(APK_KEY,'1')}catch(e){}}
+  function apkHide(){
+    clearTimeout(apkT1);clearTimeout(apkT2);
+    var b=$('#apkb');b.classList.remove('show');b.setAttribute('aria-hidden','true');
+  }
+  function initApkBanner(){
+    var ua=navigator.userAgent||'';
+    var ios=/iPhone|iPad|iPod/i.test(ua)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform||''));
+    var inApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||/; wv\)/.test(ua);
+    if(ios||inApp||apkSeen())return;
+    apkT1=setTimeout(function(){
+      var b=$('#apkb');b.classList.add('show');b.setAttribute('aria-hidden','false');
+      apkT2=setTimeout(apkHide,6000);
+    },1500);
+  }
+  /* l'utilisateur touche la bannière : on arrête la disparition automatique le temps qu'il choisisse */
+  $('#apkb').addEventListener('pointerdown',function(){clearTimeout(apkT2)});
+  $('#apkclose').addEventListener('click',function(){apkDone();apkHide()});
+  $('#apkdl').addEventListener('click',function(){apkDone();apkHide();setTimeout(function(){openModal('#apkm')},500)}); /* pas de preventDefault : le téléchargement démarre */
+  $('#apkhow').addEventListener('click',function(){apkHide();openModal('#apkm')});
+  $('#apkmdl').addEventListener('click',apkDone);
+  $('#apkmclose').addEventListener('click',function(){closeModal('#apkm')});
+  $('#apkm').addEventListener('click',function(e){if(e.target===this)closeModal('#apkm')});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('#apkm').hidden)closeModal('#apkm')});
+  $('#yr').textContent=new Date().getFullYear();
+
   /* ---------- Démarrage ---------- */
   $('#saver').checked=!!ST.saver;
   if(!DEMO_MODE){
@@ -3060,6 +3221,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   }
   applyLang();renderContact();
   loadSession();renderAccount();
+  loadPayNumber();initApkBanner();
   consumeHash().then(function(){renderAccount();loadCats();loadVideos();loadPurchases()});
 })();
 </script>
