@@ -7,49 +7,9 @@
 <script>(function(){try{if(localStorage.getItem("tl_theme")==="light"){document.documentElement.setAttribute("data-theme","light");var m=document.querySelector("meta[name=theme-color]");if(m)m.setAttribute("content","#faf8f4")}}catch(e){}})()</script>
 <style>html{background:#0b0b0d}html[data-theme=light]{background:#faf8f4}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>TOPLEAKS</title>
-<meta name="application-name" content="TOPLEAKS">
-<meta name="apple-mobile-web-app-title" content="TOPLEAKS">
-<meta property="og:site_name" content="TOPLEAKS">
-<meta property="og:title" content="TOPLEAKS">
-<!-- PWA : manifest, icônes, mode application -->
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!-- PWA : service worker (cache et hors-ligne minimal) -->
-<script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',function(){
-    navigator.serviceWorker.register('./sw.js').catch(function(e){console.warn('Service worker non enregistré :',e)});
-  });
-}
-</script>
-<style>
-/* ===== Bannière de téléchargement APK (glisse du haut) ===== */
-.apkb{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;justify-content:center;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 0;pointer-events:none;visibility:hidden;opacity:0;-webkit-transform:translateY(-130%);transform:translateY(-130%);transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .4s ease,visibility 0s linear .55s}
-.apkb.show{visibility:visible;opacity:1;-webkit-transform:none;transform:none;transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .4s ease,visibility 0s}
-.apkb-in{pointer-events:auto;width:100%;max-width:500px;display:flex;align-items:center;gap:10px;padding:10px 8px 10px 12px;border-radius:16px;background:rgba(14,14,19,.96);border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 40px rgba(0,0,0,.55);color:#f2f0eb}
-.apkb-ic{flex:none;width:38px;height:38px;border-radius:50%;background:#ffb21e;color:#1a1100;display:grid;place-items:center}
-.apkb-ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.apkb-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
-.apkb-tx b{font:600 14px/1.25 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.apkb-how{align-self:flex-start;padding:0;border:0;background:none;color:#a09da8;font-size:12px;text-decoration:underline;text-underline-offset:2px}
-.apkb-dl{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 14px;border-radius:10px;background:#ffb21e;color:#1a1100;font-weight:700;font-size:13px;text-decoration:none}
-.apkb-x{flex:none;width:34px;height:34px;border:0;border-radius:50%;background:transparent;color:#a09da8;display:grid;place-items:center;padding:0}
-.apkb-x .ic{width:16px;height:16px}
-.apkb-dl:focus-visible,.apkb-x:focus-visible,.apkb-how:focus-visible{outline:2px solid #f2f0eb;outline-offset:2px}
-.apk-steps{list-style:none;counter-reset:apk;margin:14px 0 6px;padding:0;display:grid;gap:14px}
-.apk-steps li{counter-increment:apk;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
-.apk-steps li::before{content:counter(apk);width:28px;height:28px;border-radius:50%;border:1px solid var(--accent);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:13px}
-.apk-steps b{display:block;font-size:14px;margin-bottom:2px}
-.apk-steps span{display:block;color:var(--soft);font-size:13px;line-height:1.45}
-.apk-dl{margin-top:14px;text-decoration:none}
-.foot-brand{margin:0;font:600 13px/1.2 var(--display);letter-spacing:.04em;color:var(--muted)}
-@media (prefers-reduced-motion:reduce){.apkb,.apkb.show{transition:opacity .2s ease,visibility 0s}}
-</style>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0b0d'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%23ffb21e'/%3E%3Cpath d='M26 21l18 11-18 11z' fill='%231a1100'/%3E%3C/svg%3E">
 <!-- Pour utiliser votre propre logo : remplacez la ligne ci-dessus par <link rel="icon" href="logo.png"> et ajoutez <link rel="apple-touch-icon" href="logo.png"> (fichier à la racine du dépôt) -->
+<link rel="preconnect" href="https://i.ibb.co" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap">
@@ -281,6 +241,8 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .p-time span{min-width:48px;padding:4px 9px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(15,15,20,.72);color:#f2f0eb;text-align:center;font-size:12px;font-weight:700;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 #seek{accent-color:#ffb21e}
 /* Couverture figée et contact */
+.cover-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#111;pointer-events:none;z-index:0}
+.cover-video ~ .glyph{display:none}
 .thumb::before,.slide::before,.scrim{z-index:1}
 .slide-body,.thumb .vip,.thumb .dur{z-index:2}
 .contact{margin-top:34px;padding:18px;border-radius:18px;background:var(--glass);border:1px solid var(--glass-line);box-shadow:var(--glass-hi);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur)}
@@ -347,10 +309,7 @@ body{min-height:100%;display:flex;flex-direction:column}
 .doc ul{padding-left:20px;margin:6px 0}
 .doc .draft{color:var(--muted);font-size:13px;margin-bottom:6px}
 /* lecteur : chargement + filigrane */
-.buffer{position:absolute;left:50%;top:50%;translate:-50% -50%;width:64px;height:64px;display:grid;place-items:center;z-index:2;pointer-events:none}
-.buffer[hidden]{display:none}
-.buffer-ring{position:absolute;inset:0;border-radius:50%;border:4px solid rgba(255,255,255,.25);border-top-color:var(--accent);animation:turn .9s linear infinite}
-.buffer-pct{font:700 14px/1 var(--body);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.75);font-variant-numeric:tabular-nums}
+.buffer{position:absolute;left:50%;top:50%;translate:-50% -50%;width:44px;height:44px;border-radius:50%;border:4px solid rgba(255,255,255,.25);border-top-color:var(--accent);animation:turn .9s linear infinite;z-index:2;pointer-events:none}
 .wm{position:absolute;z-index:2;pointer-events:none;color:rgba(255,255,255,.3);font:700 11px var(--body);letter-spacing:.08em;text-shadow:0 1px 2px rgba(0,0,0,.5);transition:left 1.2s ease,top 1.2s ease}
 /* paiement : code promo */
 .promo{height:46px;font-size:16px;text-transform:uppercase;letter-spacing:.06em}
@@ -389,7 +348,7 @@ body{min-height:100%;display:flex;flex-direction:column}
 .cmt small{display:block;color:var(--muted);margin-bottom:4px}
 .sheet .hint.bad{color:var(--bad)}
 @media (prefers-reduced-motion:reduce){
-  .view-in,.sk,.buffer-ring{animation:none}
+  .view-in,.sk,.buffer{animation:none}
   .card,.offer{transition:none}
 }
 /* ===== V7 : style minimaliste (surcharge, aucune structure modifiée) ===== */
@@ -517,21 +476,6 @@ body{font:400 14px/1.5 var(--body)}
 .mrow[data-state=ok] .mst{color:var(--ok)}
 .mrow[data-state=err] .mst{color:var(--bad)}
 .mrow[data-state=busy] .mst{color:var(--accent)}
-/* Sélecteur de frame (admin) */
-.fp{display:grid;gap:8px;margin:10px 0;min-width:0}
-.fp-stage video{display:block;width:100%;max-height:260px;border-radius:10px;background:#050506;object-fit:contain}
-.fp.compact .fp-stage video{max-height:170px}
-.fp-bar{display:flex;align-items:center;gap:8px}
-.fp-range{flex:1;min-width:0;accent-color:var(--accent)}
-.fp-btn{min-width:36px;height:36px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:var(--raise);color:var(--fg);font-size:15px;font-weight:600;cursor:pointer}
-.fp-btn:disabled{opacity:.5;cursor:default}
-.fp-chips{display:flex;gap:6px;flex-wrap:wrap}
-.fp-chip{height:30px;font-size:12px}
-.fp-info{font-size:12px;color:var(--muted)}
-.athumb .fp{flex:1}
-.mcov{grid-column:1/-1;display:flex;align-items:center;gap:10px}
-.mimg{width:96px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;background:var(--raise)}
-.mfp{grid-column:1/-1}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.bar,.pbar,.actions{background:var(--bg)}}
 /* ===== V8 : fenêtres de connexion et d'inscription (cartes centrées, verre dépoli) ===== */
 .modal.center{align-items:center;padding:20px;background:rgba(0,0,0,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
@@ -588,10 +532,11 @@ body{font:400 14px/1.5 var(--body)}
 body::before{top:0;left:0;right:0}
 .scrim,.slide-body,.p-ctl{left:0;right:0;bottom:0}
 .gate,.modal,.op input{top:0;left:0;right:0;bottom:0}
-#vid{top:0;left:0}
+#vid,.cover-video{top:0;left:0}
 .bar,.pbar,.player,.rail{margin-left:calc(-1*var(--gl));margin-right:calc(-1*var(--gr))}
 .thumb,.slide,.player{-webkit-transform:translateZ(0);transform:translateZ(0)}
 .thumb{width:100%;min-height:90px;isolation:isolate}
+.cover-video{-webkit-transform:translateZ(0);transform:translateZ(0)}
 .grid{grid-gap:22px}
 @supports not (aspect-ratio:1/1){
   /* Sans aspect-ratio : hauteur obtenue par un remplissage proportionnel à la largeur */
@@ -611,8 +556,7 @@ body::before{top:0;left:0;right:0}
   .p-play{-webkit-transform:translate(-50%,-60%);transform:translate(-50%,-60%)}
   .search .lead,.search .clear{-webkit-transform:translateY(-50%);transform:translateY(-50%)}
   .spin{animation-name:turnT}
-  .buffer{-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}
-  .buffer-ring{animation-name:turnT}
+  .buffer{-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);animation-name:turnB}
   @keyframes turnT{to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}
   @keyframes turnB{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
 }
@@ -671,6 +615,17 @@ video{-webkit-filter:none;filter:none}
 .card{position:relative}
 .card-hit{display:flex;flex-direction:column;gap:6px;width:100%;min-width:0;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .card-hit:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
+.ph{position:absolute;inset:0;z-index:0;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;padding:10px 11px;overflow:hidden;color:#fff;text-align:left;
+  background:radial-gradient(90% 120% at 100% 0%,hsla(var(--h2),85%,58%,.55),transparent 62%),radial-gradient(80% 100% at 0% 100%,hsla(var(--h1),75%,48%,.55),transparent 65%),linear-gradient(155deg,hsl(var(--h1),42%,19%),hsl(var(--h2),48%,8%))}
+.ph::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,12,.5),transparent 62%);pointer-events:none}
+.ph-ring{position:absolute;right:-18%;top:-45%;width:78%;aspect-ratio:1;border-radius:50%;border:1px solid rgba(255,255,255,.2);box-shadow:0 0 0 14px rgba(255,255,255,.04),0 0 0 30px rgba(255,255,255,.025)}
+.ph-k{position:relative;z-index:1;display:flex;align-items:center;gap:6px;font:700 8.5px/1 var(--body);letter-spacing:.3em;color:#ffc457}
+.ph-k::before{content:"";width:14px;height:2px;border-radius:2px;background:#ffb21e}
+.ph-t{position:relative;z-index:1;font:600 clamp(11.5px,3.3vw,16px)/1.17 var(--display);text-wrap:balance;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 1px 10px rgba(0,0,0,.45)}
+.thumb-ph .ph{padding-right:50px}
+.thumb-ph .play-ov{left:auto;right:8px;top:auto;bottom:8px;margin:0;width:34px;height:34px}
+.thumb-ph .play-ov .ic{width:15px;height:15px;margin-left:1px}
+.sum-top .ph-t,.sum-top .ph-k{display:none}
 .card .new{right:46px}
 .heart{position:absolute;top:8px;right:8px;z-index:4;width:34px;height:34px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;background:rgba(11,11,13,.58);color:#fff;-webkit-tap-highlight-color:transparent;transition:transform .15s ease,background-color .15s ease,color .15s ease}
 .heart::after{content:"";position:absolute;inset:-5px}
@@ -768,87 +723,10 @@ html[data-theme=light] .avatar{color:#fff}
 html[data-theme=light] ::selection{background:rgba(179,105,10,.22)}
 @media (min-width:560px){html[data-theme=light] .app{box-shadow:0 0 0 1px var(--line),0 40px 90px -40px rgba(60,40,10,.35)}}
 @media (hover:hover){html[data-theme=light] .card:hover{transform:translateY(-3px);border-color:rgba(179,105,10,.28);box-shadow:0 2px 4px rgba(40,28,8,.06),0 22px 40px -18px rgba(40,28,8,.32)}}
-
-/* ===== V12 : miniatures extraites de la vidéo ===== */
-.cap-slot{position:absolute;inset:0;z-index:0;border-radius:0}
-.thumb-img.cap-in{animation:tlFade .4s ease both}
-@media (prefers-reduced-motion:reduce){.thumb-img.cap-in{animation:none}}
-
-/* ===== V16 : fond noir profond au chargement, menu ⋮ admin sur les cartes ===== */
-.sk{background:linear-gradient(100deg,#0f0f12 30%,#1a1a1f 50%,#0f0f12 70%);background-size:200% 100%}
-.thumb-sk,.slide-sk,.cap-slot{background:linear-gradient(100deg,#020203 30%,#0d0d10 50%,#020203 70%)!important;background-size:200% 100%!important}
-.thumb,.thumb-img,.slide,.player{background-color:#050506}
-html[data-theme=light] .thumb,html[data-theme=light] .thumb-img{background-color:#050506}
-.player{background:#000}
-#vid{background:#000}
-.thumb-blank{position:absolute;top:0;left:0;right:0;bottom:0;z-index:0;background:#050506}
-.ckebab{position:absolute;top:8px;right:8px;z-index:5}
-.ckbtn{width:34px;height:34px;padding:0;border:0;border-radius:50%;display:grid;place-items:center;background:rgba(11,11,13,.72);color:#fff;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease,transform .15s ease}
-.ckbtn .ic{width:18px;height:18px}
-.ckbtn:active{transform:scale(.92)}
-.ckbtn[aria-expanded=true]{background:var(--accent);color:var(--accent-ink)}
-.ckbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.ckmenu{position:absolute;right:0;top:40px;z-index:25;min-width:172px;padding:6px;border-radius:12px;background:#17171d;border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:2px}
-.ckmenu button{min-height:42px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:var(--fg);text-align:left;font-size:14px;font-weight:500}
-.ckmenu button:hover,.ckmenu button:focus-visible{background:rgba(255,255,255,.08)}
-.ckmenu button.danger{color:var(--bad)}
-.card.menu-open{z-index:30}
-.new,html[data-theme=light] .new{color:#fff}
-.card.adm .heart{right:50px}
-.card.adm .new{right:90px}
-html[data-theme=light] .ckebab{top:14px;right:14px}
-html[data-theme=light] .card.adm .heart{right:56px}
-html[data-theme=light] .card.adm .new{right:96px}
-html[data-theme=light] .ckmenu{background:#fff;border:1px solid var(--line);box-shadow:0 16px 40px -12px rgba(40,28,8,.3)}
-html[data-theme=light] .ckmenu button:hover,html[data-theme=light] .ckmenu button:focus-visible{background:var(--raise)}
-/* ===== V17 : lecteur adaptatif (vertical 9:16 ou paysage 16:9) ===== */
-.player.vertical{aspect-ratio:var(--arn,.5625);width:min(100%,420px,calc((100vh - 150px)*var(--arn,.5625)));width:min(100%,420px,calc((100dvh - 150px)*var(--arn,.5625)));margin:8px auto 0;border-radius:14px}
-#player.vertical:fullscreen{width:100%;max-width:none;margin:0;border-radius:0;aspect-ratio:auto}
-#player.vertical:-webkit-full-screen{width:100%;max-width:none;margin:0;border-radius:0}
-@supports not (aspect-ratio:1/1){.player.vertical{height:75vh;padding-top:0}}
-
-/* ===== V17 : balayage lumineux (shimmer) pendant le chargement + alerte réseau ===== */
-@keyframes tlSweep{from{background-position:120% 0}to{background-position:-20% 0}}
-/* squelettes, cases en attente d'extraction, miniatures en cours de téléchargement (.ld = image chargée, voir JS).
-   .thumb-blank (cas final : économie de data, extraction échouée) reste volontairement fixe : ce n'est plus un chargement. */
-.sk,.thumb-sk,.slide-sk,.cap-slot{background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.11) 50%,transparent 70%) 120% 0/250% 100% no-repeat,#0d0d10!important;animation:tlSweep 1.5s ease-in-out infinite}
-.thumb-img:not(.ld):not(.cap-in){background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.11) 50%,transparent 70%) 120% 0/250% 100% no-repeat,#0d0d10;animation:tlSweep 1.5s ease-in-out infinite}
-html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.8) 50%,transparent 70%) 120% 0/250% 100% no-repeat,#e8e1d3!important}
-@media (prefers-reduced-motion:reduce){.sk,.thumb-sk,.slide-sk,.cap-slot,.thumb-img:not(.ld){animation:none}}
-.netwarn{margin-top:12px;padding:12px 14px;border-radius:12px;border:1px solid var(--bad);background:rgba(255,90,90,.08);color:var(--fg);font-size:14px;line-height:1.45}
-.netwarn p{margin:0 0 10px}
-.netact{display:flex;gap:8px;flex-wrap:wrap}
-.netact .btn{flex:1 1 140px}
-
-/* ===== V18 : miniatures verticales 9:16, grille 2 colonnes (mobile et desktop identiques) =====
-   Ce bloc est volontairement le dernier : il l'emporte sur les anciens réglages 16/10 et 16/9 plus haut dans la feuille.
-   L'application est une colonne de 520 px maximum, y compris sur ordinateur : 2 colonnes donnent donc le même rendu partout.
-   Pour 3 colonnes plus petites, remplacez repeat(2 par repeat(3. */
-.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px;grid-gap:20px 12px}
-.thumb,.thumb-sk{aspect-ratio:9/16;width:100%;height:auto;min-height:0;border-radius:12px}
-.thumb-img{object-fit:cover;object-position:center}
-.sum-top .thumb{flex:0 0 64px;width:64px}
-/* anciens navigateurs sans aspect-ratio : hauteur = 16/9 de la largeur, via un remplissage proportionnel */
-@supports not (aspect-ratio:1/1){
-  .thumb,.thumb-sk{height:0;min-height:0;padding-top:177.78%}
-  .sum-top .thumb{height:114px;padding-top:0} /* le remplissage en % se calcule sur le parent, d'où une hauteur fixe ici */
-}
 </style>
 
 </head>
 <body>
-<!-- Bannière de téléchargement APK : glisse du haut 1,5 s après l'arrivée, reste 6 s -->
-<div id="apkb" class="apkb" role="region" aria-label="Application TOPLEAKS" aria-hidden="true">
-  <div class="apkb-in">
-    <span class="apkb-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 20h14"/></svg></span>
-    <div class="apkb-tx">
-      <b data-i18n="apk_title"></b>
-      <button id="apkhow" class="apkb-how" type="button" data-i18n="apk_how"></button>
-    </div>
-    <a id="apkdl" class="apkb-dl" href="./topleaks.apk" download data-i18n="apk_dl"></a>
-    <button id="apkclose" class="apkb-x" type="button" aria-label="Fermer"><svg class="ic"><use href="#i-close"/></svg></button>
-  </div>
-</div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></symbol>
   <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></symbol>
@@ -914,9 +792,10 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
       <span class="glyph" aria-hidden="true">“</span>
       <video id="vid" playsinline webkit-playsinline preload="metadata" disablepictureinpicture controlslist="nodownload noremoteplayback" x-webkit-airplay="deny" hidden></video>
       <button id="pback" class="p-back" type="button" aria-label="Retour"><svg class="ic"><use href="#i-back"/></svg></button>
+      <span id="pchip" class="p-chip" hidden><svg class="ic"><use href="#i-lock"/></svg><span data-i18n="preview"></span></span>
       <button id="pplay" class="p-play" type="button" aria-label="Lire"><svg class="ic f"><use id="pplayuse" href="#i-play"/></svg></button>
       <button id="vbig" class="p-play" type="button" aria-label="Lire" hidden><svg class="ic f"><use id="vbiguse" href="#i-play"/></svg></button>
-      <div id="buffer" class="buffer" role="status" aria-live="off" aria-label="Chargement de la vidéo" hidden><i class="buffer-ring"></i><b id="bufpct" class="buffer-pct">1%</b></div>
+      <div id="buffer" class="buffer" hidden></div>
       <div id="wm" class="wm" hidden></div>
       <div id="gate" class="gate" hidden>
         <p data-i18n="gate"></p>
@@ -1032,13 +911,6 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     </div>
 
     <div id="apanel" hidden>
-      <h3 class="ah">Numéro de paiement</h3>
-      <form id="apayform" class="aform">
-        <p class="hint">Numéro officiel affiché à l’écran de paiement et dans le filigrane des vidéos payantes. Le changement s’applique à tous les utilisateurs.</p>
-        <label class="label" for="apaynum">Numéro Mobile Money</label>
-        <div class="cnumrow"><input id="apaynum" class="field aemail" type="tel" inputmode="tel" maxlength="20" autocomplete="off"><button id="apaysave" class="clink main" type="submit">Enregistrer</button></div>
-      </form>
-
       <h3 class="ah">Catégories</h3>
       <form id="acatform" class="aform">
         <label class="label" for="acatname">Nouvelle catégorie</label>
@@ -1064,6 +936,8 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
         <div id="amulti" class="multi" hidden></div>
         <label class="label" for="aurl">ou lien https de la vidéo</label>
         <input id="aurl" class="field aemail" type="url" placeholder="https://…">
+        <label class="label" for="apreview">Extrait gratuit (facultatif, mp4 court, pour une vidéo payante)</label>
+        <input id="apreview" class="field aemail afile" type="file" accept="video/mp4,video/webm">
         <div class="stack"><button id="asubmit" class="btn btn-primary" type="submit">Publier la vidéo</button><button id="acancel" class="btn btn-ghost" type="button" hidden>Annuler la modification</button></div>
       </form>
 
@@ -1094,7 +968,6 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     <div id="libbody"></div>
   </section>
   <footer id="sitefoot" class="sitefoot">
-      <p class="foot-brand">© <span id="yr">2026</span> TOPLEAKS</p>
       <nav class="flinks" aria-label="Informations">
       <button class="flink" type="button" data-doc="about" data-i18n="about"></button>
       <button class="flink" type="button" data-doc="terms" data-i18n="terms"></button>
@@ -1135,7 +1008,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     </section>
     <section class="set-sec">
       <h3 data-i18n="about"></h3>
-      <p class="set-about"><b>TOPLEAKS</b><span><span data-i18n="set_version"></span> <span id="appver"></span></span></p>
+      <p class="set-about"><b>TOPLEAKS VOD</b><span><span data-i18n="set_version"></span> <span id="appver"></span></span></p>
       <div class="flinks" style="margin-top:6px">
         <button class="flink" type="button" data-doc="about" data-i18n="about"></button>
         <button class="flink" type="button" data-doc="terms" data-i18n="terms"></button>
@@ -1224,48 +1097,6 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   </div>
 </div>
 
-<div id="qedit" class="modal center" hidden role="dialog" aria-modal="true" aria-labelledby="qetitle">
-  <div class="sheet glass">
-    <button id="qeclose" class="xclose" type="button" aria-label="Fermer"><svg class="ic"><use href="#i-close"/></svg></button>
-    <h2 id="qetitle">Modifier la vidéo</h2>
-    <form id="qeform" class="aform" novalidate>
-      <label class="label" for="qetitleinp">Titre</label>
-      <input id="qetitleinp" class="field aemail" type="text" maxlength="120">
-      <label class="label" for="qeartist">Artiste</label>
-      <input id="qeartist" class="field aemail" type="text" maxlength="80">
-      <label class="label" for="qeprice">Prix en FC (0 = gratuit)</label>
-      <input id="qeprice" class="field aemail" type="number" inputmode="numeric" min="0" step="100" value="0">
-      <label class="label" for="qedesc">Description</label>
-      <input id="qedesc" class="field aemail" type="text" maxlength="400">
-      <label class="label" for="qecat">Catégorie</label>
-      <select id="qecat" class="field aemail"><option value="">Aucune</option></select>
-      <div class="label">Miniature</div>
-      <div id="qecur" class="athumb" hidden></div>
-      <div id="qeframe" hidden></div>
-      <p class="hint">Déplacez le curseur pour choisir l’image de la miniature. L’actuelle n’est remplacée que si vous bougez le curseur.</p>
-      <p class="hint">Changer le prix ne protège pas un fichier déjà public : pour protéger une vidéo payante, republiez-la avec son fichier.</p>
-      <div class="stack"><button id="qesave" class="btn btn-primary" type="submit">Enregistrer</button><button id="qecancel" class="btn btn-ghost" type="button">Annuler</button></div>
-    </form>
-    <p id="qemsg" class="hint" role="status" aria-live="polite"></p>
-  </div>
-</div>
-
-<div id="apkm" class="modal center" hidden role="dialog" aria-modal="true" aria-labelledby="apkmtitle">
-  <div class="sheet glass">
-    <button id="apkmclose" class="xclose" type="button" aria-label="Fermer"><svg class="ic"><use href="#i-close"/></svg></button>
-    <h2 id="apkmtitle" data-i18n="apk_help_title"></h2>
-    <p class="hint" data-i18n="apk_help_intro"></p>
-    <ol class="apk-steps">
-      <li><div><b data-i18n="apk_s1_t"></b><span data-i18n="apk_s1"></span></div></li>
-      <li><div><b data-i18n="apk_s2_t"></b><span data-i18n="apk_s2"></span></div></li>
-      <li><div><b data-i18n="apk_s3_t"></b><span data-i18n="apk_s3"></span></div></li>
-      <li><div><b data-i18n="apk_s4_t"></b><span data-i18n="apk_s4"></span></div></li>
-    </ol>
-    <p class="hint" data-i18n="apk_note"></p>
-    <a id="apkmdl" class="btn btn-primary apk-dl" href="./topleaks.apk" download data-i18n="apk_dl"></a>
-  </div>
-</div>
-
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -1278,13 +1109,14 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   var PAY_NUMBER='0972494288'; /* numéro de paiement officiel : affiché au paiement et dans le filigrane des vidéos payantes */
   var PROMOS={LANCEMENT:20,BIENVENUE:10}; /* démonstration : à valider côté serveur pour de vrai */
   var NEW_DAYS=14;
+  const IMGBB_API_KEY = 'COLLE_TA_CLE_IMGBB_ICI'; /* à remplacer par votre clé ImgBB : miniatures hébergées hors Supabase */
   var APP_VERSION='2.0.0',APP_BUILD='Novembre 2026';
   var SB_URL='https://ozakwmoftlassrrcdiqg.supabase.co',SB_KEY='sb_publishable_yOJOb8ba26j8KsEbjQlUMA_ntB4GNo7';
 
   /* ---------- Textes : français, swahili, lingala (à faire relire par un locuteur) ---------- */
   var I={
-    fr:{search:'Rechercher',watch:'Regarder maintenant',all:'Tous',free:'Gratuit',isnew:'Nouveau',
-      gate:'Cette vidéo est réservée. Débloquez-la pour la regarder.',unlock:'DÉBLOQUER CE SPECTACLE ({p})',unlocked:'Spectacle débloqué',
+    fr:{search:'Rechercher',watch:'Regarder maintenant',all:'Tous',free:'Gratuit',isnew:'Nouveau',preview:'Aperçu de 5 s',
+      gate:'Fin de l’aperçu. Débloquez ce spectacle pour voir la suite.',unlock:'DÉBLOQUER CE SPECTACLE ({p})',unlocked:'Spectacle débloqué',
       fav:'Favoris',fav_on:'Dans mes favoris',share:'Partager',fav_add:'Ajouté aux favoris',fav_del:'Retiré des favoris',
       shared:'Texte copié, prêt à partager',nocopy:'Copie impossible ici',pay_title:'Paiement',secure:'Sécurisé',choose_op:'Choisissez votre opérateur',
       mm_number:'Numéro Mobile Money',mm_hint:'Le numéro du compte qui paie, 10 chiffres.',err_op:'Choisissez un opérateur : M-Pesa, Orange Money ou Airtel Money.',
@@ -1298,16 +1130,16 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
       data_saver:'Économie de data',loading:'Chargement des vidéos…',none:'Aucune vidéo pour le moment.',fail:'Impossible de charger les vidéos.',retry:'Réessayer',
       no_result:'Aucun résultat pour « {q} ». Essayez un nom d’artiste ou un titre.',res_one:'{n} résultat pour « {q} »',res_many:'{n} résultats pour « {q} »',
       draft:'Version provisoire, à faire valider avant publication.'},
-    sw:{search:'Tafuta',watch:'Tazama sasa',all:'Zote',free:'Bure',isnew:'Mpya',
-      gate:'Video hii ni ya kulipia. Ifungue ili kuitazama.',unlock:'FUNGUA ONYESHO HILI ({p})',unlocked:'Onyesho limefunguliwa',
+    sw:{search:'Tafuta',watch:'Tazama sasa',all:'Zote',free:'Bure',isnew:'Mpya',preview:'Onyesho la sekunde 5',
+      gate:'Onyesho limeisha. Fungua onyesho hili ili uendelee kutazama.',unlock:'FUNGUA ONYESHO HILI ({p})',unlocked:'Onyesho limefunguliwa',
       fav:'Vipendwa',fav_on:'Katika vipendwa vyangu',share:'Shiriki',fav_add:'Imeongezwa kwenye vipendwa',fav_del:'Imeondolewa kwenye vipendwa',
       pay_title:'Malipo',secure:'Salama',choose_op:'Chagua mtandao wako',mm_number:'Namba ya Mobile Money',mm_hint:'Namba ya akaunti inayolipa, tarakimu 10.',
       promo_label:'Msimbo wa punguzo',apply:'Tumia',promo_ok:'Msimbo umetumika: −{n} %',promo_bad:'Msimbo si sahihi.',price:'Bei',total:'Kiasi cha kulipa',
       confirm:'Thibitisha malipo ({p})',cancel:'Ghairi',wait_title:'Thibitisha kwenye simu yako',ok_title:'Malipo yamethibitishwa',browse:'Angalia maonyesho',
       contact_title:'Wasiliana nasi',contact_text:'Una swali, tatizo la malipo au pendekezo la onyesho? Tuandikie.',our_number:'Namba yetu',copy:'Nakili',call:'Piga simu',
       choose:'Chagua',about:'Kuhusu sisi',terms:'Masharti ya matumizi',privacy:'Faragha',data_saver:'Okoa data',loading:'Inapakia video…',none:'Hakuna video kwa sasa.',retry:'Jaribu tena'},
-    ln:{search:'Luka',watch:'Tala sikoyo',all:'Nyonso',free:'Ya ofele',isnew:'Ya sika',
-      gate:'Video oyo ezali ya kofuta. Fungola yango mpo na kotala.',unlock:'FUNGOLA SHOW OYO ({p})',unlocked:'Show efungwami',
+    ln:{search:'Luka',watch:'Tala sikoyo',all:'Nyonso',free:'Ya ofele',isnew:'Ya sika',preview:'Komeka ya sekonde 5',
+      gate:'Komeka esili. Fungola show oyo mpo ozala kotala.',unlock:'FUNGOLA SHOW OYO ({p})',unlocked:'Show efungwami',
       fav:'Oyo nalingi',fav_on:'Na oyo nalingi',share:'Kabola',fav_add:'Ebakisami na oyo nalingi',fav_del:'Elongolami na oyo nalingi',
       pay_title:'Kofuta',secure:'Na libateli',choose_op:'Pona réseau na yo',mm_number:'Nimero ya Mobile Money',mm_hint:'Nimero ya compte oyo ekofuta, ba chiffres 10.',
       promo_label:'Code ya promo',apply:'Tia',promo_ok:'Code ekangami: −{n} %',promo_bad:'Code ezali malamu te.',price:'Ntalo',total:'Mbongo ya kofuta',
@@ -1354,11 +1186,6 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   I.fr.pay_login='Connectez-vous pour acheter : l’accès sera activé sur votre compte.';
   I.fr.pay_wa_msg='Bonjour TOPLEAKS, je souhaite débloquer « {i} » ({p}). Opérateur : {op}. Mon numéro : {num}. E-mail de mon compte : {e}. Référence du paiement : ';
   if(!DEMO_MODE)I.fr.lib_note='Vos favoris sont enregistrés sur cet appareil uniquement. Les achats validés suivent votre compte.';I.fr.more='Charger plus';I.sw.more='Pakia zaidi';I.ln.more='Bimisa mosusu';
-  I.fr.net_check='Vérification du réseau…';I.sw.net_check='Inakagua mtandao…';I.ln.net_check='Ezali kotala réseau…';
-  I.fr.net_off='Pas de connexion internet. Vérifiez votre réseau puis réessayez : les vidéos ne s’afficheraient pas.';I.sw.net_off='Hakuna mtandao. Angalia muunganisho wako kisha ujaribu tena.';I.ln.net_off='Internet ezali te. Tala réseau na yo mpe meka lisusu.';
-  I.fr.net_slow='Connexion instable ou très lente : les nouvelles vidéos risquent de rester vides.';I.sw.net_slow='Muunganisho ni dhaifu sana: video mpya zinaweza kubaki tupu.';I.ln.net_slow='Réseau ezali na makasi te : ba video ya sika ekoki kotikala pamba.';
-  I.fr.net_retry='Réessayer';I.sw.net_retry='Jaribu tena';I.ln.net_retry='Meka lisusu';
-  I.fr.net_force='Charger quand même';I.sw.net_force='Pakia hata hivyo';I.ln.net_force='Bimisa ata boye';
   I.fr.priv_fail='Lecture protégée indisponible pour le moment.';
   (function(){
     var N={
@@ -1378,142 +1205,36 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   }
 
   /* ---------- État mémorisé sur l'appareil ---------- */
-  var ST={unlocked:{},favs:{},saver:false,lang:'fr',phone:'',pos:{},seen:0,ori:{}};
+  var ST={unlocked:{},favs:{},saver:false,lang:'fr',phone:'',pos:{},seen:0};
   try{var saved=JSON.parse(localStorage.getItem('tl_state_v1')||'{}');for(var k0 in ST)if(saved[k0]!==undefined)ST[k0]=saved[k0]}catch(e){}
   function saveState(){try{localStorage.setItem('tl_state_v1',JSON.stringify(ST))}catch(e){}}
   lang=LANGS.indexOf(ST.lang)>-1?ST.lang:'fr';
 
   /* ---------- Utilitaires ---------- */
-  var A={},V=[],byId={},FEATURED=[],loading=true,failed=false,ADMUI=false;
+  var A={},V=[],byId={},FEATURED=[],loading=true,failed=false;
   var SRV={},FIL={price:'all',dur:'all',artist:'',cat:'',fav:false},CATS=[];
-  /* Raccourcis PWA : ?filtre=gratuit ou ?filtre=vip */
-  try{var _pf=new URLSearchParams(location.search).get('filtre');if(_pf==='gratuit')FIL.price='free';else if(_pf==='vip')FIL.price='vip'}catch(e){}
   function reindex(){byId={};V.forEach(function(v){byId[v.id]=v});FEATURED=V.slice(0,3).map(function(v){return v.id})}
   var $=function(s){return document.querySelector(s)};
   var p2=function(n){return String(n).padStart(2,'0')};
   var FC=function(n){return String(n)+' FC'};
   var fmt=function(s){s=Math.floor(s);var h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?h+':'+p2(m)+':'+p2(x):m+':'+p2(x)};
   var rate=function(r){return String(r).replace('.',',')};
-  /* Fond noir profond partout (cartes, bannière, lecteur) : plus aucun dégradé coloré */
-  var grad=function(){return 'linear-gradient(160deg,#1a1a1f,#050506)'};
-  var flatBg=function(){return '#050506'};
-  /* Miniature d'une carte, par ordre de priorité :
-     1) thumbnail_url, si elle est renseignée en base ; 2) image déjà extraite de la vidéo et gardée sur l'appareil ;
-     3) sinon extraction automatique : vidéo temporaire hors écran -> 1re seconde -> canvas 480 px -> image injectée.
-     Aucune balise <video> n'est insérée dans la page : seule l'image finale est affichée. */
-  var CAPKEY='tl_caps_v1',CAPS={},CAPMAX=60,FAILTTL=72e5,capPend={},capQ=[],capBusy=0;
-  try{CAPS=JSON.parse(localStorage.getItem(CAPKEY)||'{}')||{}}catch(e){CAPS={}}
-  function capSave(){
-    var ks=Object.keys(CAPS);
-    if(ks.length>CAPMAX){ks.sort(function(a,b){return (CAPS[a].t||0)-(CAPS[b].t||0)}).slice(0,ks.length-CAPMAX).forEach(function(k){delete CAPS[k]})}
-    try{localStorage.setItem(CAPKEY,JSON.stringify(CAPS))}
-    catch(e){ /* quota ou mode privé : on garde la moitié la plus récente, sinon uniquement en mémoire */
-      try{var a=Object.keys(CAPS).sort(function(x,y){return (CAPS[x].t||0)-(CAPS[y].t||0)});a.slice(0,Math.ceil(a.length/2)).forEach(function(k){delete CAPS[k]});localStorage.setItem(CAPKEY,JSON.stringify(CAPS))}catch(e2){}
-    }
+  var grad=function(v){var g='linear-gradient(160deg,hsl('+v.h+' 55% 32%),hsl('+((v.h+35)%360)+' 60% 13%))';return v.img?"center/cover url('"+encodeURI(v.img).replace(/'/g,'%27')+"'),"+g:g};
+  var gradBg=function(v){return 'linear-gradient(160deg,hsl('+v.h+' 55% 32%),hsl('+((v.h+35)%360)+' 60% 13%))'};
+  /* Miniature : vraie image de couverture ; si elle ne charge pas, le dégradé en dessous reste visible */
+  var flatBg=function(v){return v.img?'#16161a':gradBg(v)};
+  /* Miniature : image ImgBB quand elle existe ; sinon une jaquette typographique (dégradé aux teintes du site + titre lisible).
+     Jamais d'image générique, jamais de bloc vide. */
+  function phHTML(v,nt){
+    var h=((+v.h)||0)%360,h2=(h+40)%360;
+    return '<div class="ph" role="img" aria-label="'+esc(v.t||'')+'" style="--h1:'+h+';--h2:'+h2+'"><span class="ph-ring" aria-hidden="true"></span>'+(nt?'':'<span class="ph-k">TOPLEAKS</span><span class="ph-t">'+esc(v.t||'')+'</span>')+'</div>';
   }
-  function capOf(v){var c=CAPS[v.id];return c&&c.u&&c.s===capSrc(v)?c.u:''}
-  function capFailed(v){var c=CAPS[v.id];return !!(c&&c.f&&c.s===capSrc(v)&&Date.now()-c.f<FAILTTL)}
-  function canCap(v){return !!capSrc(v)&&!ST.saver&&!capFailed(v)&&('IntersectionObserver' in window)}
-  /* Cas sans image possible (économie de data, source absente ou illisible) : fond noir uni #050506, aucun bloc décoratif */
-  function blankHTML(v){return '<div class="thumb-blank" role="img" aria-label="'+esc(v.t||'')+'"></div>'}
-  /* Source utilisée pour capturer la vignette : le lien vidéo exploitable. Jamais une vidéo protégée (VIP privée) ni une URL signée qui expire. */
-  function capSrc(v){return v.priv?'':(v.video_url||'')}
-  function imgTag(v,src,fade){
-    return '<img class="thumb-img thumbnail-img'+(fade?' cap-in':'')+'" src="'+esc(src)+'" data-id="'+esc(v.id)+'" alt="'+esc(v.t||'')+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">';
-  }
-  function slotHTML(v){return '<div class="sk cap-slot" data-cap="'+esc(v.id)+'" role="img" aria-label="'+esc(v.t||'')+'"></div>'}
-  var thumbImg=function(v){
-    if(v.img)return imgTag(v,v.img);
-    var c=capOf(v);if(c)return imgTag(v,c);
-    return canCap(v)?slotHTML(v):blankHTML(v);
+  var thumbImg=function(v,nt){
+    if(!v.img)return phHTML(v,nt);
+    return '<img class="thumb-img thumbnail-img" src="'+esc(v.img)+'" data-h="'+(v.h|0)+'" data-t="'+esc(v.t||'')+'"'+(nt?' data-nt="1"':'')+' alt="'+esc(v.t||'')+'" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">';
   };
-  /* Extraction : vidéo temporaire (jamais ajoutée à la page, crossOrigin anonymous pour que le canvas reste lisible),
-     1re seconde, canvas 480 px max, WebP 65 % (repli JPEG). Si l'image est quasi noire (fondu d'ouverture), on retente plus loin. */
-  var RAT={}; /* ratio largeur/hauteur relevé pendant l'extraction, par URL */
-  function grabFrame(url){
-    return new Promise(function(res,rej){
-      var vd=document.createElement('video'),done=false,tm,tries=0,dur=0;
-      function fin(err,u){
-        if(done)return;done=true;clearTimeout(tm);
-        try{vd.onloadedmetadata=vd.onseeked=vd.onerror=null;vd.removeAttribute('src');vd.load()}catch(e){}
-        err?rej(err):res(u);
-      }
-      function snap(){
-        try{
-          var W=vd.videoWidth,H=vd.videoHeight;
-          if(!(W>0&&H>0))throw new Error('image vide');
-          RAT[url]=W/H;
-          var w=Math.min(480,W),h=Math.round(w*H/W);
-          var c=document.createElement('canvas');c.width=w;c.height=h;
-          var cx=c.getContext('2d');cx.drawImage(vd,0,0,w,h);
-          var px=cx.getImageData(0,0,w,h).data,sum=0,n=0;
-          for(var i=0;i<px.length;i+=64){sum+=px[i]+px[i+1]+px[i+2];n+=3}
-          if(n&&sum/n<10&&tries<2&&dur>4){tries++;vd.currentTime=Math.min(dur/2,tries*5);return}
-          var u=c.toDataURL('image/webp',.65);if(u.indexOf('data:image/webp')!==0)u=c.toDataURL('image/jpeg',.7);
-          fin(null,u);
-        }catch(e){fin(e)}
-      }
-      vd.crossOrigin='anonymous';
-      vd.muted=true;vd.defaultMuted=true;vd.playsInline=true;vd.preload='metadata';
-      vd.setAttribute('playsinline','');vd.setAttribute('webkit-playsinline','');
-      vd.onerror=function(){fin(new Error('lecture impossible'))};
-      tm=setTimeout(function(){fin(new Error('délai dépassé'))},20000);
-      vd.onloadedmetadata=function(){
-        dur=isFinite(vd.duration)?vd.duration:0;
-        vd.onseeked=snap;
-        try{vd.currentTime=(dur>0&&dur<1.5)?dur/2:1}catch(e){fin(e)}
-      };
-      vd.src=url;
-    });
-  }
-  function paintSlots(id,html,v){
-    Array.prototype.forEach.call(document.querySelectorAll('[data-cap]'),function(el){
-      if(el.getAttribute('data-cap')!==id)return;
-      el.insertAdjacentHTML('afterend',html);el.parentNode.removeChild(el);
-    });
-  }
-  /* File d'attente : 2 extractions à la fois, uniquement pour les cartes réellement affichées à l'écran */
-  function capPump(){
-    while(capBusy<2&&capQ.length){
-      var id=capQ.shift(),v=byId[id];
-      if(!v||!document.querySelector('[data-cap="'+id.replace(/["\\]/g,'')+'"]')){delete capPend[id];continue}
-      capBusy++;
-      (function(id,v){
-        var src=capSrc(v);
-        grabFrame(src).then(function(u){
-          CAPS[id]={u:u,s:src,t:Date.now()};capSave();
-          if(RAT[src])setOri(id,RAT[src]);
-          paintSlots(id,imgTag(v,u,true),v);
-        },function(err){
-          CAPS[id]={f:Date.now(),s:src,t:Date.now()};capSave();
-          console.warn('Miniature automatique impossible :',v.t,err&&err.message);
-          paintSlots(id,blankHTML(v),v);
-        }).then(function(){capBusy--;delete capPend[id];capPump()});
-      })(id,v);
-    }
-  }
-  function capEnqueue(id){if(capPend[id])return;capPend[id]=1;capQ.push(id);capPump()}
-  var capIO=null;
-  function hydrateCaps(){
-    var list=document.querySelectorAll('.cap-slot[data-cap]:not([data-obs])');
-    if(!list.length)return;
-    if(!('IntersectionObserver' in window)){Array.prototype.forEach.call(list,function(el){var v=byId[el.getAttribute('data-cap')];if(v)paintSlots(v.id,blankHTML(v),v)});return}
-    if(!capIO)capIO=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){capIO.unobserve(en.target);capEnqueue(en.target.getAttribute('data-cap'))}})},{rootMargin:'300px'});
-    Array.prototype.forEach.call(list,function(el){el.setAttribute('data-obs','1');capIO.observe(el)});
-  }
-  /* thumbnail_url qui ne charge pas : on retombe sur l'extraction depuis la vidéo */
-  document.addEventListener('error',function(e){
-    var im=e.target;
-    if(!(im&&im.tagName==='IMG'&&im.classList&&im.classList.contains('thumb-img')))return;
-    var v=byId[im.getAttribute('data-id')];if(!v)return;
-    var c=capOf(v),html=c&&c!==im.getAttribute('src')?imgTag(v,c):(canCap(v)?slotHTML(v):blankHTML(v));
-    im.insertAdjacentHTML('afterend',html);im.parentNode.removeChild(im);
-  },true);
-  /* miniature téléchargée : on coupe le balayage lumineux (l'événement load ne remonte pas, d'où la phase de capture) */
-  document.addEventListener('load',function(e){
-    var im=e.target;
-    if(im&&im.tagName==='IMG'&&im.classList&&im.classList.contains('thumb-img'))im.classList.add('ld');
-  },true);
+  /* Image qui ne charge pas (lien mort, réseau bloqué, mode privé) : on la remplace par la jaquette au lieu d'un bloc vide */
+  document.addEventListener('error',function(e){var im=e.target;if(im&&im.tagName==='IMG'&&im.classList&&im.classList.contains('thumb-img')){var par=im.parentNode;im.insertAdjacentHTML('afterend',phHTML({h:+im.getAttribute('data-h')||0,t:im.getAttribute('data-t')||''},im.hasAttribute('data-nt')));par.removeChild(im);if(par.classList)par.classList.add('thumb-ph')}},true);
   var plain=function(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase()};
   var esc=function(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
   var toastT;
@@ -1550,10 +1271,26 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
       return mobile||small||noAR||!('IntersectionObserver' in window)||c.saveData===true;
     }catch(e){return true}
   })();
-  /* Le feed n'embarque aucune balise <video> : la vidéo ne se charge qu'au clic sur la carte (écran de lecture) */
-  try{if(window.MutationObserver)new MutationObserver(function(){hydrateCaps()}).observe(document.querySelector('.app'),{childList:true,subtree:true})}catch(e){}
+  /* Le feed n'embarque plus aucune balise <video> : la vidéo ne se charge qu'au clic sur la carte (écran de lecture) */
+  function cover(v){return ''}
+  /* Sur ordinateur : la mini-vidéo ne se charge que lorsqu'elle approche de l'écran ; en cas d'erreur elle disparaît et le dégradé reste visible */
+  var coverIO=null;
+  function hydrateCovers(){
+    var list=document.querySelectorAll('video.cover-video[data-src]');
+    if(!list.length||!('IntersectionObserver' in window))return;
+    if(!coverIO)coverIO=new IntersectionObserver(function(es){es.forEach(function(en){
+      if(!en.isIntersecting)return;
+      var el=en.target,src=el.getAttribute('data-src');coverIO.unobserve(el);
+      if(!src)return;
+      el.removeAttribute('data-src');el.muted=true;
+      el.addEventListener('error',function(){el.style.display='none'});
+      el.preload='metadata';el.src=src;
+    })},{rootMargin:'200px'});
+    Array.prototype.forEach.call(list,function(el){coverIO.observe(el)});
+  }
+  try{if(window.MutationObserver)new MutationObserver(hydrateCovers).observe(document.querySelector('.app'),{childList:true,subtree:true})}catch(e){}
   function slideHTML(v){
-    return '<article class="slide" style="--g:'+flatBg(v)+'">'+thumbImg(v)+'<span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
+    return '<article class="slide" style="--g:'+flatBg(v)+'">'+thumbImg(v,1)+cover(v)+'<span class="glyph" aria-hidden="true">“</span><div class="scrim"></div><div class="slide-body">'+
       '<div class="tags"><span class="tag'+(v.p?' tag-vip':'')+'">'+(v.p?'VIP':t('free'))+'</span>'+(isNew(v)?'<span class="tag">'+t('isnew')+'</span>':'')+'</div>'+
       '<h2 class="slide-title">'+esc(v.t)+'</h2>'+
       '<p class="slide-meta">'+esc(aName(v))+'</p>'+
@@ -1564,24 +1301,15 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     var on=!!ST.favs[v.id];
     return '<button class="heart" type="button" data-fav="'+esc(v.id)+'" aria-pressed="'+on+'" aria-label="'+esc(t('fav')+' : '+v.t)+'"><svg class="ic"><use href="#i-heart"/></svg></button>';
   }
-  /* Menu ⋮ visible uniquement quand l'administrateur est connecté : modifier, masquer ou supprimer en 1 clic */
-  function admMenu(v){
-    var id=esc(v.id);
-    return '<div class="ckebab"><button class="ckbtn" type="button" data-ckebab="'+id+'" aria-haspopup="menu" aria-expanded="false" aria-label="Options admin : '+esc(v.t)+'"><svg class="ic"><use href="#i-dots"/></svg></button>'+
-      '<div class="ckmenu" role="menu" hidden>'+
-      '<button type="button" role="menuitem" data-cact="edit" data-cid="'+id+'">Modifier</button>'+
-      '<button type="button" role="menuitem" data-cact="hide" data-cid="'+id+'">Masquer</button>'+
-      '<button type="button" role="menuitem" class="danger" data-cact="del" data-cid="'+id+'">Supprimer</button></div></div>';
-  }
   function cardHTML(v){
-    return '<div class="card'+(ADMUI?' adm':'')+'">'+
+    return '<div class="card">'+
       '<button class="card-hit" type="button" data-open="'+esc(v.id)+'" aria-label="'+esc(v.t)+', '+esc(aName(v))+(v.p?', VIP, '+FC(v.p):', '+t('free'))+'">'+
-      '<div class="thumb" style="--g:'+flatBg(v)+'">'+thumbImg(v)+'<span class="glyph" aria-hidden="true">“</span><span class="play-ov" aria-hidden="true"><svg class="ic f"><use href="#i-play"/></svg></span>'+
+      '<div class="thumb'+(v.img?'':' thumb-ph')+'" style="--g:'+flatBg(v)+'">'+thumbImg(v)+cover(v)+'<span class="glyph" aria-hidden="true">“</span><span class="play-ov" aria-hidden="true"><svg class="ic f"><use href="#i-play"/></svg></span>'+
       (v.p?'<span class="vip"><svg class="ic"><use href="#i-lock"/></svg>VIP</span>':'')+
       (isNew(v)?'<span class="new">'+t('isnew')+'</span>':'')+
       '</div>'+
       '<span class="c-title">'+esc(v.t)+'</span><span class="c-meta">'+esc(aName(v))+' · '+(v.p?FC(v.p):t('free'))+'</span></button>'+
-      heartBtn(v)+(ADMUI?admMenu(v):'')+'</div>';
+      heartBtn(v)+'</div>';
   }
   function skeletonCards(n){var h='';for(var i=0;i<n;i++)h+='<div class="card" aria-hidden="true"><div class="sk thumb-sk"></div><div class="sk line"></div><div class="sk line short"></div></div>';return h}
   function renderHome(){
@@ -1624,48 +1352,8 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     g.innerHTML=rows.length?rows.slice(0,SHOWN).map(cardHTML).join(''):'<p class="hint" style="grid-column:1/-1">'+esc(t(FIL.fav?'fav_empty':'f_none'))+'</p>';
     var mb=$('#morebox');if(mb)mb.innerHTML=rows.length>SHOWN?'<button id="moreb" class="btn btn-ghost" type="button">'+esc(t('more'))+' ('+(rows.length-SHOWN)+')</button>':'';
   }
-  /* ---------- Vérification réseau avant « Charger plus » ----------
-     1) navigator.onLine === false : réponse immédiate, aucun test.
-     2) sinon test rapide de joignabilité de Supabase (mode no-cors : toute réponse, même 401, prouve que le réseau passe ; seul un échec réseau rejette).
-     Plus de 4 s sans réponse = connexion instable. Un test réussi est retenu 10 s pour ne pas retarder les clics suivants. */
-  var netOkAt=0,NET_TTL=10000,NET_TIMEOUT=4000,moreBusy=false;
-  function checkNet(){
-    if(navigator.onLine===false)return Promise.resolve('offline');
-    if(Date.now()-netOkAt<NET_TTL)return Promise.resolve('ok');
-    return new Promise(function(res){
-      var ctl=('AbortController' in window)?new AbortController():null,done=false,t0=Date.now();
-      var tm=setTimeout(function(){if(done)return;done=true;if(ctl){try{ctl.abort()}catch(e){}}res('slow')},NET_TIMEOUT);
-      fetch(SB_URL+'/auth/v1/health?_='+t0,{method:'GET',mode:'no-cors',cache:'no-store',signal:ctl?ctl.signal:undefined}).then(function(){
-        if(done)return;done=true;clearTimeout(tm);netOkAt=Date.now();res('ok');
-      },function(){
-        if(done)return;done=true;clearTimeout(tm);res('offline');
-      });
-    });
-  }
-  function clearNetWarn(){var w=document.querySelector('#morebox .netwarn');if(w)w.parentNode.removeChild(w)}
-  function netWarn(kind){
-    var mb=$('#morebox');if(!mb)return;
-    clearNetWarn();
-    mb.insertAdjacentHTML('beforeend','<div class="netwarn" role="alert"><p>'+esc(t(kind==='slow'?'net_slow':'net_off'))+'</p><div class="netact"><button id="netretry" class="btn btn-ghost" type="button">'+esc(t('net_retry'))+'</button>'+(kind==='slow'?'<button id="netforce" class="btn btn-ghost" type="button">'+esc(t('net_force'))+'</button>':'')+'</div></div>');
-  }
-  function doMore(){SHOWN+=PER;renderGrid()}
-  function loadMore(){
-    if(moreBusy)return;moreBusy=true;
-    var b=$('#moreb'),old=b?b.textContent:'';
-    clearNetWarn();
-    if(b){b.disabled=true;b.textContent=t('net_check')}
-    checkNet().then(function(r){
-      moreBusy=false;
-      if(r==='ok'){doMore();return}
-      var b2=$('#moreb');if(b2&&b2===b){b2.disabled=false;b2.textContent=old}
-      netWarn(r);
-    });
-  }
-  window.addEventListener('online',function(){netOkAt=0;clearNetWarn()});
-  window.addEventListener('offline',function(){netOkAt=0});
   $('#rows').addEventListener('click',function(e){
-    if(e.target.closest('#moreb')||e.target.closest('#netretry')){loadMore();return}
-    if(e.target.closest('#netforce')){doMore();return}
+    if(e.target.closest('#moreb')){SHOWN+=PER;renderGrid();return}
     var b=e.target.closest('[data-f]');if(!b)return;
     var fs=b.getAttribute('data-f'),fi=fs.indexOf(':'),fg=fs.slice(0,fi),fv=fs.slice(fi+1);SHOWN=PER;
     FIL[fg]=(fg==='fav')?!FIL.fav:(fg==='cat')?(FIL.cat===fv?'':fv):((fg==='dur'&&FIL.dur===fv)?'all':fv);renderFilters();renderGrid();
@@ -1746,9 +1434,9 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   var seek=$('#seek'),vid=$('#vid'),buffer=$('#buffer'),wm=$('#wm');
   var ADM=false;
   /* Vidéo protégée (cur.priv) : seul un achat confirmé par le serveur ou un compte admin l'ouvre. Le déblocage démo n'y donne aucun accès. */
-  /* VIP (prix > 0) non payée, non débloquée et hors admin : verrouillée, sans aucun extrait */
-  var locked=function(){if(!(cur.p>0)||ADM||ADMUI||SRV[cur.id])return false;return cur.priv?true:!ST.unlocked[cur.id]};
-  var limit=function(){return cur.dur};
+  var locked=function(){if(cur.priv)return cur.p>0&&!SRV[cur.id]&&!ADM;return cur.p>0&&!ST.unlocked[cur.id]&&!SRV[cur.id]};
+  var PREVIEW_SEC=5;
+  var limit=function(){return locked()?(cur.dur?Math.min(PREVIEW_SEC,cur.dur):PREVIEW_SEC):cur.dur};
 
   function setPos(v){
     pos=Math.max(0,Math.min(v,limit()));
@@ -1779,79 +1467,43 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     $('#gate').hidden=false;
   }
   function play(){
-    /* Verrou immédiat : la source n'est jamais touchée tant que la vidéo n'est pas payée */
-    if(locked()){showGate();return}
     /* Lecture réservée aux comptes connectés : sinon on ouvre la fenêtre de connexion */
     if(!session){pause();openAuth(t('play_need'),function(){if(cur&&views.detail&&!views.detail.hidden)play()});return}
+    if(cur.priv&&locked()&&!cur.video_url){showGate();return}
     if(cur.video_url){
+      if(locked()&&vid.currentTime>=limit()){showGate();return}
       $('#gate').hidden=true;
       /* Mobile : le fichier vidéo n'est chargé qu'ici, au clic sur lecture ; avant, seule l'image de couverture est affichée */
       if(!vid.getAttribute('src'))vid.src=cur.video_url;
       var pr=vid.play();if(pr&&pr.catch)pr.catch(function(){});
       return;
     }
-    if(pos>=limit())setPos(0);
+    if(pos>=limit()){
+      if(locked()){showGate();return}
+      setPos(0);
+    }
     $('#gate').hidden=true;
     playing=true;setPlayIcon();clearInterval(timer);startWm();trackView();
     timer=setInterval(function(){
       setPos(pos+1);
-      if(pos>=limit())pause();
+      if(pos>=limit()){pause();if(locked())showGate()}
     },1000);
   }
   $('#pplay').addEventListener('click',function(){playing?pause():play()});
   seek.addEventListener('input',function(){
     var v=+seek.value;
     setPos(v);
-    if(locked())showGate();
+    if(locked()&&v>limit()){showGate()}
   });
   $('#gatebtn').addEventListener('click',function(){if(cur&&locked())openPay(videoItem(cur),'detail')});
   function guardVid(){
-    /* Garde-fou : si un lecteur démarre malgré le verrou, on coupe la source et on affiche le paiement */
-    if(!cur||!locked()||vid.paused)return;
-    vid.pause();vid.removeAttribute('src');try{vid.load()}catch(e){}
-    showGate();
+    if(!cur||!cur.video_url||!locked()||!$('#gate').hidden)return;
+    if(vid.currentTime>=limit()){showGate();vid.currentTime=Math.max(0,limit()-0.1)}
   }
   vid.addEventListener('timeupdate',guardVid);
   vid.addEventListener('seeking',guardVid);
-  vid.addEventListener('play',guardVid);
-  /* ---------- Compteur de chargement du lecteur ----------
-     Pourcentage = secondes déjà en mémoire devant la position de lecture / secondes nécessaires pour démarrer (BUF_NEED, ajustable).
-     Il monte de 1 % à 99 % pendant le tampon, passe à 100 % dès que la lecture est prête, puis l'overlay disparaît.
-     Affiché seulement quand on attend vraiment des données : lecture lancée, manque de tampon, déplacement dans la vidéo. */
-  var bufPct=$('#bufpct'),BUF_NEED=4,bufShown=0,bufHold=0;
-  function bufAhead(){
-    var b=vid.buffered,t0=vid.currentTime||0;
-    for(var i=0;i<b.length;i++)if(b.start(i)<=t0+.3&&b.end(i)>=t0)return b.end(i)-t0;
-    return 0;
-  }
-  function bufCalc(){
-    var left=isFinite(vid.duration)?vid.duration-(vid.currentTime||0):BUF_NEED,need=Math.max(.5,Math.min(BUF_NEED,left));
-    return Math.max(1,Math.min(99,Math.floor(bufAhead()/need*100)));
-  }
-  function bufUpdate(){
-    if(buffer.hidden)return;
-    bufShown=Math.max(bufShown,bufCalc()); /* jamais de recul pendant un même chargement */
-    bufPct.textContent=bufShown+'%';
-  }
-  function bufShow(){
-    clearTimeout(bufHold);
-    if(buffer.hidden||bufShown>=100)bufShown=0;
-    buffer.hidden=false;bufUpdate();
-  }
-  function bufHide(ready){
-    clearTimeout(bufHold);
-    if(buffer.hidden)return;
-    if(ready){bufShown=100;bufPct.textContent='100%';bufHold=setTimeout(function(){buffer.hidden=true;bufShown=0},200)}
-    else{buffer.hidden=true;bufShown=0}
-  }
-  vid.addEventListener('waiting',bufShow);
-  vid.addEventListener('stalled',function(){if(!vid.paused)bufShow()});
-  vid.addEventListener('play',function(){if(vid.readyState<3)bufShow()});
-  vid.addEventListener('seeking',function(){if(vid.readyState<3)bufShow()});
-  ['progress','loadeddata','durationchange'].forEach(function(ev){vid.addEventListener(ev,bufUpdate)});
-  ['canplay','playing'].forEach(function(ev){vid.addEventListener(ev,function(){bufHide(true)})});
-  ['pause','error','ended','emptied','abort'].forEach(function(ev){vid.addEventListener(ev,function(){bufHide(false)})});
-  vid.addEventListener('timeupdate',function(){if(!buffer.hidden&&vid.readyState>=3&&!vid.paused)bufHide(true)}); /* filet de sécurité si un événement est manqué */
+  vid.addEventListener('waiting',function(){buffer.hidden=false});
+  ['playing','canplay','pause','error','ended'].forEach(function(ev){vid.addEventListener(ev,function(){buffer.hidden=true})});
   vid.addEventListener('play',function(){startWm();trackView()});
   vid.addEventListener('pause',stopWm);
   /* Reprise de lecture : position mémorisée sur l'appareil, enregistrée toutes les 5 s */
@@ -1869,25 +1521,10 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   vid.addEventListener('loadedmetadata',function(){
     if(!cur||!cur.video_url||!isFinite(vid.duration))return;
     var p=ST.pos[cur.id];
-    if(p>5&&p<vid.duration-5){var m=p;if(m>5){try{vid.currentTime=m;toast(t('resume',{t:fmt(m)}))}catch(e){}}}
+    if(p>5&&p<vid.duration-5){var m=locked()?Math.min(p,limit()-1):p;if(m>5){try{vid.currentTime=m;toast(t('resume',{t:fmt(m)}))}catch(e){}}}
   });
   vid.addEventListener('loadedmetadata',function(){
     if(cur&&cur.video_url&&isFinite(vid.duration)&&!cur.dur){cur.dur=Math.ceil(vid.duration)}
-  });
-
-  /* ---------- Lecteur adaptatif : paysage (16:9, pleine largeur) ou vertical (9:16, colonne centrée) ---------- */
-  function setOri(id,r){
-    r=Math.round(r*1000)/1000;if(!(r>0)||ST.ori[id]===r)return;
-    ST.ori[id]=r;saveState();
-  }
-  function applyOri(r){
-    var pl=$('#player'),vert=r>0&&r<0.9;
-    pl.classList.toggle('vertical',vert);
-    if(vert)pl.style.setProperty('--arn',Math.max(.4,r));else pl.style.removeProperty('--arn');
-  }
-  vid.addEventListener('loadedmetadata',function(){
-    if(!cur||!cur.video_url||!(vid.videoWidth>0&&vid.videoHeight>0))return;
-    var r=vid.videoWidth/vid.videoHeight;setOri(cur.id,r);applyOri(r);
   });
 
   /* ---------- Lecteur personnalisé (vidéo réelle) : mêmes règles d'aperçu que le lecteur natif (guardVid) ---------- */
@@ -1896,7 +1533,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   function exitFs(){if(!fsEl())return;try{(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(e){}}
   function vmax(){
     var d=isFinite(vid.duration)?vid.duration:((cur&&cur.dur)||0);
-    return d;
+    return (cur&&locked())?Math.min(d||limit(),limit()):d;
   }
   function vSync(){
     if(!cur||vid.hidden)return;
@@ -1959,6 +1596,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
         '<button id="watchnow" class="btn btn-primary" type="button"><svg class="ic f"><use href="#i-play"/></svg>'+t('watch')+'</button>';
       $('#watchnow').addEventListener('click',function(){window.scrollTo(0,0);if(!cur.video_url&&pos>=limit())setPos(0);play()});
     }
+    $('#pchip').hidden=!locked();
   }
   function renderFav(){
     var on=!!ST.favs[cur.id];
@@ -1971,14 +1609,15 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   }
   function openDetail(id){
     cur=byId[id];if(!cur)return;
+    if(cur.priv)cur.video_url=cur.preview||'';
     pause();viewed=false;wm.hidden=true;buffer.hidden=true;
-    $('#player').style.setProperty('--g','#000');applyOri(ST.ori[cur.id]||0);
+    $('#player').style.setProperty('--g',grad(cur));
     seek.max=cur.dur||100;
-    var hv=!!cur.video_url&&!locked();
+    var hv=!!cur.video_url;
     vid.hidden=!hv;$('#pplay').hidden=hv;document.querySelector('.p-ctl').hidden=hv;
     $('#vctl').hidden=!hv;$('#vbig').hidden=!hv;vid.classList.remove('live');$('#player').classList.remove('vplaying','idle');$('#vnow').textContent='0:00';$('#vtot').textContent=fmt(cur.dur);$('#vseek').value=0;$('#vseek').style.setProperty('--p','0%');
     vid.preload=(ST.saver||LITE)?'none':'metadata';
-    if(hv){vid.controls=false;vid.poster=cur.img||capOf(cur)||'';if(LITE){vid.removeAttribute('src');vid.load()}else vid.src=cur.video_url}else{vid.removeAttribute('poster');vid.removeAttribute('src');vid.load()}
+    if(hv){vid.controls=false;vid.poster=cur.img||'';if(LITE){vid.removeAttribute('src');vid.load()}else vid.src=cur.video_url}else{vid.removeAttribute('poster');vid.removeAttribute('src');vid.load()}
     $('#ttot').textContent=fmt(cur.dur);
     $('#gate').hidden=true;
     $('#dtitle').textContent=cur.t;
@@ -1990,8 +1629,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     $('#dartist').innerHTML='<div class="avatar" style="--g:'+grad({h:(cur.h+120)%360})+'" aria-hidden="true">'+esc(ini)+'</div><div><h3>'+esc(a)+'</h3></div>';
     setPos(0);renderMeta();
     show('detail');refreshSocial();
-    if(locked()){$('#pplay').hidden=true;$('#vbig').hidden=true;$('#vctl').hidden=true;document.querySelector('.p-ctl').hidden=true;showGate()}
-    if(cur.priv)resolveSource();
+    if(cur.priv){if(locked()&&!cur.video_url){$('#pplay').hidden=true;showGate()}resolveSource()}
   }
   /* Vidéo protégée : lien signé d'une heure, demandé avec le jeton du compte ; le serveur refuse sans achat confirmé */
   function resolveSource(){
@@ -2004,7 +1642,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
         if(!cur||cur.id!==id)return;
         cur.video_url=SB_URL+'/storage/v1'+j.signedURL;
         $('#gate').hidden=true;vid.hidden=false;$('#pplay').hidden=true;document.querySelector('.p-ctl').hidden=true;
-        vid.controls=false;$('#vctl').hidden=false;$('#vbig').hidden=false;vid.poster=cur.img||capOf(cur)||'';if(!LITE)vid.src=cur.video_url;
+        vid.controls=false;$('#vctl').hidden=false;$('#vbig').hidden=false;vid.poster=cur.img||'';if(!LITE)vid.src=cur.video_url;
       });
     }).catch(function(){if(cur&&cur.id===id&&!locked())toast(t('priv_fail'))});
   }
@@ -2037,7 +1675,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   function renderPaySum(){
     var it=payItem;
     var thumb=it.vid
-      ?'<div class="thumb" style="--g:'+flatBg(it.vid)+'">'+thumbImg(it.vid)+'<span class="glyph" aria-hidden="true">“</span></div>'
+      ?'<div class="thumb" style="--g:'+flatBg(it.vid)+'">'+thumbImg(it.vid)+cover(it.vid)+'<span class="glyph" aria-hidden="true">“</span></div>'
       :'<div class="thumb offer-thumb" style="--g:linear-gradient(160deg,hsl(38 70% 40%),hsl(275 60% 16%))"><span class="glyph" aria-hidden="true">“</span></div>';
     var h='<div class="sum-top">'+thumb+'<div><b>'+esc(it.title)+'</b><span>'+esc(it.sub)+'</span></div></div>'+
       '<div class="sum-row"><span>'+t('price')+'</span><span>'+FC(it.price)+'</span></div>';
@@ -2053,7 +1691,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     $('#perr').textContent='';$('#phone').classList.remove('bad');
     if(ST.phone&&!$('#phone').value)$('#phone').value=ST.phone;
     $('#watch').removeAttribute('data-wa');
-    renderPaySum();payState('form');show('pay');loadPayNumber();
+    renderPaySum();payState('form');show('pay');
   }
   function backFromPay(){clearTimeout(payT);show(payFrom==='detail'&&cur?'detail':'home')}
   ['#payclose','#cancel','#waitcancel'].forEach(function(s){$(s).addEventListener('click',backFromPay)});
@@ -2177,7 +1815,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
         var name=r.artist||'TOPLEAKS';
         if(!A[name])A[name]={n:name};
         return {id:String(r.id),a:name,t:r.title||'Sans titre',dur:r.duration_seconds||0,r:0,p:+r.price_fc||0,
-          created:r.created_at,h:hue(r.title||''),d:r.description||'',db:true,img:https(r.thumbnail_url),video_url:r.video_path?'':https(r.video_url),cat:String(r.category_id==null?'':r.category_id),priv:r.video_path||''};
+          created:r.created_at,h:hue(r.title||''),d:r.description||'',db:true,img:https(r.thumbnail_url),video_url:https(r.video_url),cat:String(r.category_id==null?'':r.category_id),priv:r.video_path||'',preview:r.video_path?https(r.video_url):''};
       });
       loading=false;failed=false;reindex();renderHome();search();openShared();notifyNew();
       setStatus(V.length?'Supabase · '+V.length:'Supabase · 0');
@@ -2257,7 +1895,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     });
   }
   function authMsg(x,bad){var el=$('#signm').hidden?$('#authmsg'):$('#signmsg');el.textContent=x||'';el.className='hint'+(x&&bad?' bad':'')}
-  var MODALS=['#authm','#signm','#comm','#qedit','#apkm'];
+  var MODALS=['#authm','#signm','#comm'];
   function openModal(sel){
     lastFocus=document.activeElement;$(sel).hidden=false;document.body.style.overflow='hidden';
     setTimeout(function(){var f=null,q2=$(sel).querySelectorAll('input,textarea');for(var i=0;i<q2.length;i++){if(!q2[i].closest('[hidden]')){f=q2[i];break}}if(!f)f=$(sel).querySelector('.xclose');if(f)try{f.focus()}catch(e){}},40);
@@ -2498,7 +2136,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     if(!session)return;
     authedFetch(REST+'purchases?select=video_id&status=eq.paid&video_id=not.is.null').then(function(r){return r.ok?r.json():[]}).then(function(rows){
       rows.forEach(function(x){SRV[x.video_id]=true});
-      if(cur&&!views.detail.hidden){renderMeta();if(!cur.priv&&cur.video_url&&!locked()&&vid.hidden)openDetail(cur.id)}
+      if(cur&&!views.detail.hidden)renderMeta();
       if(!views.lib.hidden)renderLib();
       resolveSource();
     }).catch(function(){});
@@ -2522,16 +2160,8 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   var admCache=null;
   function syncAdminBtn(){
     var b=$('#adminopen');if(!b)return;
-    if(!session||!session.user){b.hidden=true;setAdminUI(false);if(views.admin&&!views.admin.hidden)show('home');return}
-    isAdmin().then(function(v){b.hidden=!v;setAdminUI(v);if(!v&&views.admin&&!views.admin.hidden)show('home')});
-  }
-  /* Affiche ou retire le menu ⋮ sur les cartes selon le statut administrateur */
-  function setAdminUI(v){
-    v=!!v;if(v===ADMUI)return;
-    ADMUI=v;
-    if(loading)return;
-    renderGrid();search();
-    if(views.lib&&!views.lib.hidden)renderLib();
+    if(!session||!session.user){b.hidden=true;if(views.admin&&!views.admin.hidden)show('home');return}
+    isAdmin().then(function(v){b.hidden=!v;if(!v&&views.admin&&!views.admin.hidden)show('home')});
   }
   function isAdmin(){
     if(!session||!session.user)return Promise.resolve(false);
@@ -2549,7 +2179,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
       if(!x)return;
       return authedFetch(REST+'admins?select=user_id&user_id=eq.'+enc(x.user.id)).then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
         if(!rows.length){$('#aneed').hidden=false;$('#aneedtxt').textContent=t('admin_not');$('#aopenauth').hidden=true;return}
-        $('#apanel').hidden=false;$('#apaynum').value=PAY_NUMBER;loadPayNumber();loadStats();loadCats();
+        $('#apanel').hidden=false;loadStats();loadCats();
       });
     }).catch(function(err){$('#aneed').hidden=false;amsg(friendlyErr(err),true)});
   }
@@ -2669,233 +2299,11 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
       .catch(function(err){dl.disabled=false;amsg('Échec : '+err.message,true)});
     }
   });
-  /* ---------- Actions rapides du menu ⋮ des cartes ---------- */
-  function closeCkMenus(){
-    Array.prototype.forEach.call(document.querySelectorAll('.ckmenu'),function(m){
-      m.hidden=true;var b=m.parentNode.querySelector('.ckbtn');if(b)b.setAttribute('aria-expanded','false');
-      var c=m.closest('.card');if(c)c.classList.remove('menu-open');
-    });
-  }
-  function refreshAdminLists(){var ap=$('#apanel');if(ap&&!ap.hidden)loadStats()}
-  function quickErr(err){toast('Échec : '+(err.noSession?t('admin_need'):(err.network?t('e_net'):err.message)))}
-  function quickHide(id){
-    authedFetch(REST+'videos?id=eq.'+enc(id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({is_published:false})})
-    .then(function(r){if(!r.ok)return restErr(r);toast('Vidéo masquée du catalogue');loadVideos();refreshAdminLists()})
-    .catch(quickErr);
-  }
-  function quickDelete(id){
-    var v=byId[id];if(!v)return;
-    if(!confirm('Supprimer « '+v.t+' » définitivement ? Ses statistiques seront perdues.'))return;
-    authedFetch(REST+'videos?select=video_url,thumbnail_url,video_path&id=eq.'+enc(id)).then(function(r){return r.ok?r.json():[]}).then(function(rows){
-      var row=rows[0]||{};
-      return authedFetch(REST+'videos?id=eq.'+enc(id),{method:'DELETE'}).then(function(r){if(!r.ok)return restErr(r);return cleanFiles(row)});
-    }).then(function(){
-      if(editId===id)stopEdit();
-      if(ST.favs[id]){delete ST.favs[id];saveState()}
-      toast('Vidéo supprimée, fichiers effacés');loadVideos();refreshAdminLists();
-    }).catch(quickErr);
-  }
-  var qeId=null,qePicker=null,qeOld='';
-  function qeClean(){
-    if(qePicker){qePicker.destroy();qePicker=null}
-    var h=$('#qeframe');if(h){h.innerHTML='';h.hidden=true}
-    var c=$('#qecur');if(c){c.innerHTML='';c.hidden=true}
-  }
-  function closeQE(){qeClean();closeModal('#qedit')}
-  /* Mini-lecteur de la vidéo existante : lien public direct, ou lien signé d'une heure pour une vidéo VIP (fichier privé) */
-  function qeFrame(id,v){
-    var cur=$('#qecur'),host=$('#qeframe');
-    if(v.thumbnail_url){cur.innerHTML='<img alt="Miniature actuelle" src="'+esc(v.thumbnail_url)+'"><span>Miniature actuelle</span>';cur.hidden=false}
-    else{cur.innerHTML='';cur.hidden=true}
-    host.hidden=false;host.innerHTML='<p class="fp-info">Chargement de la vidéo…</p>';
-    function fail(){
-      if(qeId!==id)return;
-      if(qePicker){qePicker.destroy();qePicker=null}
-      host.innerHTML='<p class="fp-info">Aperçu indisponible pour cette vidéo (lien externe ou fichier protégé). Le reste reste modifiable.</p>';
-    }
-    function go(src){if(qeId!==id)return;qePicker=FramePicker(host,{src:src,compact:true,onError:fail})}
-    if(v.video_path){
-      authedFetch(SB_URL+'/storage/v1/object/sign/videos-private/'+v.video_path.split('/').map(encodeURIComponent).join('/'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({expiresIn:3600})})
-      .then(function(r){return r.ok?r.json():restErr(r)}).then(function(j){go(SB_URL+'/storage/v1'+j.signedURL)}).catch(fail);
-    }else if(v.video_url)go(v.video_url);
-    else fail();
-  }
-  function qeMsg(x,bad){var el=$('#qemsg');el.textContent=x||'';el.className='hint'+(x&&bad?' bad':'')}
-  function openQuickEdit(id){
-    qeId=id;qeClean();qeOld='';$('#qeform').reset();
-    $('#qecat').innerHTML='<option value="">Aucune</option>'+CATS.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>'}).join('');
-    qeMsg('Chargement…');openModal('#qedit');
-    function ok(r){return r.ok?r.json():restErr(r)}
-    authedFetch(REST+'videos?select=title,artist,description,price_fc,category_id,video_url,video_path,thumbnail_url&id=eq.'+enc(id)).then(function(r){
-      return r.status===400?authedFetch(REST+'videos?select=title,artist,description,price_fc,video_url,video_path,thumbnail_url&id=eq.'+enc(id)).then(ok):ok(r);
-    }).then(function(rows){
-      if(qeId!==id)return;
-      var v=rows[0];if(!v){qeMsg('Vidéo introuvable.',true);return}
-      $('#qetitleinp').value=v.title||'';$('#qeartist').value=v.artist||'';$('#qeprice').value=v.price_fc||0;$('#qedesc').value=v.description||'';
-      $('#qecat').value=(v.category_id==null?'':String(v.category_id));qeMsg('');qeOld=v.thumbnail_url||'';qeFrame(id,v);
-    }).catch(function(err){qeMsg('Échec : '+(err.noSession?t('admin_need'):err.message),true)});
-  }
-  document.addEventListener('click',function(e){
-    var kb=e.target.closest('[data-ckebab]');
-    if(kb){
-      var m=kb.parentNode.querySelector('.ckmenu'),was=m.hidden;closeCkMenus();
-      m.hidden=!was;kb.setAttribute('aria-expanded',was?'true':'false');
-      var cd=kb.closest('.card');if(cd)cd.classList.toggle('menu-open',was);
-      return;
-    }
-    var ac=e.target.closest('[data-cact]');
-    if(ac){
-      var id=ac.getAttribute('data-cid'),act=ac.getAttribute('data-cact');closeCkMenus();
-      if(act==='edit')openQuickEdit(id);else if(act==='hide')quickHide(id);else if(act==='del')quickDelete(id);
-      return;
-    }
-    if(!e.target.closest('.ckebab'))closeCkMenus();
-  });
-  document.addEventListener('keydown',function(e){
-    if(e.key!=='Escape')return;
-    closeCkMenus();
-    if(!$('#qedit').hidden)closeQE();
-  });
-  $('#qeclose').addEventListener('click',closeQE);
-  $('#qecancel').addEventListener('click',closeQE);
-  $('#qedit').addEventListener('click',function(e){if(e.target===this)closeQE()});
-  $('#qeform').addEventListener('submit',function(e){
-    e.preventDefault();var id=qeId;if(!id)return;
-    var title=$('#qetitleinp').value.trim(),price=parseInt($('#qeprice').value,10);
-    if(title.length<2){qeMsg('Titre trop court.',true);return}
-    if(!(price>=0)){qeMsg('Prix invalide.',true);return}
-    var body={title:title,artist:$('#qeartist').value.trim()||null,description:$('#qedesc').value.trim()||null,price_fc:price};
-    if($('#qecat').value||CATS.length)body.category_id=$('#qecat').value||null;
-    var btn=$('#qesave'),newThumb=null,oldThumb=qeOld,saved=false;btn.disabled=true;qeMsg('Enregistrement…');
-    /* frame choisie : capture -> envoi dans le bucket -> thumbnail_url mis à jour avec le titre, le prix, etc. */
-    var pick=qePicker&&qePicker.touched()?qePicker.capture():Promise.resolve(null);
-    pick.then(function(blob){
-      if(!blob)return;
-      qeMsg('Envoi de la miniature…');
-      return uploadFile(blob,'cover.'+(blob.type==='image/webp'?'webp':'jpg')).then(function(u){newThumb=u;body.thumbnail_url=u});
-    }).then(function(){
-      qeMsg('Enregistrement…');
-      return authedFetch(REST+'videos?id=eq.'+enc(id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)});
-    }).then(function(r){
-      if(!r.ok)return restErr(r);
-      saved=true;
-      closeQE();toast('Modifications enregistrées');loadVideos();refreshAdminLists();
-      if(newThumb&&oldThumb)cleanFiles({thumbnail_url:oldThumb}); /* ancienne image effacée du bucket (au mieux) */
-    }).catch(function(err){
-      if(newThumb&&!saved)cleanFiles({thumbnail_url:newThumb}); /* fiche refusée : pas d'image orpheline */
-      qeMsg('Échec : '+(err.noSession?t('admin_need'):(err.network?t('e_net'):err.message)),true);
-    }).then(function(){btn.disabled=false});
-  });
-  /* VIP : le fichier est privé, aucune image ne peut en être extraite côté visiteur. La vignette calculée ici part dans le bucket public Supabase.
-     Au mieux : en cas d'échec la carte reste simplement noire. */
-  function upThumb(info,priv){
-    if(!(priv||(info&&info.custom))||!info||!info.blob)return Promise.resolve(null);
-    return uploadFile(info.blob,'cover.'+(info.blob.type==='image/webp'?'webp':'jpg')).catch(function(){return null});
-  }
   function uploadFile(file,fname,bucket){
     bucket=bucket||BUCKET;
     var name=Date.now()+'-'+(fname||file.name).normalize('NFD').replace(/[^\w.\-]+/g,'_');
     return authedFetch(SB_URL+'/storage/v1/object/'+enc(bucket)+'/'+enc(name),{method:'POST',headers:{'Content-Type':file.type||'video/mp4','x-upsert':'false'},body:file})
     .then(function(r){return r.ok?(bucket===BUCKET?SB_URL+'/storage/v1/object/public/'+enc(bucket)+'/'+enc(name):name):restErr(r)});
-  }
-  /* ---------- Sélecteur de frame (façon TikTok / Facebook) ----------
-     Mini-lecteur muet + curseur à l'image près (30 i/s), utilisé par #aadd (1 fichier), #amulti (une ligne par fichier) et #qedit (vidéo déjà publiée).
-     La frame choisie est capturée dans un <canvas> ; l'image part dans le bucket Supabase et son lien va dans videos.thumbnail_url.
-     Ce lecteur n'existe que dans l'espace admin : aucune balise <video> n'est ajoutée au catalogue. */
-  var FPS=30;
-  function fmtT(s){s=Math.max(0,s||0);var m=Math.floor(s/60),x=Math.floor(s%60),d=Math.floor(s*10)%10;return m+':'+(x<10?'0':'')+x+','+d}
-  function FramePicker(host,o){
-    var self={},v=document.createElement('video'),blobUrl=null,dur=0,frames=0,tgt=0,seeking=false,want=null,touched=false,dead=false,guard=0;
-    var root=document.createElement('div');
-    root.className='fp'+(o.compact?' compact':'');
-    root.innerHTML='<div class="fp-stage"></div><div class="fp-bar"><button type="button" class="fp-btn" data-step="-1" aria-label="Image précédente">‹</button><input class="fp-range" type="range" min="0" max="1" step="1" value="0" disabled aria-label="Choisir l’image de la miniature"><button type="button" class="fp-btn" data-step="1" aria-label="Image suivante">›</button></div>'+
-      (o.compact?'':'<div class="fp-chips">'+[10,30,50,70,90].map(function(p){return '<button type="button" class="fp-btn fp-chip" data-p="'+p+'">'+p+' %</button>'}).join('')+'</div>')+
-      '<div class="fp-info" aria-live="polite">Chargement de la vidéo…</div>';
-    host.innerHTML='';host.appendChild(root);
-    var rg=root.querySelector('.fp-range'),info=root.querySelector('.fp-info');
-    root.querySelector('.fp-stage').appendChild(v);
-    v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.preload='metadata';v.controls=false;
-    if(o.file){blobUrl=URL.createObjectURL(o.file);v.src=blobUrl}
-    else{v.crossOrigin='anonymous';v.src=o.src}  /* crossOrigin avant src : sinon le canvas serait « taché » et la capture refusée */
-    function label(){info.textContent=touched?'Miniature choisie : '+fmtT(tgt)+' sur '+fmtT(dur):'Image automatique. Bougez le curseur pour choisir la miniature.'}
-    function fail(){if(dead)return;rg.disabled=true;touched=false;info.textContent='Aperçu impossible pour cette vidéo.';if(o.onError)o.onError()}
-    /* un seul déplacement à la fois : on garde seulement la dernière position demandée pendant qu'un seek est en cours */
-    function seek(t){
-      if(seeking){want=t;return}
-      seeking=true;want=null;
-      clearTimeout(guard);guard=setTimeout(function(){if(!seeking)return;seeking=false;if(want!==null){var w=want;want=null;seek(w)}},3000);
-      try{v.currentTime=t}catch(e){seeking=false}
-    }
-    v.addEventListener('seeked',function(){
-      if(dead)return;
-      seeking=false;clearTimeout(guard);
-      if(want!==null){var w=want;want=null;seek(w)}
-    });
-    function go(f,user){
-      if(!frames)return;
-      f=Math.max(0,Math.min(frames,Math.round(f)));
-      rg.value=f;tgt=Math.min(f/FPS,Math.max(0,dur-.1));
-      if(user)touched=true;
-      label();seek(tgt);
-    }
-    v.addEventListener('loadedmetadata',function(){
-      if(dead)return;
-      dur=v.duration;
-      if(!isFinite(dur)||dur<=0){fail();return}
-      frames=Math.max(1,Math.floor(dur*FPS));rg.max=frames;rg.disabled=false;
-      go((o.time!=null?o.time:Math.min(1,Math.max(.1,dur/2)))*FPS,false); /* départ à ~1 s, comme l'extraction automatique */
-    });
-    v.addEventListener('error',fail);
-    rg.addEventListener('input',function(){go(+rg.value,true)});
-    root.addEventListener('click',function(e){
-      var b=e.target.closest('button');if(!b||!frames)return;
-      if(b.hasAttribute('data-step'))go(+rg.value+(+b.getAttribute('data-step')),true);
-      else if(b.hasAttribute('data-p'))go(frames*(+b.getAttribute('data-p'))/100,true);
-    });
-    function settled(){
-      return new Promise(function(res){
-        if(!seeking&&want===null){res();return}
-        var tm=setTimeout(function(){v.removeEventListener('seeked',h);res()},4000);
-        function h(){if(!seeking&&want===null){clearTimeout(tm);v.removeEventListener('seeked',h);res()}}
-        v.addEventListener('seeked',h);
-      });
-    }
-    self.touched=function(){return touched};
-    self.time=function(){return tgt};
-    /* Capture la frame affichée : Blob WebP (repli JPEG pour Safari). Rejette si le canvas est refusé (vidéo externe sans CORS). */
-    self.capture=function(){
-      return settled().then(function(){
-        return new Promise(function(res,rej){
-          if(!v.videoWidth){rej(new Error('Capture impossible : vidéo non chargée.'));return}
-          try{
-            var w=Math.min(640,v.videoWidth),c=document.createElement('canvas');
-            c.width=w;c.height=Math.round(w*v.videoHeight/v.videoWidth);
-            c.getContext('2d').drawImage(v,0,0,c.width,c.height);
-            c.toBlob(function(b){
-              if(b&&b.type==='image/webp'){res(b);return}
-              c.toBlob(function(j){(j||b)?res(j||b):rej(new Error('Capture impossible.'))},'image/jpeg',.8);
-            },'image/webp',.8);
-          }catch(e){rej(new Error('Capture refusée : la vidéo vient d’un autre site sans autorisation CORS.'))}
-        });
-      });
-    };
-    self.destroy=function(){
-      dead=true;clearTimeout(guard);
-      try{v.pause();v.removeAttribute('src');v.load()}catch(e){}
-      if(blobUrl){try{URL.revokeObjectURL(blobUrl)}catch(e){}blobUrl=null}
-      host.innerHTML='';
-    };
-    return self;
-  }
-  /* Image finale d'une vidéo : la frame choisie si l'admin a bougé le curseur (ou une frame déjà validée), sinon la couverture automatique */
-  function coverWith(file,picker,saved){
-    return getCover(file).then(function(info){
-      var p=picker&&picker.touched()?picker.capture().catch(function(){return null}):Promise.resolve(null);
-      return p.then(function(blob){
-        blob=blob||saved;
-        return blob?{dur:info.dur,blob:blob,custom:true}:info;
-      });
-    });
   }
   /* Couverture automatique : image figée de la vidéo choisie + durée, calculées dans le navigateur */
   function probeVideo(file){
@@ -2918,23 +2326,46 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
       v.src=u;
     });
   }
-  /* ---------- Miniatures : aperçu local uniquement (aucun hébergement d'image) ----------
-     À la sélection du fichier : durée + image à ~1 s, calculées dans le navigateur.
-     Sans choix de l'admin rien n'est envoyé (thumbnail_url vide : le catalogue extrait l'image). Si l'admin choisit une frame, elle est envoyée et enregistrée dans thumbnail_url. */
+  /* ---------- Miniatures : envoi vers ImgBB ---------- */
+  function uploadToImgBB(blob){
+    if(!IMGBB_API_KEY||/COLLE_TA_CLE/.test(IMGBB_API_KEY))return Promise.reject(new Error('Clé ImgBB manquante'));
+    var fd=new FormData();fd.append('image',blob,'cover.'+(blob.type==='image/webp'?'webp':'jpg'));
+    var ctl=window.AbortController?new AbortController():null,tm=setTimeout(function(){if(ctl)ctl.abort()},30000);
+    return fetch('https://api.imgbb.com/1/upload?key='+encodeURIComponent(IMGBB_API_KEY),{method:'POST',body:fd,signal:ctl?ctl.signal:undefined})
+    .then(function(r){return r.json().catch(function(){return {}}).then(function(d){
+      var u=d&&d.data&&d.data.url;
+      if(r.ok&&d.success!==false&&u&&/^https:\/\//.test(u))return u;
+      throw new Error('ImgBB : '+((d&&d.error&&d.error.message)||('HTTP '+r.status)));
+    })}).then(function(u){clearTimeout(tm);return u},function(e){clearTimeout(tm);throw e});
+  }
+  /* Dès la sélection du fichier : image à 1 s -> canvas 480 px -> WebP 65 % -> ImgBB. Le résultat est gardé pour la publication. */
   var COVERS=typeof WeakMap!=='undefined'?new WeakMap():null;
   function prepCover(file){
     var c=COVERS&&COVERS.get(file);if(c)return c;
-    c=probeVideo(file);
+    c=probeVideo(file).then(function(info){
+      var out={dur:info.dur||0,blob:info.blob||null,url:null};
+      if(!info.blob)return out;
+      return uploadToImgBB(info.blob).then(function(u){out.url=u;return out},function(err){console.warn('Miniature ImgBB :',err);out.err=err;return out});
+    });
     if(COVERS)COVERS.set(file,c);return c;
   }
-  function getCover(file){return prepCover(file)}
-  var singlePicker=null;
+  /* À la publication : réutilise la miniature déjà envoyée, ou retente une fois si l'envoi avait échoué */
+  function getCover(file){
+    return prepCover(file).then(function(r){
+      if(r.url||!r.blob)return r;
+      return uploadToImgBB(r.blob).then(function(u){r.url=u;r.err=null;return r},function(err){r.err=err;return r});
+    });
+  }
   function showCoverPreview(file){
     var box=$('#athumb');if(!box)return;
-    if(singlePicker){singlePicker.destroy();singlePicker=null}
     if(!file){box.hidden=true;box.innerHTML='';return}
-    box.hidden=false;
-    singlePicker=FramePicker(box,{file:file});
+    box.hidden=false;box.textContent='Création de la miniature…';
+    prepCover(file).then(function(r){
+      if($('#afile').files[0]!==file)return;
+      if(!r.blob){box.textContent='Miniature impossible (le catalogue affichera l’image de secours).';return}
+      var u=URL.createObjectURL(r.blob);
+      box.innerHTML='<img alt="Miniature" src="'+u+'"><span>'+(r.url?'Miniature envoyée sur ImgBB ✓':'Envoi ImgBB échoué, nouvel essai à la publication.')+'</span>';
+    });
   }
   /* ---------- Envoi de plusieurs vidéos à la fois ----------
      Chaque fichier a son titre et son prix. Envoi un par un : analyse (couverture + durée), fichier,
@@ -2943,15 +2374,14 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   function baseTitle(n){return n.replace(/\.[^.]+$/,'').replace(/^\d{8,}-/,'').replace(/[_\-]+/g,' ').replace(/\s+/g,' ').trim()}
   function sizeMb(f){return (f.size/1048576).toFixed(1)+' Mo'}
   function resetMulti(){
-    multi.forEach(function(m){if(m.picker){m.picker.destroy();m.picker=null}});
     multi=[];var box=$('#amulti');if(box){box.hidden=true;box.innerHTML=''}
-    $('#atitle').required=true;
+    $('#atitle').required=true;$('#apreview').hidden=false;var l=document.querySelector('label[for=apreview]');if(l)l.hidden=false;
     $('#asubmit').textContent='Publier la vidéo';
   }
   function renderMulti(){
     var box=$('#amulti'),price=$('#aprice').value||'0';
     box.innerHTML='<p class="mhead">'+multi.length+' vidéos : titre et prix pour chacune. L’artiste et la description ci-dessus sont communs. Prix 0 = gratuite, sinon la vidéo part dans le stockage privé.</p>'+
-      multi.map(function(m,i){return '<div class="mrow" data-i="'+i+'" data-state="wait"><input class="field mt" type="text" maxlength="120" aria-label="Titre" value="'+esc(m.title)+'"><input class="field mp" type="number" inputmode="numeric" min="0" step="100" aria-label="Prix en FC" value="'+esc(price)+'"><div class="mcov"><img class="mimg" alt="Miniature" hidden><button type="button" class="fp-btn mpick">Choisir la miniature</button></div><div class="mfp" hidden></div><small>'+esc(m.file.name)+' · '+sizeMb(m.file)+'</small><span class="mst">En attente</span></div>'}).join('');
+      multi.map(function(m,i){return '<div class="mrow" data-i="'+i+'" data-state="wait"><input class="field mt" type="text" maxlength="120" aria-label="Titre" value="'+esc(m.title)+'"><input class="field mp" type="number" inputmode="numeric" min="0" step="100" aria-label="Prix en FC" value="'+esc(price)+'"><small>'+esc(m.file.name)+' · '+sizeMb(m.file)+'</small><span class="mst">En attente</span></div>'}).join('');
     box.hidden=false;
   }
   $('#afile').addEventListener('change',function(){
@@ -2959,39 +2389,15 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     showCoverPreview(fs.length===1?fs[0]:null);
     if(editId||fs.length<2){resetMulti();return}
     multi=fs.map(function(f){return {file:f,title:baseTitle(f.name)}});
-    $('#atitle').required=false;
+    $('#atitle').required=false;$('#apreview').hidden=true;var l=document.querySelector('label[for=apreview]');if(l)l.hidden=true;
     $('#asubmit').textContent='Publier '+fs.length+' vidéos';
     renderMulti();
     /* plusieurs fichiers : miniatures préparées une par une en arrière-plan */
-    fs.reduce(function(p,f){return p.then(function(){return prepCover(f)}).then(function(info){paintRowCover(f,info)})},Promise.resolve());
+    fs.reduce(function(p,f){return p.then(function(){return prepCover(f)})},Promise.resolve());
   });
   $('#aprice').addEventListener('input',function(){
     if(!multi.length)return;
     Array.prototype.forEach.call(document.querySelectorAll('#amulti .mrow:not([data-state=ok]) .mp'),function(i){i.value=$('#aprice').value});
-  });
-  function paintRowCover(f,info){
-    if(!info||!info.blob)return;
-    multi.forEach(function(m,i){
-      if(m.file!==f||m.custom)return;
-      var im=document.querySelector('#amulti .mrow[data-i="'+i+'"] .mimg');
-      if(im){im.src=URL.createObjectURL(info.blob);im.hidden=false}
-    });
-  }
-  function closeRowPicker(row,m){
-    var b=row.querySelector('.mpick'),host=row.querySelector('.mfp'),im=row.querySelector('.mimg'),pk=m.picker;
-    var p=pk&&pk.touched()?pk.capture().then(function(blob){if(blob){m.custom=blob;m.time=pk.time();im.src=URL.createObjectURL(blob);im.hidden=false}}).catch(function(err){amsg('Miniature : '+err.message,true)}):Promise.resolve();
-    p.then(function(){
-      if(m.picker){m.picker.destroy();m.picker=null}
-      host.hidden=true;b.textContent=m.custom?'Changer la miniature':'Choisir la miniature';
-    });
-  }
-  $('#amulti').addEventListener('click',function(e){
-    var b=e.target.closest('.mpick');if(!b)return;
-    var row=b.closest('.mrow'),m=multi[+row.getAttribute('data-i')];
-    if(!m||row.getAttribute('data-state')==='ok'||row.getAttribute('data-state')==='busy')return;
-    if(m.picker){closeRowPicker(row,m);return}
-    var host=row.querySelector('.mfp');host.hidden=false;b.textContent='Valider la miniature';
-    m.picker=FramePicker(host,{file:m.file,compact:true,time:m.time});
   });
   function markRow(row,state,txt){row.setAttribute('data-state',state);row.querySelector('.mst').textContent=txt}
   function uploadOne(row){
@@ -3000,27 +2406,23 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     if(!(price>=0))return Promise.reject(new Error('Prix invalide'));
     var priv=price>0,up={};
     markRow(row,'busy','Miniature…');
-    return coverWith(m.file,m.picker,m.custom).then(function(info){
+    return getCover(m.file).then(function(info){
       markRow(row,'busy','Envoi du fichier…');
       return (priv?uploadFile(m.file,null,'videos-private'):uploadFile(m.file)).then(function(u){
         if(priv)up.video_path=u;else up.video_url=u;
-        return upThumb(info,priv).then(function(tu){
-        up.thumb=tu;markRow(row,'busy','Enregistrement…');
-        var body={title:title,artist:$('#aartist').value.trim()||null,description:$('#adesc').value.trim()||null,price_fc:price,is_published:true};
+        var th=info.url||null;markRow(row,'busy','Enregistrement…');
+        var body={title:title,artist:$('#aartist').value.trim()||null,description:$('#adesc').value.trim()||null,price_fc:price,is_published:true,thumbnail_url:th};
         if(priv)body.video_path=up.video_path;else body.video_url=up.video_url;
         if($('#acat').value||CATS.length)body.category_id=$('#acat').value||null;
         if(info.dur)body.duration_seconds=info.dur;
-        if(tu)body.thumbnail_url=tu;
         return authedFetch(REST+'videos',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)}).then(function(r){if(!r.ok)return restErr(r)});
-        });
       });
     }).then(function(){
       markRow(row,'ok','Publiée'+(priv?' (protégée)':''));
-      Array.prototype.forEach.call(row.querySelectorAll('input,button'),function(i){i.disabled=true});
-      if(m.picker){m.picker.destroy();m.picker=null;row.querySelector('.mfp').hidden=true}
+      Array.prototype.forEach.call(row.querySelectorAll('input'),function(i){i.disabled=true});
     },function(err){
       /* fichier déjà envoyé mais fiche refusée : on efface les fichiers pour ne pas laisser d'orphelins */
-      return cleanFiles({video_path:up.video_path,video_url:up.video_url,thumbnail_url:up.thumb}).then(function(){throw err});
+      return cleanFiles({video_path:up.video_path,video_url:up.video_url}).then(function(){throw err});
     });
   }
   function runBatch(){
@@ -3043,11 +2445,11 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     if(link&&!file&&!/^https:\/\//.test(link)){amsg('Le lien doit commencer par https://',true);return}
     if(!(price>=0)){amsg('Prix invalide.',true);return}
     var btn=$('#asubmit');btn.disabled=true;amsg(file?'Analyse puis envoi du fichier, patientez…':'Enregistrement…');
-    var priv=!!file&&price>0;
-    var media=file?coverWith(file,singlePicker,null).then(function(info){
+    var prev=$('#apreview').files[0],priv=!!file&&price>0;
+    var media=file?getCover(file).then(function(info){
       return (priv?uploadFile(file,null,'videos-private'):uploadFile(file)).then(function(u){
-        return upThumb(info,priv).then(function(tu){
-          return priv?{path:u,thumb:tu,dur:info.dur||null}:{url:u,thumb:tu,dur:info.dur||null};
+        return (priv&&prev?uploadFile(prev):Promise.resolve(null)).then(function(pu){
+          return priv?{path:u,url:pu,thumb:info.url||null,dur:info.dur||null}:{url:u,thumb:info.url||null,dur:info.dur||null};
         });
       });
     }):Promise.resolve(link?{url:link}:null);
@@ -3130,92 +2532,9 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   $('#appver').textContent=APP_VERSION+' · '+APP_BUILD;
   syncThemeUI();
 
-  /* ---------- Numéro de paiement officiel : table Supabase « app_settings » (key = payment_number) ----------
-     La valeur de PAY_NUMBER tout en haut du script ne sert que de secours (réseau coupé ou table absente). */
-  var PAYNUM_CACHE='tl_paynum_v1',payNumLoaded=false;
-  function cleanPayNum(s){return String(s||'').replace(/[^\d+\s.\-]/g,'').replace(/\s+/g,' ').trim()}
-  function validPayNum(s){var d=String(s).replace(/\D/g,'');return d.length>=9&&d.length<=15}
-  function applyPayNum(n){
-    n=cleanPayNum(n);if(!validPayNum(n))return;
-    PAY_NUMBER=n;
-    if(wm&&!wm.hidden)wm.textContent='TOPLEAKS · '+PAY_NUMBER;
-    if(payItem&&!views.pay.hidden&&!$('#payform').hidden)renderPaySum();
-    var inp=$('#apaynum');if(inp&&document.activeElement!==inp)inp.value=PAY_NUMBER;
-  }
-  function payNumFallback(){
-    if(payNumLoaded)return;
-    var c=null;try{c=localStorage.getItem(PAYNUM_CACHE)}catch(e){}
-    if(c)applyPayNum(c);
-  }
-  function loadPayNumber(){
-    return fetch(REST+'app_settings?select=value&key=eq.payment_number',{headers:{apikey:SB_KEY},cache:'no-store'})
-    .then(function(r){return r.ok?r.json():[]})
-    .then(function(rows){
-      if(rows&&rows[0]&&rows[0].value){
-        payNumLoaded=true;applyPayNum(rows[0].value);
-        try{localStorage.setItem(PAYNUM_CACHE,PAY_NUMBER)}catch(e){}
-      }else payNumFallback();
-    }).catch(payNumFallback);
-  }
-  $('#apayform').addEventListener('submit',function(e){
-    e.preventDefault();
-    var n=cleanPayNum($('#apaynum').value),btn=$('#apaysave');
-    if(!validPayNum(n)){amsg('Numéro invalide : entrez 9 à 15 chiffres.',true);return}
-    btn.disabled=true;amsg('Enregistrement…');
-    authedFetch(REST+'app_settings?on_conflict=key',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({key:'payment_number',value:n,updated_at:new Date().toISOString()})}).then(function(r){
-      if(!r.ok)return restErr(r);
-      payNumLoaded=true;applyPayNum(n);
-      try{localStorage.setItem(PAYNUM_CACHE,n)}catch(e){}
-      amsg('Numéro de paiement enregistré : '+n+'. Il s’affiche maintenant pour tous les utilisateurs.');
-    }).catch(function(err){
-      amsg('Échec : '+(err.noSession?t('admin_need'):(err.network?t('e_net'):err.message))+' (table « app_settings » installée ? voir le script SQL)',true);
-    }).then(function(){btn.disabled=false});
-  });
-
-  /* ---------- Bannière de téléchargement APK ----------
-     Apparaît 1,5 s après l'arrivée, reste 6 s, puis disparaît. Une fois fermée (×) ou cliquée (Télécharger), elle ne revient plus (localStorage).
-     Non affichée sur iPhone/iPad (pas d'APK) ni dans l'application installée elle-même. */
-  var APK_KEY='tl_apk_banner_v1',apkT1=null,apkT2=null;
-  var APKT={
-    apk_title:'Application TOPLEAKS pour Android',apk_how:'Comment installer ?',apk_dl:'Télécharger',
-    apk_help_title:'Installer l’application sur Android',
-    apk_help_intro:'L’installation prend moins d’une minute. Suivez ces étapes :',
-    apk_s1_t:'Téléchargez le fichier',apk_s1:'Touchez « Télécharger ». Si Chrome demande une confirmation, choisissez « Télécharger quand même ».',
-    apk_s2_t:'Ouvrez topleaks.apk',apk_s2:'Touchez la notification de téléchargement, ou ouvrez l’appli Fichiers puis le dossier Téléchargements.',
-    apk_s3_t:'Autorisez l’installation',apk_s3:'Si Android affiche « Installation bloquée », touchez Paramètres et activez « Autoriser depuis cette source » pour Chrome (ou pour Fichiers), puis revenez en arrière.',
-    apk_s4_t:'Installez',apk_s4:'Touchez Installer, puis Ouvrir. Si Play Protect affiche un avertissement, touchez « Plus de détails » puis « Installer quand même ».',
-    apk_note:'Téléchargez l’APK uniquement depuis le site officiel TOPLEAKS.'
-  };
-  for(var ak in APKT)I.fr[ak]=APKT[ak];
-  function apkSeen(){try{return !!localStorage.getItem(APK_KEY)}catch(e){return false}}
-  function apkDone(){try{localStorage.setItem(APK_KEY,'1')}catch(e){}}
-  function apkHide(){
-    clearTimeout(apkT1);clearTimeout(apkT2);
-    var b=$('#apkb');b.classList.remove('show');b.setAttribute('aria-hidden','true');
-  }
-  function initApkBanner(){
-    var ua=navigator.userAgent||'';
-    var ios=/iPhone|iPad|iPod/i.test(ua)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform||''));
-    var inApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||/; wv\)/.test(ua);
-    if(ios||inApp||apkSeen())return;
-    apkT1=setTimeout(function(){
-      var b=$('#apkb');b.classList.add('show');b.setAttribute('aria-hidden','false');
-      apkT2=setTimeout(apkHide,6000);
-    },1500);
-  }
-  /* l'utilisateur touche la bannière : on arrête la disparition automatique le temps qu'il choisisse */
-  $('#apkb').addEventListener('pointerdown',function(){clearTimeout(apkT2)});
-  $('#apkclose').addEventListener('click',function(){apkDone();apkHide()});
-  $('#apkdl').addEventListener('click',function(){apkDone();apkHide();setTimeout(function(){openModal('#apkm')},500)}); /* pas de preventDefault : le téléchargement démarre */
-  $('#apkhow').addEventListener('click',function(){apkHide();openModal('#apkm')});
-  $('#apkmdl').addEventListener('click',apkDone);
-  $('#apkmclose').addEventListener('click',function(){closeModal('#apkm')});
-  $('#apkm').addEventListener('click',function(e){if(e.target===this)closeModal('#apkm')});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('#apkm').hidden)closeModal('#apkm')});
-  $('#yr').textContent=new Date().getFullYear();
-
   /* ---------- Démarrage ---------- */
   $('#saver').checked=!!ST.saver;
+  hydrateCovers();
   if(!DEMO_MODE){
     var dbn=document.querySelector('.demo-banner');if(dbn)dbn.hidden=true;
     var dn=document.querySelector('[data-i18n="demo_note"]');if(dn)dn.setAttribute('data-i18n','pay_manual_note');
@@ -3223,7 +2542,6 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   }
   applyLang();renderContact();
   loadSession();renderAccount();
-  loadPayNumber();initApkBanner();
   consumeHash().then(function(){renderAccount();loadCats();loadVideos();loadPurchases()});
 })();
 </script>
