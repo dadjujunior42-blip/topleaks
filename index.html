@@ -13,7 +13,7 @@
 <meta property="og:title" content="TOPLEAKS">
 <!-- PWA : manifest, icônes, mode application -->
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1386,6 +1386,8 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   /* ---------- Utilitaires ---------- */
   var A={},V=[],byId={},FEATURED=[],loading=true,failed=false,ADMUI=false;
   var SRV={},FIL={price:'all',dur:'all',artist:'',cat:'',fav:false},CATS=[];
+  /* Raccourcis PWA : ?filtre=gratuit ou ?filtre=vip */
+  try{var _pf=new URLSearchParams(location.search).get('filtre');if(_pf==='gratuit')FIL.price='free';else if(_pf==='vip')FIL.price='vip'}catch(e){}
   function reindex(){byId={};V.forEach(function(v){byId[v.id]=v});FEATURED=V.slice(0,3).map(function(v){return v.id})}
   var $=function(s){return document.querySelector(s)};
   var p2=function(n){return String(n).padStart(2,'0')};
