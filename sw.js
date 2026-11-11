@@ -3,7 +3,7 @@
    - fichiers statiques du site : cache d'abord, mis à jour en arrière-plan
    - JAMAIS en cache : Supabase (API, connexion, stockage), vidéos, APK, requêtes partielles (Range)
    Pour forcer une mise à jour chez tous les utilisateurs, changez VERSION. */
-var VERSION = 'v1';
+var VERSION = 'v2';
 var CACHE = 'topleaks-' + VERSION;
 var SHELL = [
   './',
@@ -25,6 +25,7 @@ self.addEventListener('install', function (e) {
 self.addEventListener('activate', function (e) {
   e.waitUntil(
     caches.keys().then(function (keys) {
+      /* supprime les anciens caches (dont topleaks-v1, qui pouvait contenir une mauvaise page) */
       return Promise.all(keys.filter(function (k) { return k.indexOf('topleaks-') === 0 && k !== CACHE; })
         .map(function (k) { return caches.delete(k); }));
     }).then(function () { return self.clients.claim(); })
@@ -32,6 +33,15 @@ self.addEventListener('activate', function (e) {
 });
 
 function isMedia(url) { return /\.(mp4|webm|mov|m4v|mp3|apk|aab)(\?|$)/i.test(url.pathname); }
+
+/* Seule la page d'accueil du site est une « page » à mettre en cache */
+function isHome(url) { return url.pathname === '/' || url.pathname === '/index.html'; }
+
+/* Une réponse est une vraie page seulement si elle est valide et de type HTML */
+function isHtml(res) {
+  var t = res && res.headers && res.headers.get('content-type') || '';
+  return !!(res && res.ok && t.indexOf('text/html') !== -1);
+}
 
 self.addEventListener('fetch', function (e) {
   var req = e.request;
@@ -56,15 +66,23 @@ self.addEventListener('fetch', function (e) {
   if (url.origin !== self.location.origin) return;
   if (isMedia(url)) return;
 
-  /* Pages : réseau d'abord, repli sur le cache hors-ligne */
+  /* Pages */
   if (req.mode === 'navigate') {
+    /* Toute adresse qui n'est pas l'accueil (image, JSON, .well-known, 404…) : le navigateur gère seul, rien en cache */
+    if (!isHome(url)) return;
     e.respondWith(
       fetch(req).then(function (res) {
-        var copy = res.clone();
-        caches.open(CACHE).then(function (c) { c.put('./index.html', copy); });
+        /* on ne garde que les vraies pages HTML, jamais une erreur ni un autre type de fichier */
+        if (isHtml(res)) {
+          var copy = res.clone();
+          caches.open(CACHE).then(function (c) { c.put('./index.html', copy); });
+        }
         return res;
       }).catch(function () {
-        return caches.match('./index.html').then(function (hit) { return hit || caches.match('./'); });
+        return caches.match('./index.html').then(function (hit) {
+          if (hit && isHtml(hit)) return hit;
+          return caches.match('./').then(function (h2) { return h2 && isHtml(h2) ? h2 : Response.error(); });
+        });
       })
     );
     return;
