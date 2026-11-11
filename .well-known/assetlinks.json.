@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "online.topleaks.app",
+        "sha256_cert_fingerprints": ["DC:E0:A4:57:92:8D:8E:6C:DB:2E:35:66:91:3E:C0:8C:BB:F5:F3:64:02:49:D4:F7:EE:AE:01:F9:F0:63:62:38"]
+      }
+    }]
