@@ -2,26 +2,69 @@
   "id": "/?source=pwa",
   "name": "TOPLEAKS",
   "short_name": "TOPLEAKS",
+  "description": "Plateforme de streaming et de VOD, spectacles d'humour et divertissement exclusif.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#0b0b0d",
   "theme_color": "#0b0b0d",
   "lang": "fr",
   "dir": "ltr",
+  "categories": ["entertainment", "video", "lifestyle"],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "accueil.png",
+      "sizes": "1080x2400",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Catalogue de spectacles TOPLEAKS"
+    },
+    {
+      "src": "video.png",
+      "sizes": "1080x2400",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Page d'un spectacle VIP"
+    },
+    {
+      "src": "paiement.png",
+      "sizes": "1080x2400",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Paiement Mobile Money"
+    },
+    {
+      "src": "accueil-clair.png",
+      "sizes": "1080x2400",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Thème clair"
     }
   ]
 }
