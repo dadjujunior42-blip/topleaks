@@ -833,6 +833,28 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
   .thumb,.thumb-sk{height:0;min-height:0;padding-top:177.78%}
   .sum-top .thumb{height:114px;padding-top:0} /* le remplissage en % se calcule sur le parent, d'où une hauteur fixe ici */
 }
+/* ===== V19 : espace admin en onglets + cartes KPI (style verre, suit les thèmes sombre et clair) ===== */
+.atabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:8px 0 4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line);-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%)}
+.atabs::-webkit-scrollbar{display:none}
+.atab{flex:1 0 auto;min-height:42px;padding:0 14px;border:0;border-radius:10px;background:transparent;color:var(--soft);font-weight:600;font-size:13px;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:background-color .15s,color .15s}
+.atab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.atab[aria-selected=true]{background:rgba(255,255,255,.08);color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.apane{padding-bottom:30px}
+.apane>.ah:first-child{margin-top:20px}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.kpi{display:flex;flex-direction:column;gap:4px;min-width:0;padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.05);-webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+.kpi-l{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.kpi-v{font:600 26px/1.1 var(--display);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kpi-s{font-size:12px;color:var(--muted);min-height:1.2em}
+.kpi.accent .kpi-v{color:var(--accent)}
+.kpi-apk{grid-column:1/-1;gap:10px;border-color:rgba(255,178,30,.45)}
+.kpi-act{display:flex;gap:8px;flex-wrap:wrap}
+.kpi-act .btn{flex:1 1 150px;width:auto;text-decoration:none}
+.atop .arow span{display:block}
+html[data-theme=light] .atabs{background:#f1ece1}
+html[data-theme=light] .atab[aria-selected=true]{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.12),inset 0 0 0 1.5px var(--accent)}
+html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.04),0 12px 26px -18px rgba(40,28,8,.25)}
+@media (prefers-reduced-motion:reduce){.atab{transition:none}}
 </style>
 
 </head>
@@ -1032,55 +1054,89 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     </div>
 
     <div id="apanel" hidden>
-      <h3 class="ah">Numéro de paiement</h3>
-      <form id="apayform" class="aform">
-        <p class="hint">Numéro officiel affiché à l’écran de paiement et dans le filigrane des vidéos payantes. Le changement s’applique à tous les utilisateurs.</p>
-        <label class="label" for="apaynum">Numéro Mobile Money</label>
-        <div class="cnumrow"><input id="apaynum" class="field aemail" type="tel" inputmode="tel" maxlength="20" autocomplete="off"><button id="apaysave" class="clink main" type="submit">Enregistrer</button></div>
-      </form>
+      <div class="atabs" role="tablist" aria-label="Sections de l’espace admin">
+        <button type="button" class="atab" role="tab" id="tab-overview" data-atab="overview" aria-controls="pane-overview" aria-selected="true">Vue d’ensemble</button>
+        <button type="button" class="atab" role="tab" id="tab-catalog" data-atab="catalog" aria-controls="pane-catalog" aria-selected="false" tabindex="-1">Vidéos &amp; Catalogue</button>
+        <button type="button" class="atab" role="tab" id="tab-sales" data-atab="sales" aria-controls="pane-sales" aria-selected="false" tabindex="-1">Achats &amp; Réglages</button>
+      </div>
 
-      <h3 class="ah">Catégories</h3>
-      <form id="acatform" class="aform">
-        <label class="label" for="acatname">Nouvelle catégorie</label>
-        <div class="cnumrow"><input id="acatname" class="field aemail" type="text" maxlength="40"><button class="clink main" type="submit">Ajouter</button></div>
-      </form>
-      <div id="acats"></div>
+      <!-- Onglet 1 : Vue d'ensemble -->
+      <div id="pane-overview" class="apane" role="tabpanel" aria-labelledby="tab-overview">
+        <h3 class="ah">Statistiques clés</h3>
+        <div class="kpis">
+          <div class="kpi"><span class="kpi-l">Vidéos en ligne</span><span class="kpi-v" id="kpi-online">…</span><span class="kpi-s" id="kpi-online-sub"></span></div>
+          <div class="kpi"><span class="kpi-l">Vues totales</span><span class="kpi-v" id="kpi-views">…</span><span class="kpi-s" id="kpi-views-sub"></span></div>
+          <div class="kpi"><span class="kpi-l">Ventes VIP</span><span class="kpi-v" id="kpi-sales">…</span><span class="kpi-s" id="kpi-sales-sub"></span></div>
+          <div class="kpi accent"><span class="kpi-l">Revenus estimés</span><span class="kpi-v" id="kpi-rev">…</span><span class="kpi-s">Ventes confirmées</span></div>
+          <div class="kpi kpi-apk">
+            <span class="kpi-l">Application Android</span>
+            <span class="kpi-s">Lien direct de téléchargement de l’APK.</span>
+            <div class="kpi-act">
+              <a id="kpi-apk" class="btn btn-primary" href="./TOPLEAKS.apk" download>Télécharger l’APK</a>
+              <button id="kpi-apkcopy" class="btn btn-ghost" type="button">Copier le lien</button>
+            </div>
+          </div>
+        </div>
+        <h3 class="ah">Vidéos les plus vues</h3>
+        <div id="atop" class="atop"></div>
+        <p class="hint">Les revenus sont calculés à partir des achats enregistrés (colonne <code>revenue_fc</code> de la vue <code>video_stats</code>).</p>
+      </div>
 
-      <h3 class="ah">Ajouter une vidéo</h3>
-      <form id="aadd" class="aform">
-        <label class="label" for="atitle">Titre</label>
-        <input id="atitle" class="field aemail" type="text" required maxlength="120">
-        <label class="label" for="aartist">Artiste</label>
-        <input id="aartist" class="field aemail" type="text" maxlength="80">
-        <label class="label" for="aprice">Prix en FC (0 = gratuit)</label>
-        <input id="aprice" class="field aemail" type="number" inputmode="numeric" min="0" step="100" value="0" required>
-        <label class="label" for="adesc">Description (facultatif)</label>
-        <input id="adesc" class="field aemail" type="text" maxlength="400">
-        <label class="label" for="acat">Catégorie (facultatif)</label>
-        <select id="acat" class="field aemail"><option value="">Aucune</option></select>
-        <label class="label" for="afile">Fichier vidéo (mp4) : vous pouvez en choisir plusieurs</label>
-        <input id="afile" class="field aemail afile" type="file" accept="video/mp4,video/webm" multiple>
-        <div id="athumb" class="athumb" hidden></div>
-        <div id="amulti" class="multi" hidden></div>
-        <label class="label" for="aurl">ou lien https de la vidéo</label>
-        <input id="aurl" class="field aemail" type="url" placeholder="https://…">
-        <div class="stack"><button id="asubmit" class="btn btn-primary" type="submit">Publier la vidéo</button><button id="acancel" class="btn btn-ghost" type="button" hidden>Annuler la modification</button></div>
-      </form>
+      <!-- Onglet 2 : Vidéos & Catalogue -->
+      <div id="pane-catalog" class="apane" role="tabpanel" aria-labelledby="tab-catalog" hidden>
+        <h3 class="ah">Ajouter une vidéo</h3>
+        <form id="aadd" class="aform">
+          <label class="label" for="atitle">Titre</label>
+          <input id="atitle" class="field aemail" type="text" required maxlength="120">
+          <label class="label" for="aartist">Artiste</label>
+          <input id="aartist" class="field aemail" type="text" maxlength="80">
+          <label class="label" for="aprice">Prix en FC (0 = gratuit)</label>
+          <input id="aprice" class="field aemail" type="number" inputmode="numeric" min="0" step="100" value="0" required>
+          <label class="label" for="adesc">Description (facultatif)</label>
+          <input id="adesc" class="field aemail" type="text" maxlength="400">
+          <label class="label" for="acat">Catégorie (facultatif)</label>
+          <select id="acat" class="field aemail"><option value="">Aucune</option></select>
+          <label class="label" for="afile">Fichier vidéo (mp4) : vous pouvez en choisir plusieurs</label>
+          <input id="afile" class="field aemail afile" type="file" accept="video/mp4,video/webm" multiple>
+          <div id="athumb" class="athumb" hidden></div>
+          <div id="amulti" class="multi" hidden></div>
+          <label class="label" for="aurl">ou lien https de la vidéo</label>
+          <input id="aurl" class="field aemail" type="url" placeholder="https://…">
+          <div class="stack"><button id="asubmit" class="btn btn-primary" type="submit">Publier la vidéo</button><button id="acancel" class="btn btn-ghost" type="button" hidden>Annuler la modification</button></div>
+        </form>
 
-      <h3 class="ah">Vidéos et statistiques</h3>
-      <div id="astats"></div>
+        <h3 class="ah">Catégories</h3>
+        <form id="acatform" class="aform">
+          <label class="label" for="acatname">Nouvelle catégorie</label>
+          <div class="cnumrow"><input id="acatname" class="field aemail" type="text" maxlength="40"><button class="clink main" type="submit">Ajouter</button></div>
+        </form>
+        <div id="acats"></div>
 
-      <h3 class="ah">Valider un achat</h3>
-      <form id="agrant" class="aform">
-        <p class="hint">Après réception du paiement Mobile Money, donnez l’accès au compte de l’acheteur.</p>
-        <label class="label" for="gmail">E-mail du compte acheteur</label>
-        <input id="gmail" class="field aemail" type="email" required>
-        <label class="label" for="gvideo">Spectacle payant</label>
-        <select id="gvideo" class="field aemail" required></select>
-        <label class="label" for="gref">Référence du paiement</label>
-        <input id="gref" class="field aemail" type="text" maxlength="60">
-        <div class="stack"><button id="gsubmit" class="btn btn-primary" type="submit">Accorder l’accès</button></div>
-      </form>
+        <h3 class="ah">Vidéos et statistiques</h3>
+        <div id="astats"></div>
+      </div>
+
+      <!-- Onglet 3 : Achats & Réglages -->
+      <div id="pane-sales" class="apane" role="tabpanel" aria-labelledby="tab-sales" hidden>
+        <h3 class="ah">Valider un achat</h3>
+        <form id="agrant" class="aform">
+          <p class="hint">Après réception du paiement Mobile Money, donnez l’accès au compte de l’acheteur.</p>
+          <label class="label" for="gmail">E-mail du compte acheteur</label>
+          <input id="gmail" class="field aemail" type="email" required>
+          <label class="label" for="gvideo">Spectacle payant</label>
+          <select id="gvideo" class="field aemail" required></select>
+          <label class="label" for="gref">Référence du paiement</label>
+          <input id="gref" class="field aemail" type="text" maxlength="60">
+          <div class="stack"><button id="gsubmit" class="btn btn-primary" type="submit">Accorder l’accès</button></div>
+        </form>
+
+        <h3 class="ah">Numéro de paiement</h3>
+        <form id="apayform" class="aform">
+          <p class="hint">Numéro officiel affiché à l’écran de paiement et dans le filigrane des vidéos payantes. Le changement s’applique à tous les utilisateurs.</p>
+          <label class="label" for="apaynum">Numéro Mobile Money</label>
+          <div class="cnumrow"><input id="apaynum" class="field aemail" type="tel" inputmode="tel" maxlength="20" autocomplete="off"><button id="apaysave" class="clink main" type="submit">Enregistrer</button></div>
+        </form>
+      </div>
     </div>
   </section>
 
@@ -2549,7 +2605,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
       if(!x)return;
       return authedFetch(REST+'admins?select=user_id&user_id=eq.'+enc(x.user.id)).then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
         if(!rows.length){$('#aneed').hidden=false;$('#aneedtxt').textContent=t('admin_not');$('#aopenauth').hidden=true;return}
-        $('#apanel').hidden=false;$('#apaynum').value=PAY_NUMBER;loadPayNumber();loadStats();loadCats();
+        $('#apanel').hidden=false;restoreAdminTab();$('#apaynum').value=PAY_NUMBER;loadPayNumber();loadStats();loadCats();
       });
     }).catch(function(err){$('#aneed').hidden=false;amsg(friendlyErr(err),true)});
   }
@@ -2603,9 +2659,9 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     }
   });
   function loadStats(){
-    var box=$('#astats');box.innerHTML='<div class="sk" style="height:56px"></div>';
+    var box=$('#astats');box.innerHTML='<div class="sk" style="height:56px"></div>';kpiReset('…');
     authedFetch(REST+'video_stats?select=*&order=created_at.desc').then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
-      ADMV={};
+      ADMV={};renderKpis(rows);
       if(!rows.length){box.innerHTML='<p class="hint">Aucune vidéo.</p>';return}
       var tv=0,ts=0,tr=0;
       box.innerHTML=rows.map(function(r){
@@ -2616,7 +2672,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
           '<button type="button" role="menuitem" data-pub="'+esc(r.id)+'" data-state="'+(r.is_published?'1':'0')+'">'+(r.is_published?'Masquer':'Publier')+'</button>'+
           '<button type="button" role="menuitem" class="danger" data-del="'+esc(r.id)+'">Supprimer</button></div></div></div>';
       }).join('')+'<p class="hint">Total : '+tv+' vues · '+ts+' ventes · '+FC(tr)+'</p>';
-    }).then(function(){var sel=$('#gvideo');if(sel)sel.innerHTML=Object.keys(ADMV).filter(function(k){return ADMV[k].price_fc>0}).map(function(k){return '<option value="'+esc(k)+'">'+esc(ADMV[k].title)+' · '+FC(ADMV[k].price_fc)+'</option>'}).join('')}).catch(function(err){box.innerHTML='<p class="hint bad">Statistiques indisponibles : '+esc(err.message)+'</p>'});
+    }).then(function(){var sel=$('#gvideo');if(sel)sel.innerHTML=Object.keys(ADMV).filter(function(k){return ADMV[k].price_fc>0}).map(function(k){return '<option value="'+esc(k)+'">'+esc(ADMV[k].title)+' · '+FC(ADMV[k].price_fc)+'</option>'}).join('')}).catch(function(err){kpiReset('—');box.innerHTML='<p class="hint bad">Statistiques indisponibles : '+esc(err.message)+'</p>'});
   }
   /* Efface les fichiers de la vidéo supprimée (au mieux : une erreur de stockage n'arrête rien) */
   function cleanFiles(v){
@@ -2637,7 +2693,7 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
     amsg('Chargement…');
     authedFetch(REST+'videos?select=title,artist,description,price_fc,category_id&id=eq.'+enc(id)).then(function(r){if(r.status===400)return authedFetch(REST+'videos?select=title,artist,description,price_fc&id=eq.'+enc(id)).then(function(r2){return r2.ok?r2.json():restErr(r2)});return r.ok?r.json():restErr(r)}).then(function(rows){
       var v=rows[0];if(!v){amsg('Vidéo introuvable.',true);return}
-      resetMulti();editId=id;$('#atitle').value=v.title||'';$('#aartist').value=v.artist||'';$('#aprice').value=v.price_fc||0;$('#adesc').value=v.description||'';fillCatSelect();$('#acat').value=(v.category_id==null?'':String(v.category_id));
+      showAdminTab('catalog');resetMulti();editId=id;$('#atitle').value=v.title||'';$('#aartist').value=v.artist||'';$('#aprice').value=v.price_fc||0;$('#adesc').value=v.description||'';fillCatSelect();$('#acat').value=(v.category_id==null?'':String(v.category_id));
       $('#afile').value='';$('#aurl').value='';$('#asubmit').textContent='Enregistrer les modifications';$('#acancel').hidden=false;
       amsg('Modification en cours. Laissez fichier et lien vides pour garder la vidéo actuelle.');
       try{$('#aadd').scrollIntoView({behavior:'smooth'})}catch(e){}
@@ -3061,6 +3117,63 @@ html[data-theme=light] .sk.line{background:linear-gradient(100deg,transparent 30
       if(!r.ok)return restErr(r);
       stopEdit();amsg((eid?'Modifications enregistrées.':'Vidéo publiée.')+(price>0&&!priv?' Attention : sans fichier envoyé (lien https), la vidéo payante n’est pas protégée.':''));loadStats();loadVideos();
     }).catch(function(err){amsg('Échec : '+(err.noSession?t('admin_need'):err.message),true)}).then(function(){btn.disabled=false});
+  });
+
+  /* ---------- Admin : onglets et cartes KPI ---------- */
+  var ATABS=['overview','catalog','sales'],ATAB_KEY='tl_admin_tab';
+  function showAdminTab(name,focus){
+    if(ATABS.indexOf(name)<0)name='overview';
+    ATABS.forEach(function(k){
+      var on=k===name,b=$('#tab-'+k),p=$('#pane-'+k);
+      b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;p.hidden=!on;
+    });
+    closeKmenus();
+    try{sessionStorage.setItem(ATAB_KEY,name)}catch(e){}
+    var tb=$('#tab-'+name);
+    if(focus)tb.focus();
+    try{tb.scrollIntoView({block:'nearest',inline:'center'})}catch(e){}
+  }
+  function restoreAdminTab(){var n='overview';try{n=sessionStorage.getItem(ATAB_KEY)||n}catch(e){}showAdminTab(n)}
+  $('#apanel').addEventListener('click',function(e){
+    var b=e.target.closest('[data-atab]');if(b)showAdminTab(b.getAttribute('data-atab'));
+  });
+  /* Clavier : flèches gauche/droite, Début, Fin (motif WAI-ARIA des onglets) */
+  $('#apanel').addEventListener('keydown',function(e){
+    var b=e.target.closest('[data-atab]');if(!b)return;
+    var i=ATABS.indexOf(b.getAttribute('data-atab')),n=-1;
+    if(e.key==='ArrowRight')n=(i+1)%ATABS.length;
+    else if(e.key==='ArrowLeft')n=(i+ATABS.length-1)%ATABS.length;
+    else if(e.key==='Home')n=0;else if(e.key==='End')n=ATABS.length-1;
+    if(n>-1){e.preventDefault();showAdminTab(ATABS[n],true)}
+  });
+
+  var nf=function(n){return (+n||0).toLocaleString('fr-FR')};
+  function setKpi(id,txt){var el=$('#'+id);if(el)el.textContent=txt}
+  function kpiReset(txt){
+    ['kpi-online','kpi-views','kpi-sales','kpi-rev'].forEach(function(i){setKpi(i,txt)});
+    ['kpi-online-sub','kpi-views-sub','kpi-sales-sub'].forEach(function(i){setKpi(i,'')});
+    if(txt==='—')$('#atop').innerHTML='<p class="hint">Statistiques indisponibles.</p>';
+  }
+  /* rows = lignes de la vue video_stats (déjà chargées par loadStats) */
+  function renderKpis(rows){
+    var on=0,vip=0,tv=0,ts=0,tr=0;
+    rows.forEach(function(r){
+      if(r.is_published){on++;if(+r.price_fc>0)vip++}
+      tv+=+r.views||0;ts+=+r.sales||0;tr+=+r.revenue_fc||0;
+    });
+    setKpi('kpi-online',nf(on));setKpi('kpi-online-sub','sur '+nf(rows.length)+' au total');
+    setKpi('kpi-views',nf(tv));setKpi('kpi-views-sub',rows.length?'≈ '+nf(Math.round(tv/rows.length))+' par vidéo':'');
+    setKpi('kpi-sales',nf(ts));setKpi('kpi-sales-sub',nf(vip)+' vidéo(s) VIP en ligne');
+    setKpi('kpi-rev',nf(tr)+' FC');
+    var top=rows.slice().sort(function(a,b){return (+b.views||0)-(+a.views||0)}).slice(0,5).filter(function(r){return (+r.views||0)>0});
+    $('#atop').innerHTML=top.length?top.map(function(r){
+      return '<div class="arow"><div><b>'+esc(r.title)+'</b><span>'+nf(r.views)+' vues · '+nf(r.sales)+' ventes · '+FC(+r.revenue_fc||0)+'</span></div></div>';
+    }).join(''):'<p class="hint">Pas encore de vues enregistrées.</p>';
+  }
+  $('#kpi-apkcopy').addEventListener('click',function(){
+    var url=new URL('TOPLEAKS.apk',location.href).href;
+    try{navigator.clipboard.writeText(url).then(function(){toast(t('link_copied'))},function(){toast(t('share_fail'))})}
+    catch(e){toast(t('share_fail'))}
   });
 
   /* ---------- Thème, Paramètres ---------- */
