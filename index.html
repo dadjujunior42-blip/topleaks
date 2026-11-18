@@ -5,7 +5,111 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0b0d">
 <script>(function(){try{if(localStorage.getItem("tl_theme")==="light"){document.documentElement.setAttribute("data-theme","light");var m=document.querySelector("meta[name=theme-color]");if(m)m.setAttribute("content","#faf8f4")}}catch(e){}})()</script>
-<style>html{background:#0b0b0d}html[data-theme=light]{background:#faf8f4}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>html{background:#0b0b0d}html[data-theme=light]{background:#faf8f4}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+/* ===== Épinglage : badge « À la une », bouton et case admin ===== */
+.pin-b{position:absolute;left:6px;bottom:6px;z-index:3;display:inline-flex;align-items:center;gap:4px;padding:3px 9px 3px 7px;border-radius:999px;background:rgba(14,14,20,.62);-webkit-backdrop-filter:blur(12px) saturate(160%);backdrop-filter:blur(12px) saturate(160%);border:1px solid rgba(255,178,30,.45);box-shadow:0 0 14px rgba(255,178,30,.22),inset 0 1px 0 rgba(255,255,255,.14);color:var(--accent);font-size:10px;font-weight:700;letter-spacing:.05em;line-height:1.3;pointer-events:none}
+.pin-b i{font-style:normal;filter:drop-shadow(0 0 4px rgba(255,178,30,.7))}
+.card.pinned .thumb{box-shadow:0 0 0 1px rgba(255,178,30,.4),0 8px 26px -10px rgba(255,178,30,.35)}
+.pin-opt{display:flex;align-items:center;gap:10px;margin:12px 0 4px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);cursor:pointer;font-size:14px;color:var(--fg);min-height:48px}
+.pin-opt input{width:20px;height:20px;accent-color:var(--accent);flex:none}
+.pin-opt small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.arow .pin-tag{display:inline-flex;align-items:center;gap:3px;margin-left:8px;padding:1px 8px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--accent);background:rgba(255,178,30,.12);border:1px solid rgba(255,178,30,.35);vertical-align:middle}
+.kmenu button.pinact,.ckmenu button.pinact{color:var(--accent)}
+html[data-theme=light] .pin-b{background:rgba(12,10,6,.74);color:#ffc457;border-color:rgba(255,196,87,.5)}
+html[data-theme=light] .pin-opt{background:var(--raise);border:1px solid var(--line)}
+html[data-theme=light] .arow .pin-tag{color:#8a4f00;background:rgba(179,105,10,.1);border-color:rgba(179,105,10,.35)}
+html[data-theme=light] .card.pinned .thumb{box-shadow:0 0 0 1px rgba(179,105,10,.4),0 8px 24px -10px rgba(179,105,10,.35)}
+
+/* ===== Admin : Dark Glassmorphism / Fintech ===== */
+html.adm-wide .app{max-width:1180px}
+.adm{--ag:rgba(255,255,255,.045);--al:rgba(255,255,255,.09);display:block}
+.adm-sb{display:flex;flex-direction:column;gap:14px;margin:8px 0 14px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(24,24,32,.9),rgba(10,10,14,.95));border:1px solid var(--al);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 20px 50px -30px #000}
+.adm-brand{display:flex;align-items:center;gap:10px}
+.adm-logo{flex:none;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(145deg,#ffcb52,#e08a00);color:#1a1100;box-shadow:0 6px 18px -6px rgba(255,178,30,.6)}
+.adm-logo svg{width:16px;height:16px;fill:currentColor}
+.adm-bt{flex:1;min-width:0;display:flex;flex-direction:column}
+.adm-bt b{font:600 15px/1.2 var(--display);color:var(--fg)}
+.adm-bt small{font-size:11px;color:var(--muted);letter-spacing:.02em}
+.adm-badge{flex:none;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--accent);background:rgba(255,178,30,.12);border:1px solid rgba(255,178,30,.4)}
+.adm-welcome{padding:12px 4px 4px;border-top:1px solid var(--al)}
+.adm-welcome h3{margin:0;font:600 22px/1.1 var(--display);color:var(--fg)}
+.adm-welcome p{display:flex;align-items:center;gap:8px;margin:8px 0 0;font-size:12px;color:var(--muted)}
+.adm-dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(61,220,151,.18),0 0 10px var(--ok)}
+.adm .atabs{display:flex;flex-direction:row;gap:6px;overflow-x:auto;margin:0;padding:0;border:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;scrollbar-width:none}
+.adm-sec{display:none;margin:12px 4px 2px;font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted)}
+.adm .atab{position:relative;display:flex;align-items:center;gap:10px;flex:0 0 auto;min-height:42px;padding:0 14px;border-radius:12px;border:1px solid transparent;background:var(--ag);color:var(--soft);font-weight:500;font-size:14px;text-align:left}
+.adm .atab .ic{width:18px;height:18px;flex:none;opacity:.8}
+.adm .atab.sub{display:none}
+.adm .atab:disabled{opacity:.5}
+.adm .atab[aria-selected=true]{color:var(--fg);background:linear-gradient(90deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border-color:var(--al);box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.adm-led{display:none;margin-left:auto;width:3px;height:16px;border-radius:3px;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+.adm .atab[aria-selected=true] .adm-led{display:block}
+.adm-count,.adm-tag{margin-left:auto;padding:1px 8px;border-radius:999px;font-style:normal;font-size:11px;font-weight:700;color:var(--soft);background:rgba(255,255,255,.08);border:1px solid var(--al)}
+.adm-count{color:var(--accent);border-color:rgba(255,178,30,.35);background:rgba(255,178,30,.1)}
+.adm-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 10px}
+.adm-crumb{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.adm-crumb i{font-style:normal;opacity:.5}.adm-crumb b{color:var(--fg);font-weight:600}
+.adm-live{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.adm-live b{color:var(--soft);font-weight:600}
+.adm-pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(61,220,151,.55);animation:admp 2s infinite}
+@keyframes admp{70%{box-shadow:0 0 0 8px rgba(61,220,151,0)}100%{box-shadow:0 0 0 0 rgba(61,220,151,0)}}
+.adm-ref{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--al);background:var(--ag);color:var(--soft);padding:0}
+.adm-ref .ic{width:16px;height:16px}
+.adm-h{margin:10px 0 2px;font:600 clamp(26px,6vw,36px)/1.05 var(--display);letter-spacing:-.01em;color:var(--fg)}
+.adm .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.adm .kpi{position:relative;overflow:hidden;gap:6px;padding:16px;border-radius:18px;border:1px solid var(--al);background:radial-gradient(120% 90% at 100% 0,rgba(255,255,255,.07),transparent 60%),rgba(16,16,22,.7);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 18px 40px -28px #000}
+.adm .kpi::before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:2px;border-radius:2px;background:var(--accent);opacity:.8;box-shadow:0 0 10px var(--accent)}
+.adm .kpi .kpi-v{font-size:28px}
+.kpi-d{align-self:flex-start;min-height:20px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;color:var(--ok);background:rgba(61,220,151,.12);border:1px solid rgba(61,220,151,.25)}
+.kpi-d:empty{visibility:hidden}.kpi-d.neu{color:var(--soft);background:rgba(255,255,255,.07);border-color:var(--al)}.kpi-d.neg{color:var(--bad);background:rgba(255,122,110,.12);border-color:rgba(255,122,110,.3)}
+.spark{width:100%;height:30px;margin-top:2px;overflow:visible}
+.spark path.l{fill:none;stroke:var(--accent);stroke-width:1.6;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round}
+.spark path.a{fill:url(#sparkg);stroke:none;opacity:.25}
+.spark rect{fill:var(--accent);opacity:.7}
+.adm .kpi-apk.adm-apk{margin:14px 0 0;grid-column:auto}
+.adm-card{margin:18px 0 0;padding:16px;border-radius:20px;border:1px solid var(--al);background:rgba(14,14,20,.72);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.adm-ch{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px}
+.adm-eyebrow{display:block;font-size:12px;color:var(--muted)}
+.adm-h3{margin:2px 0 0;font:600 20px/1.15 var(--display);color:var(--fg)}
+.adm-search{max-width:240px;min-height:40px;padding:0 12px;font-size:14px}
+.adm-tw{overflow-x:auto;border-radius:14px;border:1px solid var(--al);-webkit-overflow-scrolling:touch}
+.adm-t{width:100%;min-width:480px;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.adm-t th{padding:12px 14px;text-align:left;font-weight:600;font-size:12px;color:var(--muted);background:rgba(255,255,255,.03);border-bottom:1px solid var(--al);white-space:nowrap}
+.adm-t td{padding:14px;color:var(--soft);border-bottom:1px solid var(--al);vertical-align:middle}
+.adm-t tr:last-child td{border-bottom:0}
+.adm-t td:first-child{color:var(--muted);width:48px}
+.adm-t td.mail{color:var(--fg);font-weight:500;overflow-wrap:anywhere}
+.adm-t tbody tr:hover td{background:rgba(255,255,255,.025)}
+.adm-empty{text-align:center;color:var(--muted)!important}
+.bdg{display:inline-block;padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700;white-space:nowrap;color:var(--ok);background:rgba(61,220,151,.1);border:1px solid rgba(61,220,151,.28)}
+.bdg.wait{color:#ffc457;background:rgba(255,178,30,.1);border-color:rgba(255,178,30,.3)}
+.bdg.off{color:var(--muted);background:rgba(255,255,255,.05);border-color:var(--al)}
+.adm .arow{border-bottom-color:var(--al)}
+@media (min-width:900px){
+  .adm{display:grid;grid-template-columns:268px minmax(0,1fr);gap:18px;align-items:start}
+  .adm-sb{position:sticky;top:12px;margin:8px 0;padding:18px;gap:16px;min-height:calc(100vh - 140px)}
+  .adm .atabs{flex-direction:column;gap:3px;overflow:visible}
+  .adm-sec{display:block}
+  .adm .atab{background:transparent;width:100%}
+  .adm .atab.sub{display:flex}
+  .adm .atab:hover:not(:disabled){background:rgba(255,255,255,.05)}
+  .adm .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .adm-t{min-width:0}
+}
+@media (max-width:899px){.adm .atab.sub{display:none}.adm-welcome h3{font-size:18px}.adm-welcome h3 br{display:none}}
+html[data-theme=light] .adm-sb{background:linear-gradient(180deg,#fff,#f6f1e7);border-color:var(--line);box-shadow:0 16px 40px -24px rgba(40,28,8,.35)}
+html[data-theme=light] .adm{--ag:#f3eee4;--al:var(--line)}
+html[data-theme=light] .adm .kpi,html[data-theme=light] .adm-card{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.05),0 16px 30px -22px rgba(40,28,8,.3)}
+html[data-theme=light] .adm .atab[aria-selected=true]{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.12)}
+html[data-theme=light] .adm-t th{background:#faf6ee}
+html[data-theme=light] .adm-t tbody tr:hover td{background:#faf6ee}
+html[data-theme=light] .adm-logo{box-shadow:none}
+html[data-theme=light] .kpi-d{color:#14724a}
+html[data-theme=light] .adm .atabs{background:none;border:0}
+html[data-theme=light] .adm .atab{color:#413c49}
+html[data-theme=light] .adm .atab[aria-selected=true]{color:#18151b}
+html[data-theme=light] .adm .atab:disabled{color:#6f6a78}
+</style>
 <title>TOPLEAKS</title>
 <meta name="application-name" content="TOPLEAKS">
 <meta name="apple-mobile-web-app-title" content="TOPLEAKS">
@@ -859,7 +963,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
 
 </head>
 <body>
-<!-- Bannière de téléchargement APK : glisse du haut 1,5 s après l'arrivée, reste 6 s -->
+<!-- Bannière de téléchargement APK : glisse du haut ; persistante sur Android jusqu'à fermeture -->
 <div id="apkb" class="apkb" role="region" aria-label="Application TOPLEAKS" aria-hidden="true">
   <div class="apkb-in">
     <span class="apkb-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 20h14"/></svg></span>
@@ -890,8 +994,16 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1.1-4.4A8 8 0 1121 12z"/></symbol>
   <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.9" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.9" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.9" fill="currentColor" stroke="none"/></symbol>
   <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M4 7l11-3v3M16 13.5h.01"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.5-5.8M20 4v5h-5"/></symbol>
   <symbol id="i-smile" viewBox="0 0 24 24"><path d="M5 11c1.5 5.5 12.5 5.5 14 0z"/><path d="M8 7.5h.01M16 7.5h.01"/></symbol>
 </svg>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="sparkg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb21e"/><stop offset="1" stop-color="#ffb21e" stop-opacity="0"/></linearGradient></defs></svg>
 
 <div class="app">
 
@@ -1053,33 +1165,79 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
       <div class="stack"><button id="aopenauth" class="btn btn-primary" type="button" data-i18n="login"></button></div>
     </div>
 
-    <div id="apanel" hidden>
-      <div class="atabs" role="tablist" aria-label="Sections de l’espace admin">
-        <button type="button" class="atab" role="tab" id="tab-overview" data-atab="overview" aria-controls="pane-overview" aria-selected="true">Vue d’ensemble</button>
-        <button type="button" class="atab" role="tab" id="tab-catalog" data-atab="catalog" aria-controls="pane-catalog" aria-selected="false" tabindex="-1">Vidéos &amp; Catalogue</button>
-        <button type="button" class="atab" role="tab" id="tab-sales" data-atab="sales" aria-controls="pane-sales" aria-selected="false" tabindex="-1">Achats &amp; Réglages</button>
-      </div>
+    <div id="apanel" class="adm" hidden>
+      <aside class="adm-sb" aria-label="Navigation admin">
+        <div class="adm-brand">
+          <span class="adm-logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5l12 7-12 7z"/></svg></span>
+          <div class="adm-bt"><b>TOPLEAKS Admin</b><small>Console de gestion</small></div>
+          <span class="adm-badge">PRO</span>
+        </div>
+        <div class="adm-welcome">
+          <h3>Welcome <br>Back, Chief</h3>
+          <p><span class="adm-dot" aria-hidden="true"></span><span id="adm-sess">Session active</span></p>
+        </div>
+        <nav class="atabs" role="tablist" aria-orientation="vertical" aria-label="Sections de l’espace admin">
+          <span class="adm-sec">Overview</span>
+          <button type="button" class="atab" role="tab" id="tab-overview" data-atab="overview" aria-controls="pane-overview" aria-selected="true"><svg class="ic"><use href="#i-grid"/></svg>Dashboard<i class="adm-led" aria-hidden="true"></i></button>
+          <span class="adm-sec">Content</span>
+          <button type="button" class="atab" role="tab" id="tab-catalog" data-atab="catalog" aria-controls="pane-catalog" aria-selected="false" tabindex="-1"><svg class="ic"><use href="#i-play"/></svg>Vidéos &amp; Catalogue<i class="adm-led" aria-hidden="true"></i></button>
+          <button type="button" class="atab sub" data-go="catalog:#acatform"><svg class="ic"><use href="#i-tag"/></svg>Catégories</button>
+          <button type="button" class="atab sub" disabled><svg class="ic"><use href="#i-msg"/></svg>Commentaires<em class="adm-tag">Bientôt</em></button>
+          <span class="adm-sec">Activity</span>
+          <button type="button" class="atab" role="tab" id="tab-sales" data-atab="sales" aria-controls="pane-sales" aria-selected="false" tabindex="-1"><svg class="ic"><use href="#i-lock"/></svg>Ventes VIP<i class="adm-led" aria-hidden="true"></i></button>
+          <button type="button" class="atab sub" data-go="sales:#agrant"><svg class="ic"><use href="#i-wallet"/></svg>Transactions MM</button>
+          <span class="adm-sec">Others</span>
+          <button type="button" class="atab sub" data-go="sales:#apayform"><svg class="ic"><use href="#i-gear"/></svg>Paramètres App</button>
+          <button type="button" class="atab sub" data-go="overview:#amembers"><svg class="ic"><use href="#i-user"/></svg>Accès Client<em class="adm-count" id="adm-count">–</em></button>
+          <button type="button" class="atab sub" disabled><svg class="ic"><use href="#i-help"/></svg>Support<em class="adm-tag">Bientôt</em></button>
+        </nav>
+      </aside>
 
-      <!-- Onglet 1 : Vue d'ensemble -->
+      <div class="adm-main">
+        <div class="adm-top">
+          <div class="adm-crumb" aria-live="polite"><span>Overview</span><i>/</i><b id="adm-crumb">Dashboard</b></div>
+          <div class="adm-live"><span class="adm-pulse" aria-hidden="true"></span><span>Dernière mise à jour : <b id="adm-upd">…</b></span><button id="adm-refresh" class="adm-ref" type="button" aria-label="Actualiser"><svg class="ic"><use href="#i-refresh"/></svg></button></div>
+        </div>
+
+      <!-- Onglet 1 : Vue d'ensemble & Membres -->
       <div id="pane-overview" class="apane" role="tabpanel" aria-labelledby="tab-overview">
-        <h3 class="ah">Statistiques clés</h3>
+        <h2 class="adm-h">Live Dashboard</h2>
         <div class="kpis">
-          <div class="kpi"><span class="kpi-l">Vidéos en ligne</span><span class="kpi-v" id="kpi-online">…</span><span class="kpi-s" id="kpi-online-sub"></span></div>
-          <div class="kpi"><span class="kpi-l">Vues totales</span><span class="kpi-v" id="kpi-views">…</span><span class="kpi-s" id="kpi-views-sub"></span></div>
-          <div class="kpi"><span class="kpi-l">Ventes VIP</span><span class="kpi-v" id="kpi-sales">…</span><span class="kpi-s" id="kpi-sales-sub"></span></div>
-          <div class="kpi accent"><span class="kpi-l">Revenus estimés</span><span class="kpi-v" id="kpi-rev">…</span><span class="kpi-s">Ventes confirmées</span></div>
-          <div class="kpi kpi-apk">
-            <span class="kpi-l">Application Android</span>
-            <span class="kpi-s">Lien direct de téléchargement de l’APK.</span>
-            <div class="kpi-act">
-              <a id="kpi-apk" class="btn btn-primary" href="./TOPLEAKS.apk" download>Télécharger l’APK</a>
-              <button id="kpi-apkcopy" class="btn btn-ghost" type="button">Copier le lien</button>
-            </div>
+          <div class="kpi"><span class="kpi-l">Comptes inscrits</span><span class="kpi-v" id="kpi-accounts">…</span><span class="kpi-d" id="kpi-accounts-d"></span><svg class="spark" id="sp-accounts" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"></svg><span class="kpi-s" id="kpi-accounts-sub"></span></div>
+          <div class="kpi"><span class="kpi-l">Comptes actifs (7 j)</span><span class="kpi-v" id="kpi-active">…</span><span class="kpi-d" id="kpi-active-d"></span><svg class="spark" id="sp-active" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"></svg><span class="kpi-s" id="kpi-active-sub"></span></div>
+          <div class="kpi"><span class="kpi-l">Vidéos en ligne</span><span class="kpi-v" id="kpi-online">…</span><span class="kpi-d" id="kpi-online-d"></span><svg class="spark" id="sp-online" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"></svg><span class="kpi-s" id="kpi-online-sub"></span></div>
+          <div class="kpi"><span class="kpi-l">Vues totales</span><span class="kpi-v" id="kpi-views">…</span><span class="kpi-d" id="kpi-views-d"></span><svg class="spark" id="sp-views" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"></svg><span class="kpi-s" id="kpi-views-sub"></span></div>
+          <div class="kpi"><span class="kpi-l">Ventes VIP</span><span class="kpi-v" id="kpi-sales">…</span><span class="kpi-d" id="kpi-sales-d"></span><svg class="spark" id="sp-sales" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"></svg><span class="kpi-s" id="kpi-sales-sub"></span></div>
+          <div class="kpi accent"><span class="kpi-l">Revenus estimés</span><span class="kpi-v" id="kpi-rev">…</span><span class="kpi-d" id="kpi-rev-d"></span><svg class="spark" id="sp-rev" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"></svg><span class="kpi-s">Ventes confirmées</span></div>
+        </div>
+
+        <div class="adm-card" id="amembers">
+          <div class="adm-ch"><div><span class="adm-eyebrow">Live Updates</span><h3 class="adm-h3">Membres inscrits</h3></div>
+            <input id="amemq" class="field adm-search" type="search" placeholder="Rechercher un e-mail" aria-label="Rechercher un membre" autocomplete="off"></div>
+          <div class="adm-tw"><table class="adm-t" aria-label="Liste des membres">
+            <thead><tr><th scope="col">No</th><th scope="col">E-mail client</th><th scope="col">Dernière connexion</th><th scope="col">Statut</th></tr></thead>
+            <tbody id="amembody"><tr><td colspan="4" class="adm-empty">Chargement…</td></tr></tbody></table></div>
+          <div class="stack"><button id="amemmore" class="btn btn-ghost" type="button" hidden>Voir plus</button></div>
+        </div>
+
+        <div class="adm-card">
+          <div class="adm-ch"><div><span class="adm-eyebrow">Activité</span><h3 class="adm-h3">Transactions &amp; activité récente</h3></div></div>
+          <div class="adm-tw"><table class="adm-t" aria-label="Activité récente">
+            <thead><tr><th scope="col">No</th><th scope="col">E-mail client</th><th scope="col">Activité / Détail</th><th scope="col">Statut</th></tr></thead>
+            <tbody id="aactbody"><tr><td colspan="4" class="adm-empty">Chargement…</td></tr></tbody></table></div>
+        </div>
+
+        <div class="kpi kpi-apk adm-apk">
+          <span class="kpi-l">Application Android</span>
+          <span class="kpi-s">Lien direct de téléchargement de l’APK.</span>
+          <div class="kpi-act">
+            <a id="kpi-apk" class="btn btn-primary" href="./TOPLEAKS.apk" download>Télécharger l’APK</a>
+            <button id="kpi-apkcopy" class="btn btn-ghost" type="button">Copier le lien</button>
           </div>
         </div>
         <h3 class="ah">Vidéos les plus vues</h3>
         <div id="atop" class="atop"></div>
-        <p class="hint">Les revenus sont calculés à partir des achats enregistrés (colonne <code>revenue_fc</code> de la vue <code>video_stats</code>).</p>
+        <p class="hint">Les revenus sont calculés à partir des achats enregistrés (colonne <code>revenue_fc</code> de la vue <code>video_stats</code>). Les membres viennent de la table <code>profiles</code> (script SQL fourni).</p>
       </div>
 
       <!-- Onglet 2 : Vidéos & Catalogue -->
@@ -1096,6 +1254,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
           <input id="adesc" class="field aemail" type="text" maxlength="400">
           <label class="label" for="acat">Catégorie (facultatif)</label>
           <select id="acat" class="field aemail"><option value="">Aucune</option></select>
+          <label class="pin-opt" for="apin"><input id="apin" type="checkbox"><span>⚡ Épingler en haut de l’accueil<small>Badge « À la une », affichée avant les nouveautés.</small></span></label>
           <label class="label" for="afile">Fichier vidéo (mp4) : vous pouvez en choisir plusieurs</label>
           <input id="afile" class="field aemail afile" type="file" accept="video/mp4,video/webm" multiple>
           <div id="athumb" class="athumb" hidden></div>
@@ -1136,6 +1295,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
           <label class="label" for="apaynum">Numéro Mobile Money</label>
           <div class="cnumrow"><input id="apaynum" class="field aemail" type="tel" inputmode="tel" maxlength="20" autocomplete="off"><button id="apaysave" class="clink main" type="submit">Enregistrer</button></div>
         </form>
+      </div>
       </div>
     </div>
   </section>
@@ -1295,6 +1455,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
       <input id="qedesc" class="field aemail" type="text" maxlength="400">
       <label class="label" for="qecat">Catégorie</label>
       <select id="qecat" class="field aemail"><option value="">Aucune</option></select>
+      <label class="pin-opt" for="qepin"><input id="qepin" type="checkbox"><span>⚡ Épingler en haut de l’accueil<small>Badge « À la une », affichée avant les nouveautés.</small></span></label>
       <div class="label">Miniature</div>
       <div id="qecur" class="athumb" hidden></div>
       <div id="qeframe" hidden></div>
@@ -1440,7 +1601,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   lang=LANGS.indexOf(ST.lang)>-1?ST.lang:'fr';
 
   /* ---------- Utilitaires ---------- */
-  var A={},V=[],byId={},FEATURED=[],loading=true,failed=false,ADMUI=false;
+  var A={},V=[],byId={},FEATURED=[],loading=true,failed=false,ADMUI=false,PINOK=false;
   var SRV={},FIL={price:'all',dur:'all',artist:'',cat:'',fav:false},CATS=[];
   /* Raccourcis PWA : ?filtre=gratuit ou ?filtre=vip */
   try{var _pf=new URLSearchParams(location.search).get('filtre');if(_pf==='gratuit')FIL.price='free';else if(_pf==='vip')FIL.price='vip'}catch(e){}
@@ -1573,6 +1734,28 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   var plain=function(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase()};
   var esc=function(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
   var toastT;
+  /* Copie fiable : API Clipboard, sinon champ texte temporaire invisible + execCommand, sinon invite manuelle */
+  function copyText(text){
+    text=String(text==null?'':text);
+    function legacy(){
+      return new Promise(function(res,rej){
+        var ta=document.createElement('textarea'),ok=false,prev=document.activeElement;
+        ta.value=text;ta.setAttribute('readonly','');ta.setAttribute('aria-hidden','true');ta.tabIndex=-1;
+        ta.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:0;outline:0;opacity:0;font-size:16px;pointer-events:none';
+        document.body.appendChild(ta);
+        try{ta.focus({preventScroll:true})}catch(e){}
+        try{ta.select();ta.setSelectionRange(0,text.length);ok=document.execCommand('copy')}catch(e){ok=false}
+        document.body.removeChild(ta);
+        if(prev&&prev.focus)try{prev.focus({preventScroll:true})}catch(e){}
+        if(ok)return res();
+        try{window.prompt('Copiez ce lien :',text);res()}catch(e){rej(e)}
+      });
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText&&window.isSecureContext){
+      return navigator.clipboard.writeText(text).catch(legacy);
+    }
+    return legacy();
+  }
   function toast(msg){var el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove('show')},2200)}
   var isNew=function(v){return v.created&&(Date.now()-new Date(v.created).getTime())<NEW_DAYS*864e5};
   var aName=function(v){return (A[v.a]&&A[v.a].n)||'TOPLEAKS'};
@@ -1626,15 +1809,17 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
     return '<div class="ckebab"><button class="ckbtn" type="button" data-ckebab="'+id+'" aria-haspopup="menu" aria-expanded="false" aria-label="Options admin : '+esc(v.t)+'"><svg class="ic"><use href="#i-dots"/></svg></button>'+
       '<div class="ckmenu" role="menu" hidden>'+
       '<button type="button" role="menuitem" data-cact="edit" data-cid="'+id+'">Modifier</button>'+
+      '<button type="button" role="menuitem" class="pinact" data-cact="pin" data-cid="'+id+'">'+(v.pin?'Désépingler':'⚡ Épingler en haut')+'</button>'+
       '<button type="button" role="menuitem" data-cact="hide" data-cid="'+id+'">Masquer</button>'+
       '<button type="button" role="menuitem" class="danger" data-cact="del" data-cid="'+id+'">Supprimer</button></div></div>';
   }
   function cardHTML(v){
-    return '<div class="card'+(ADMUI?' adm':'')+'">'+
+    return '<div class="card'+(ADMUI?' adm':'')+(v.pin?' pinned':'')+'">'+
       '<button class="card-hit" type="button" data-open="'+esc(v.id)+'" aria-label="'+esc(v.t)+', '+esc(aName(v))+(v.p?', VIP, '+FC(v.p):', '+t('free'))+'">'+
       '<div class="thumb" style="--g:'+flatBg(v)+'">'+thumbImg(v)+'<span class="glyph" aria-hidden="true">“</span><span class="play-ov" aria-hidden="true"><svg class="ic f"><use href="#i-play"/></svg></span>'+
       (v.p?'<span class="vip"><svg class="ic"><use href="#i-lock"/></svg>VIP</span>':'')+
       (isNew(v)?'<span class="new">'+t('isnew')+'</span>':'')+
+      (v.pin?'<span class="pin-b"><i aria-hidden="true">⚡</i>À la une</span>':'')+
       '</div>'+
       '<span class="c-title">'+esc(v.t)+'</span><span class="c-meta">'+esc(aName(v))+' · '+(v.p?FC(v.p):t('free'))+'</span></button>'+
       heartBtn(v)+(ADMUI?admMenu(v):'')+'</div>';
@@ -1747,6 +1932,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   function show(name){
     if(!views.home.hidden&&name!=='home')homeY=window.scrollY;
     Object.keys(views).forEach(function(k){views[k].hidden=(k!==name)});
+    document.documentElement.classList.toggle('adm-wide',name==='admin');
     var el=views[name];el.classList.remove('view-in');void el.offsetWidth;el.classList.add('view-in');
     window.scrollTo(0,name==='home'?homeY:0);
   }
@@ -2069,7 +2255,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   $('#share').addEventListener('click',function(){
     if(!cur)return;
     var url=shareUrl(),title=cur.t;
-    function copy(){try{navigator.clipboard.writeText(url).then(function(){toast(t('link_copied'))},function(){toast(t('share_fail'))})}catch(e){toast(t('share_fail'))}}
+    function copy(){copyText(url).then(function(){toast(t('link_copied'))},function(){toast(t('share_fail'))})}
     if(navigator.share){try{navigator.share({title:title,text:title+' · TOPLEAKS',url:url}).catch(function(err){if(err&&err.name!=='AbortError')copy()})}catch(e){copy()}}
     else copy();
   });
@@ -2211,18 +2397,16 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   $('#contactlinks').addEventListener('click',function(e){
     if(!e.target.closest('#ccopy'))return;
     var inp=$('#cnum');
-    try{navigator.clipboard.writeText(inp.value).then(function(){toast(t('copied'))},function(){inp.select();toast(t('selected'))})}
-    catch(x){inp.select();toast(t('selected'))}
+    copyText(inp.value).then(function(){toast(t('copied'))},function(){try{inp.select()}catch(x){}toast(t('selected'))});
   });
 
   /* ---------- Supabase : lecture des vidéos publiées ---------- */
   function hue(str){var h=0;for(var i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))%360;return h}
-  function setStatus(x){}
   function https(u){u=u==null?'':String(u).trim();return /^https:\/\//.test(u)?u:''}
   function loadVideos(){
     loading=true;failed=false;renderHome();
-    var url=SB_URL+'/rest/v1/videos?select=id,title,artist,description,thumbnail_url,video_url,duration_seconds,price_fc,created_at,video_path,category_id&is_published=eq.true&order=created_at.desc';
-    (function go(){return fetch(url,{headers:{apikey:SB_KEY}}).then(function(r){if(r.status===400){var n=url.replace(',category_id','');if(n===url)n=url.replace(',video_path','');if(n!==url){url=n;return go()}}return r})})().then(function(r){
+    var url=SB_URL+'/rest/v1/videos?select=id,title,artist,description,thumbnail_url,video_url,duration_seconds,price_fc,created_at,video_path,category_id,pinned&is_published=eq.true&order=pinned.desc.nullslast,created_at.desc';
+    (function go(){return fetch(url,{headers:{apikey:SB_KEY}}).then(function(r){if(r.status===400){var n=url.replace(',pinned','').replace('order=pinned.desc.nullslast,created_at.desc','order=created_at.desc');if(n===url)n=url.replace(',category_id','');if(n===url)n=url.replace(',video_path','');if(n!==url){url=n;return go()}}return r})})().then(function(r){
       if(!r.ok)return r.text().then(function(tx){
         var m='';try{m=JSON.parse(tx).message||''}catch(x){}
         var err=new Error('HTTP '+r.status+(m?' · '+m:''));err.status=r.status;throw err;
@@ -2233,16 +2417,14 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
         var name=r.artist||'TOPLEAKS';
         if(!A[name])A[name]={n:name};
         return {id:String(r.id),a:name,t:r.title||'Sans titre',dur:r.duration_seconds||0,r:0,p:+r.price_fc||0,
-          created:r.created_at,h:hue(r.title||''),d:r.description||'',db:true,img:https(r.thumbnail_url),video_url:r.video_path?'':https(r.video_url),cat:String(r.category_id==null?'':r.category_id),priv:r.video_path||''};
+          created:r.created_at,h:hue(r.title||''),d:r.description||'',db:true,img:https(r.thumbnail_url),video_url:r.video_path?'':https(r.video_url),cat:String(r.category_id==null?'':r.category_id),priv:r.video_path||'',pin:!!r.pinned};
       });
+      PINOK=/,pinned/.test(url);
+      /* tri de sécurité : épinglées d'abord, puis plus récentes */
+      V.sort(function(a,b){return (b.pin-a.pin)||(new Date(b.created||0)-new Date(a.created||0))});
       loading=false;failed=false;reindex();renderHome();search();openShared();notifyNew();
-      setStatus(V.length?'Supabase · '+V.length:'Supabase · 0');
     }).catch(function(e){
       loading=false;failed=true;V=[];reindex();renderHome();
-      var hint=e.status===404?'La table « videos » est introuvable : lancez le script SQL.'
-        :(e.status===401||e.status===403)?'Accès refusé : vérifiez la clé publique et la règle RLS.'
-        :'Réseau bloqué ou hors ligne. Dans l’aperçu de la conversation, les appels externes sont bloqués : ouvrez le fichier dans votre navigateur.';
-      setStatus('Supabase : '+e.message+'. '+hint);
     });
   }
 
@@ -2252,7 +2434,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   function appUrl(){return web?location.origin+location.pathname:location.href.split('#')[0].split('?')[0]}
   function shareUrl(){return appUrl()+'?video='+enc(cur.id)}
   function loadSession(){try{var x=JSON.parse(localStorage.getItem(AUTH_KEY)||'null');session=(x&&x.access_token&&x.refresh_token)?x:null}catch(e){session=null}}
-  function storeSession(x){session=x;try{if(x)localStorage.setItem(AUTH_KEY,JSON.stringify(x));else localStorage.removeItem(AUTH_KEY)}catch(e){}renderAccount()}
+  function storeSession(x){session=x;try{if(x)localStorage.setItem(AUTH_KEY,JSON.stringify(x));else localStorage.removeItem(AUTH_KEY)}catch(e){}renderAccount();if(x)setTimeout(touchSeen,0)}
   function normSession(j){
     if(!j||!j.access_token)return null;
     var u=j.user||(session&&session.user)||null;
@@ -2605,7 +2787,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
       if(!x)return;
       return authedFetch(REST+'admins?select=user_id&user_id=eq.'+enc(x.user.id)).then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
         if(!rows.length){$('#aneed').hidden=false;$('#aneedtxt').textContent=t('admin_not');$('#aopenauth').hidden=true;return}
-        $('#apanel').hidden=false;restoreAdminTab();$('#apaynum').value=PAY_NUMBER;loadPayNumber();loadStats();loadCats();
+        $('#apanel').hidden=false;restoreAdminTab();$('#apaynum').value=PAY_NUMBER;loadPayNumber();loadCats();refreshDash();
       });
     }).catch(function(err){$('#aneed').hidden=false;amsg(friendlyErr(err),true)});
   }
@@ -2660,15 +2842,18 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   });
   function loadStats(){
     var box=$('#astats');box.innerHTML='<div class="sk" style="height:56px"></div>';kpiReset('…');
-    authedFetch(REST+'video_stats?select=*&order=created_at.desc').then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
+    return authedFetch(REST+'video_stats?select=*&order=created_at.desc').then(function(r){return r.ok?r.json():restErr(r)}).then(function(rows){
       ADMV={};renderKpis(rows);
+      return authedFetch(REST+'videos?select=id,pinned').then(function(r){return r.ok?r.json():[]}).catch(function(){return []}).then(function(pr){var pm={};pr.forEach(function(x){pm[String(x.id)]=!!x.pinned});rows.forEach(function(r){r.pinned=!!pm[String(r.id)]});return rows});
+    }).then(function(rows){
       if(!rows.length){box.innerHTML='<p class="hint">Aucune vidéo.</p>';return}
       var tv=0,ts=0,tr=0;
       box.innerHTML=rows.map(function(r){
         ADMV[r.id]=r;tv+=+r.views||0;ts+=+r.sales||0;tr+=+r.revenue_fc||0;
-        return '<div class="arow'+(r.is_published?'':' off')+'"><div><b>'+esc(r.title)+'</b><span>'+(r.price_fc>0?FC(r.price_fc):t('free'))+' · '+(+r.views||0)+' vues · '+(+r.sales||0)+' ventes · '+FC(+r.revenue_fc||0)+'</span></div>'+
+        return '<div class="arow'+(r.is_published?'':' off')+'"><div><b>'+esc(r.title)+(r.pinned?'<em class="pin-tag" style="font-style:normal">⚡ À la une</em>':'')+'</b><span>'+(r.price_fc>0?FC(r.price_fc):t('free'))+' · '+(+r.views||0)+' vues · '+(+r.sales||0)+' ventes · '+FC(+r.revenue_fc||0)+'</span></div>'+
           '<div class="kebab"><button class="kbtn" type="button" data-kebab aria-haspopup="menu" aria-expanded="false" aria-label="Options"><svg class="ic"><use href="#i-dots"/></svg></button>'+
           '<div class="kmenu" role="menu" hidden><button type="button" role="menuitem" data-edit="'+esc(r.id)+'">Modifier</button>'+
+          '<button type="button" role="menuitem" class="pinact" data-pin="'+esc(r.id)+'" data-state="'+(r.pinned?'1':'0')+'">'+(r.pinned?'Désépingler':'⚡ Épingler en haut')+'</button>'+
           '<button type="button" role="menuitem" data-pub="'+esc(r.id)+'" data-state="'+(r.is_published?'1':'0')+'">'+(r.is_published?'Masquer':'Publier')+'</button>'+
           '<button type="button" role="menuitem" class="danger" data-del="'+esc(r.id)+'">Supprimer</button></div></div></div>';
       }).join('')+'<p class="hint">Total : '+tv+' vues · '+ts+' ventes · '+FC(tr)+'</p>';
@@ -2691,9 +2876,9 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   function stopEdit(){editId=null;$('#aadd').reset();resetMulti();showCoverPreview(null);$('#asubmit').textContent='Publier la vidéo';$('#acancel').hidden=true}
   function startEdit(id){
     amsg('Chargement…');
-    authedFetch(REST+'videos?select=title,artist,description,price_fc,category_id&id=eq.'+enc(id)).then(function(r){if(r.status===400)return authedFetch(REST+'videos?select=title,artist,description,price_fc&id=eq.'+enc(id)).then(function(r2){return r2.ok?r2.json():restErr(r2)});return r.ok?r.json():restErr(r)}).then(function(rows){
+    authedFetch(REST+'videos?select=title,artist,description,price_fc,category_id,pinned&id=eq.'+enc(id)).then(function(r){if(r.status===400)return authedFetch(REST+'videos?select=title,artist,description,price_fc&id=eq.'+enc(id)).then(function(r2){return r2.ok?r2.json():restErr(r2)});return r.ok?r.json():restErr(r)}).then(function(rows){
       var v=rows[0];if(!v){amsg('Vidéo introuvable.',true);return}
-      showAdminTab('catalog');resetMulti();editId=id;$('#atitle').value=v.title||'';$('#aartist').value=v.artist||'';$('#aprice').value=v.price_fc||0;$('#adesc').value=v.description||'';fillCatSelect();$('#acat').value=(v.category_id==null?'':String(v.category_id));
+      showAdminTab('catalog');resetMulti();editId=id;$('#atitle').value=v.title||'';$('#aartist').value=v.artist||'';$('#aprice').value=v.price_fc||0;$('#adesc').value=v.description||'';fillCatSelect();$('#acat').value=(v.category_id==null?'':String(v.category_id));$('#apin').checked=!!v.pinned;
       $('#afile').value='';$('#aurl').value='';$('#asubmit').textContent='Enregistrer les modifications';$('#acancel').hidden=false;
       amsg('Modification en cours. Laissez fichier et lien vides pour garder la vidéo actuelle.');
       try{$('#aadd').scrollIntoView({behavior:'smooth'})}catch(e){}
@@ -2707,8 +2892,11 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
     var kb=e.target.closest('[data-kebab]');
     if(kb){var m=kb.parentNode.querySelector('.kmenu'),was=m.hidden;closeKmenus();m.hidden=!was;kb.setAttribute('aria-expanded',was?'true':'false');return}
     if(e.target.closest('.kmenu'))closeKmenus();
-    var b=e.target.closest('[data-pub]'),ed=e.target.closest('[data-edit]'),dl=e.target.closest('[data-del]');
-    if(b){
+    var b=e.target.closest('[data-pub]'),ed=e.target.closest('[data-edit]'),dl=e.target.closest('[data-del]'),pn=e.target.closest('[data-pin]');
+    if(pn){
+      pn.disabled=true;
+      setPin(pn.getAttribute('data-pin'),pn.getAttribute('data-state')!=='1').catch(function(err){pn.disabled=false;amsg('Échec : '+err.message,true)});
+    }else if(b){
       var next=b.getAttribute('data-state')!=='1';b.disabled=true;
       authedFetch(REST+'videos?id=eq.'+enc(b.getAttribute('data-pub')),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({is_published:next})})
       .then(function(r){if(!r.ok)return restErr(r);loadStats();loadVideos()})
@@ -2738,6 +2926,15 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
     authedFetch(REST+'videos?id=eq.'+enc(id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({is_published:false})})
     .then(function(r){if(!r.ok)return restErr(r);toast('Vidéo masquée du catalogue');loadVideos();refreshAdminLists()})
     .catch(quickErr);
+  }
+  /* Épingle ou désépingle une vidéo : elle passe tout en haut de l'accueil */
+  function setPin(id,next){
+    return authedFetch(REST+'videos?id=eq.'+enc(id),{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({pinned:next})})
+    .then(function(r){if(r.status===400)throw new Error('Colonne « pinned » absente : lancez le script SQL.');if(!r.ok)return restErr(r);loadVideos();refreshAdminLists()});
+  }
+  function quickPin(id){
+    var v=byId[id];if(!v)return;var next=!v.pin;
+    setPin(id,next).then(function(){toast(next?'Vidéo épinglée en haut':'Vidéo désépinglée')}).catch(quickErr);
   }
   function quickDelete(id){
     var v=byId[id];if(!v)return;
@@ -2782,13 +2979,13 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
     $('#qecat').innerHTML='<option value="">Aucune</option>'+CATS.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+'</option>'}).join('');
     qeMsg('Chargement…');openModal('#qedit');
     function ok(r){return r.ok?r.json():restErr(r)}
-    authedFetch(REST+'videos?select=title,artist,description,price_fc,category_id,video_url,video_path,thumbnail_url&id=eq.'+enc(id)).then(function(r){
+    authedFetch(REST+'videos?select=title,artist,description,price_fc,category_id,pinned,video_url,video_path,thumbnail_url&id=eq.'+enc(id)).then(function(r){
       return r.status===400?authedFetch(REST+'videos?select=title,artist,description,price_fc,video_url,video_path,thumbnail_url&id=eq.'+enc(id)).then(ok):ok(r);
     }).then(function(rows){
       if(qeId!==id)return;
       var v=rows[0];if(!v){qeMsg('Vidéo introuvable.',true);return}
       $('#qetitleinp').value=v.title||'';$('#qeartist').value=v.artist||'';$('#qeprice').value=v.price_fc||0;$('#qedesc').value=v.description||'';
-      $('#qecat').value=(v.category_id==null?'':String(v.category_id));qeMsg('');qeOld=v.thumbnail_url||'';qeFrame(id,v);
+      $('#qecat').value=(v.category_id==null?'':String(v.category_id));$('#qepin').checked=!!v.pinned;qeMsg('');qeOld=v.thumbnail_url||'';qeFrame(id,v);
     }).catch(function(err){qeMsg('Échec : '+(err.noSession?t('admin_need'):err.message),true)});
   }
   document.addEventListener('click',function(e){
@@ -2802,7 +2999,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
     var ac=e.target.closest('[data-cact]');
     if(ac){
       var id=ac.getAttribute('data-cid'),act=ac.getAttribute('data-cact');closeCkMenus();
-      if(act==='edit')openQuickEdit(id);else if(act==='hide')quickHide(id);else if(act==='del')quickDelete(id);
+      if(act==='edit')openQuickEdit(id);else if(act==='pin')quickPin(id);else if(act==='hide')quickHide(id);else if(act==='del')quickDelete(id);
       return;
     }
     if(!e.target.closest('.ckebab'))closeCkMenus();
@@ -2822,6 +3019,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
     if(!(price>=0)){qeMsg('Prix invalide.',true);return}
     var body={title:title,artist:$('#qeartist').value.trim()||null,description:$('#qedesc').value.trim()||null,price_fc:price};
     if($('#qecat').value||CATS.length)body.category_id=$('#qecat').value||null;
+    if($('#qepin').checked||PINOK)body.pinned=$('#qepin').checked;
     var btn=$('#qesave'),newThumb=null,oldThumb=qeOld,saved=false;btn.disabled=true;qeMsg('Enregistrement…');
     /* frame choisie : capture -> envoi dans le bucket -> thumbnail_url mis à jour avec le titre, le prix, etc. */
     var pick=qePicker&&qePicker.touched()?qePicker.capture():Promise.resolve(null);
@@ -3065,6 +3263,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
         var body={title:title,artist:$('#aartist').value.trim()||null,description:$('#adesc').value.trim()||null,price_fc:price,is_published:true};
         if(priv)body.video_path=up.video_path;else body.video_url=up.video_url;
         if($('#acat').value||CATS.length)body.category_id=$('#acat').value||null;
+        if($('#apin').checked||PINOK)body.pinned=$('#apin').checked;
         if(info.dur)body.duration_seconds=info.dur;
         if(tu)body.thumbnail_url=tu;
         return authedFetch(REST+'videos',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)}).then(function(r){if(!r.ok)return restErr(r)});
@@ -3111,6 +3310,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
       var body={title:$('#atitle').value.trim(),artist:$('#aartist').value.trim()||null,description:$('#adesc').value.trim()||null,price_fc:price};
       if(m){body.video_url=m.url||null;if(m.path||eid)body.video_path=m.path||null;if(file)body.thumbnail_url=m.thumb||null;if(m.dur)body.duration_seconds=m.dur}
       if($('#acat').value||CATS.length)body.category_id=$('#acat').value||null;
+        if($('#apin').checked||PINOK)body.pinned=$('#apin').checked;
       if(!eid)body.is_published=true;
       return authedFetch(REST+'videos'+(eid?'?id=eq.'+enc(eid):''),{method:eid?'PATCH':'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)});
     }).then(function(r){
@@ -3128,6 +3328,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
       b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;p.hidden=!on;
     });
     closeKmenus();
+    var cr=$('#adm-crumb');if(cr)cr.textContent={overview:'Dashboard',catalog:'Vidéos & Catalogue',sales:'Achats & Réglages'}[name];
     try{sessionStorage.setItem(ATAB_KEY,name)}catch(e){}
     var tb=$('#tab-'+name);
     if(focus)tb.focus();
@@ -3151,7 +3352,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   function setKpi(id,txt){var el=$('#'+id);if(el)el.textContent=txt}
   function kpiReset(txt){
     ['kpi-online','kpi-views','kpi-sales','kpi-rev'].forEach(function(i){setKpi(i,txt)});
-    ['kpi-online-sub','kpi-views-sub','kpi-sales-sub'].forEach(function(i){setKpi(i,'')});
+    ['kpi-online-sub','kpi-views-sub','kpi-sales-sub','kpi-online-d','kpi-views-d','kpi-sales-d','kpi-rev-d'].forEach(function(i){setKpi(i,'')});
     if(txt==='—')$('#atop').innerHTML='<p class="hint">Statistiques indisponibles.</p>';
   }
   /* rows = lignes de la vue video_stats (déjà chargées par loadStats) */
@@ -3165,6 +3366,18 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
     setKpi('kpi-views',nf(tv));setKpi('kpi-views-sub',rows.length?'≈ '+nf(Math.round(tv/rows.length))+' par vidéo':'');
     setKpi('kpi-sales',nf(ts));setKpi('kpi-sales-sub',nf(vip)+' vidéo(s) VIP en ligne');
     setKpi('kpi-rev',nf(tr)+' FC');
+    /* tendances calculées sur les données réelles de la vue video_stats */
+    var wk=Date.now()-7*864e5,added=rows.filter(function(r){return r.created_at&&new Date(r.created_at).getTime()>wk}).length;
+    setPill('kpi-online-d',added?'+'+added+' cette semaine':'Stable',added?'':'neu');
+    setPill('kpi-views-d',rows.length&&tv?'≈ '+nf(Math.round(tv/rows.length))+' / vidéo':'—','neu');
+    setPill('kpi-sales-d',ts&&tv?(ts/tv*100).toFixed(1).replace('.',',')+' % des vues':'—','neu');
+    setPill('kpi-rev-d',ts?'≈ '+nf(Math.round(tr/ts))+' FC / vente':'—','neu');
+    var byDate=rows.filter(function(r){return r.created_at}).sort(function(a,b){return new Date(a.created_at)-new Date(b.created_at)}),cum=0;
+    spark('sp-online',byDate.map(function(r){return r.is_published?++cum:cum}));
+    var top8=rows.slice().sort(function(a,b){return (+b.views||0)-(+a.views||0)}).slice(0,8);
+    sparkBars('sp-views',top8.map(function(r){return +r.views||0}));
+    sparkBars('sp-sales',top8.map(function(r){return +r.sales||0}));
+    sparkBars('sp-rev',top8.map(function(r){return +r.revenue_fc||0}));
     var top=rows.slice().sort(function(a,b){return (+b.views||0)-(+a.views||0)}).slice(0,5).filter(function(r){return (+r.views||0)>0});
     $('#atop').innerHTML=top.length?top.map(function(r){
       return '<div class="arow"><div><b>'+esc(r.title)+'</b><span>'+nf(r.views)+' vues · '+nf(r.sales)+' ventes · '+FC(+r.revenue_fc||0)+'</span></div></div>';
@@ -3172,9 +3385,104 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   }
   $('#kpi-apkcopy').addEventListener('click',function(){
     var url=new URL('TOPLEAKS.apk',location.href).href;
-    try{navigator.clipboard.writeText(url).then(function(){toast(t('link_copied'))},function(){toast(t('share_fail'))})}
-    catch(e){toast(t('share_fail'))}
+    copyText(url).then(function(){toast(t('link_copied'))},function(){toast(t('share_fail'))});
   });
+
+
+  /* ---------- Admin : tendances, membres (table profiles), activité ---------- */
+  function setPill(id,txt,cls){var el=$('#'+id);if(!el)return;el.textContent=txt;el.className='kpi-d'+(cls?' '+cls:'')}
+  function spark(id,vals){
+    var el=$('#'+id);if(!el)return;
+    if(!vals||vals.length<2){el.innerHTML='';return}
+    var mx=Math.max.apply(null,vals),mn=Math.min.apply(null,vals),rg=(mx-mn)||1,n=vals.length;
+    var pts=vals.map(function(v,i){return [(i/(n-1)*100).toFixed(1),(26-(v-mn)/rg*22).toFixed(1)]});
+    var d='M'+pts.map(function(p){return p.join(' ')}).join(' L');
+    el.innerHTML='<path class="a" d="'+d+' L100 28 L0 28Z"/><path class="l" d="'+d+'"/>';
+  }
+  function sparkBars(id,vals){
+    var el=$('#'+id);if(!el)return;
+    if(!vals||!vals.length||!Math.max.apply(null,vals)){el.innerHTML='';return}
+    var mx=Math.max.apply(null,vals),w=100/vals.length;
+    el.innerHTML=vals.map(function(v,i){var h=Math.max(2,v/mx*26);return '<rect x="'+(i*w+w*.18).toFixed(1)+'" y="'+(28-h).toFixed(1)+'" width="'+(w*.64).toFixed(1)+'" height="'+h.toFixed(1)+'" rx="1.5"/>'}).join('');
+  }
+  var MEMBERS=[],MEMSHOWN=10,MEMQ='',PROFOK=true,lastUpd=0;
+  function fdate(x){if(!x)return 'Jamais';var d=new Date(x);return isNaN(d)?'—':d.toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}
+  function isActive(m){return m.last_seen&&Date.now()-new Date(m.last_seen).getTime()<7*864e5}
+  function renderMembers(){
+    var body=$('#amembody'),more=$('#amemmore');
+    if(!PROFOK){body.innerHTML='<tr><td colspan="4" class="adm-empty">Table « profiles » indisponible : lancez le script SQL.</td></tr>';more.hidden=true;return}
+    var qq=plain(MEMQ.trim()),list=MEMBERS.filter(function(m){return !qq||plain(m.email||'').indexOf(qq)>-1});
+    if(!list.length){body.innerHTML='<tr><td colspan="4" class="adm-empty">'+(MEMBERS.length?'Aucun résultat.':'Aucun membre pour l’instant.')+'</td></tr>';more.hidden=true;return}
+    body.innerHTML=list.slice(0,MEMSHOWN).map(function(m,i){
+      var st=isActive(m)?'<span class="bdg">Actif</span>':(m.last_seen?'<span class="bdg off">Inactif</span>':'<span class="bdg wait">Jamais connecté</span>');
+      return '<tr><td>'+(i+1)+'</td><td class="mail">'+esc(m.email||'—')+'</td><td>'+esc(fdate(m.last_seen))+'</td><td>'+st+'</td></tr>';
+    }).join('');
+    more.hidden=list.length<=MEMSHOWN;more.textContent='Voir plus ('+(list.length-MEMSHOWN)+')';
+  }
+  function dayBuckets(items,key,days){
+    var out=[],now=new Date();now.setHours(23,59,59,999);
+    for(var i=days-1;i>=0;i--){var end=now.getTime()-i*864e5,st=end-864e5,c=0;items.forEach(function(m){var t0=m[key]&&new Date(m[key]).getTime();if(t0&&t0>st&&t0<=end)c++});out.push(c)}
+    return out;
+  }
+  function loadMembers(){
+    return authedFetch(REST+'profiles?select=id,email,created_at,last_seen&order=last_seen.desc.nullslast&limit=1000',{headers:{Prefer:'count=exact'}}).then(function(r){
+      if(!r.ok){PROFOK=false;return restErr(r)}
+      var cr=r.headers.get('content-range'),tot=cr&&+cr.split('/')[1];
+      return r.json().then(function(rows){return {rows:rows,total:tot>0?tot:rows.length}});
+    }).then(function(o){
+      PROFOK=true;MEMBERS=o.rows;var tot=o.total,act=MEMBERS.filter(isActive).length,wk=Date.now()-7*864e5,w2=Date.now()-14*864e5;
+      var n1=MEMBERS.filter(function(m){return m.created_at&&new Date(m.created_at).getTime()>wk}).length;
+      var n0=MEMBERS.filter(function(m){var t0=m.created_at&&new Date(m.created_at).getTime();return t0&&t0>w2&&t0<=wk}).length;
+      setKpi('kpi-accounts',nf(tot));setKpi('adm-count',nf(tot));
+      setPill('kpi-accounts-d',n1?'+'+n1+(n0?' ('+(n1>=n0?'+':'−')+Math.abs(Math.round((n1-n0)/n0*100))+' %)':'')+' / 7 j':'0 nouveau / 7 j',n1?'':'neu');
+      setKpi('kpi-accounts-sub','');
+      setKpi('kpi-active',nf(act));setPill('kpi-active-d',tot?Math.round(act/tot*100)+' % des comptes':'—','neu');
+      var cum=0,pre=MEMBERS.filter(function(m){return m.created_at&&new Date(m.created_at).getTime()<=Date.now()-14*864e5}).length;
+      spark('sp-accounts',dayBuckets(MEMBERS,'created_at',14).map(function(c){cum+=c;return pre+cum}));
+      sparkBars('sp-active',dayBuckets(MEMBERS,'last_seen',7));
+      renderMembers();
+    }).catch(function(err){
+      PROFOK=false;setKpi('kpi-accounts','—');setKpi('kpi-active','—');setKpi('adm-count','–');
+      setPill('kpi-accounts-d','Voir script SQL','neu');renderMembers();
+    });
+  }
+  $('#amemq').addEventListener('input',function(){MEMQ=this.value;MEMSHOWN=10;renderMembers()});
+  $('#amemmore').addEventListener('click',function(){MEMSHOWN+=15;renderMembers()});
+  function loadActivity(){
+    var body=$('#aactbody'),mail={};
+    MEMBERS.forEach(function(m){mail[m.id]=m.email});
+    return authedFetch(REST+'purchases?select=*&order=created_at.desc&limit=10').then(function(r){return r.ok?r.json():[]}).catch(function(){return []}).then(function(pp){
+      var ev=[];
+      pp.forEach(function(p){
+        var v=ADMV[p.video_id],paid=String(p.status||'').toLowerCase()==='paid';
+        ev.push({t:p.created_at,mail:p.email||p.user_email||mail[p.user_id]||'—',d:'Achat VIP · '+(v?v.title:'vidéo')+(p.reference?' · réf. '+p.reference:''),st:paid?'<span class="bdg">Payé</span>':'<span class="bdg wait">En attente</span>'});
+      });
+      MEMBERS.filter(isActive).slice(0,6).forEach(function(m){ev.push({t:m.last_seen,mail:m.email||'—',d:'Connexion à l’application',st:'<span class="bdg">Actif</span>'})});
+      ev.sort(function(a,b){return new Date(b.t||0)-new Date(a.t||0)});
+      ev=ev.slice(0,8);
+      body.innerHTML=ev.length?ev.map(function(e,i){return '<tr><td>'+(i+1)+'</td><td class="mail">'+esc(e.mail)+'</td><td>'+esc(e.d)+'<br><span style="color:var(--muted);font-size:12px">'+esc(fdate(e.t))+'</span></td><td>'+e.st+'</td></tr>'}).join(''):'<tr><td colspan="4" class="adm-empty">Aucune activité récente.</td></tr>';
+    });
+  }
+  function tickUpd(){var el=$('#adm-upd');if(!el)return;if(!lastUpd){el.textContent='…';return}var s2=Math.round((Date.now()-lastUpd)/1000);el.textContent=s2<10?'à l’instant':s2<60?'il y a '+s2+' s':'il y a '+Math.round(s2/60)+' min'}
+  setInterval(tickUpd,15000);
+  function refreshDash(){
+    lastUpd=0;tickUpd();
+    var sl=$('#adm-sess');if(sl&&session&&session.user)sl.textContent='Session active · '+session.user.email;
+    return Promise.all([loadStats(),loadMembers()]).then(function(){return loadActivity()}).then(function(){lastUpd=Date.now();tickUpd()});
+  }
+  $('#adm-refresh').addEventListener('click',refreshDash);
+  /* raccourcis de la barre latérale : onglet + défilement vers la section */
+  $('#apanel').addEventListener('click',function(e){
+    var g=e.target.closest('[data-go]');if(!g)return;
+    var p=g.getAttribute('data-go').split(':');showAdminTab(p[0]);
+    var el=$(p[1]);if(el)try{el.scrollIntoView({behavior:'smooth',block:'start'})}catch(x){}
+  });
+  /* dernière connexion : enregistrée côté serveur (fonction touch_last_seen du script SQL) */
+  var seenAt=0;
+  function touchSeen(){
+    if(!session||Date.now()-seenAt<5*60*1000)return;seenAt=Date.now();
+    authedFetch(REST+'rpc/touch_last_seen',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'}).catch(function(){});
+  }
 
   /* ---------- Thème, Paramètres ---------- */
   var THEME_KEY='tl_theme';
@@ -3288,7 +3596,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   /* ---------- Bannière de téléchargement APK ----------
      Apparaît 1,5 s après l'arrivée, reste 6 s, puis disparaît. Une fois fermée (×) ou cliquée (Télécharger), elle ne revient plus (localStorage).
      Non affichée sur iPhone/iPad (pas d'APK) ni dans l'application installée elle-même. */
-  var APK_KEY='tl_apk_banner_v1',apkT1=null,apkT2=null;
+  var APK_KEY='tl_apk_banner_v2',APK_QUIET=3*864e5,apkT1=null,apkT2=null;
   var APKT={
     apk_title:'Application TOPLEAKS pour Android',apk_how:'Comment installer ?',apk_dl:'Télécharger',
     apk_help_title:'Installer l’application sur Android',
@@ -3300,8 +3608,8 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
     apk_note:'Téléchargez l’APK uniquement depuis le site officiel TOPLEAKS.'
   };
   for(var ak in APKT)I.fr[ak]=APKT[ak];
-  function apkSeen(){try{return !!localStorage.getItem(APK_KEY)}catch(e){return false}}
-  function apkDone(){try{localStorage.setItem(APK_KEY,'1')}catch(e){}}
+  function apkSeen(){try{var v=+localStorage.getItem(APK_KEY)||0;return v>0&&Date.now()-v<APK_QUIET}catch(e){return false}}
+  function apkDone(){try{localStorage.setItem(APK_KEY,String(Date.now()))}catch(e){}}
   function apkHide(){
     clearTimeout(apkT1);clearTimeout(apkT2);
     var b=$('#apkb');b.classList.remove('show');b.setAttribute('aria-hidden','true');
@@ -3311,10 +3619,12 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
     var ios=/iPhone|iPad|iPod/i.test(ua)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform||''));
     var inApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||/; wv\)/.test(ua);
     if(ios||inApp||apkSeen())return;
+    /* Android : la bannière reste affichée jusqu'à ce qu'on la ferme ou qu'on la touche. Ailleurs : 20 s. */
+    var android=/Android/i.test(ua);
     apkT1=setTimeout(function(){
       var b=$('#apkb');b.classList.add('show');b.setAttribute('aria-hidden','false');
-      apkT2=setTimeout(function(){apkDone();apkHide()},6000);
-    },1500);
+      if(!android)apkT2=setTimeout(apkHide,20000);
+    },1200);
   }
   /* l'utilisateur touche la bannière : on arrête la disparition automatique le temps qu'il choisisse */
   $('#apkb').addEventListener('pointerdown',function(){clearTimeout(apkT2)});
@@ -3327,6 +3637,34 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!$('#apkm').hidden)closeModal('#apkm')});
   $('#yr').textContent=new Date().getFullYear();
 
+  /* ---------- Bouton Retour du téléphone ----------
+     Une entrée « garde » est toujours posée au-dessus de l'historique. Un retour physique la consomme,
+     on ferme alors la couche la plus haute (fenêtre, tiroir, sous-écran, recherche) puis on repose la garde.
+     Quand il ne reste rien à fermer, un second retour dans les 2 s quitte réellement l'application. */
+  var backTs=0,guardOn=false;
+  function armGuard(){try{history.pushState({tlGuard:1},'',location.href);guardOn=true}catch(e){}}
+  function topLayer(){
+    for(var i=0;i<MODALS.length;i++)if(!$(MODALS[i]).hidden)return {k:'modal',sel:MODALS[i]};
+    if(!setEl.hidden)return {k:'settings'};
+    for(var n in views)if(n!=='home'&&!views[n].hidden)return {k:'screen'};
+    if($('#q').value.trim())return {k:'search'};
+    return null;
+  }
+  function closeTop(l){
+    if(l.k==='modal'){if(l.sel==='#qedit')closeQE();else closeModal(l.sel)}
+    else if(l.k==='settings')closeSettings();
+    else if(l.k==='screen'){try{pause()}catch(e){}try{exitFs()}catch(e){}show('home')}
+    else if(l.k==='search'){q.value='';search();q.blur()}
+  }
+  try{history.replaceState({tlBase:1},'',location.href)}catch(e){}
+  armGuard();
+  window.addEventListener('popstate',function(){
+    var l=topLayer();
+    if(l){closeTop(l);armGuard();return}
+    if(Date.now()-backTs<2000){backTs=0;try{history.back()}catch(e){}return}
+    backTs=Date.now();toast('Appuyez encore sur Retour pour quitter');armGuard();
+  });
+
   /* ---------- Démarrage ---------- */
   $('#saver').checked=!!ST.saver;
   if(!DEMO_MODE){
@@ -3336,7 +3674,7 @@ html[data-theme=light] .kpi{background:#fff;box-shadow:0 1px 2px rgba(40,28,8,.0
   }
   applyLang();renderContact();
   loadSession();renderAccount();
-  loadPayNumber();initApkBanner();
+  loadPayNumber();initApkBanner();touchSeen();
   consumeHash().then(function(){renderAccount();loadCats();loadVideos();loadPurchases()});
 })();
 </script>
