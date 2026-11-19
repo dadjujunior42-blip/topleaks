@@ -1,11 +1,10 @@
 {
-  "name": "floral-disk-8bf2",
-  "main": "src/index.js",
-  "compatibility_date": "2026-11-19",
+  // ...
   "r2_buckets": [
     {
       "binding": "R2_BUCKET",
       "bucket_name": "topleaks"
     }
-  ]
+  ],
+  // ...
 }
