@@ -1,0 +1,21 @@
+/* ===== Bannière de téléchargement APK (glisse du haut) ===== */
+.apkb{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;justify-content:center;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 0;pointer-events:none;visibility:hidden;opacity:0;-webkit-transform:translateY(-130%);transform:translateY(-130%);transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .4s ease,visibility 0s linear .55s}
+.apkb.show{visibility:visible;opacity:1;-webkit-transform:none;transform:none;transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .4s ease,visibility 0s}
+.apkb-in{pointer-events:auto;width:100%;max-width:500px;display:flex;align-items:center;gap:10px;padding:10px 8px 10px 12px;border-radius:16px;background:rgba(14,14,19,.96);border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 40px rgba(0,0,0,.55);color:#f2f0eb}
+.apkb-ic{flex:none;width:38px;height:38px;border-radius:50%;background:#ffb21e;color:#1a1100;display:grid;place-items:center}
+.apkb-ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.apkb-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.apkb-tx b{font:600 14px/1.25 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.apkb-how{align-self:flex-start;padding:0;border:0;background:none;color:#a09da8;font-size:12px;text-decoration:underline;text-underline-offset:2px}
+.apkb-dl{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 14px;border-radius:10px;background:#ffb21e;color:#1a1100;font-weight:700;font-size:13px;text-decoration:none}
+.apkb-x{flex:none;width:34px;height:34px;border:0;border-radius:50%;background:transparent;color:#a09da8;display:grid;place-items:center;padding:0}
+.apkb-x .ic{width:16px;height:16px}
+.apkb-dl:focus-visible,.apkb-x:focus-visible,.apkb-how:focus-visible{outline:2px solid #f2f0eb;outline-offset:2px}
+.apk-steps{list-style:none;counter-reset:apk;margin:14px 0 6px;padding:0;display:grid;gap:14px}
+.apk-steps li{counter-increment:apk;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+.apk-steps li::before{content:counter(apk);width:28px;height:28px;border-radius:50%;border:1px solid var(--accent);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:13px}
+.apk-steps b{display:block;font-size:14px;margin-bottom:2px}
+.apk-steps span{display:block;color:var(--soft);font-size:13px;line-height:1.45}
+.apk-dl{margin-top:14px;text-decoration:none}
+.foot-brand{margin:0;font:600 13px/1.2 var(--display);letter-spacing:.04em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.apkb,.apkb.show{transition:opacity .2s ease,visibility 0s}}
