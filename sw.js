@@ -3,7 +3,7 @@
    - fichiers statiques du site : cache d'abord, mis à jour en arrière-plan
    - JAMAIS en cache : Supabase (API, connexion, stockage), vidéos, APK, requêtes partielles (Range)
    Pour forcer une mise à jour chez tous les utilisateurs, changez VERSION. */
-var VERSION = 'v2';
+var VERSION = 'v3';
 var CACHE = 'topleaks-' + VERSION;
 var SHELL = [
   './',
