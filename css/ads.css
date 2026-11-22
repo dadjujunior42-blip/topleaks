@@ -1,0 +1,12 @@
+/* TOPLEAKS : habillage de la pub avant la vidéo suivante */
+#player{position:relative}
+.tl-ad{position:absolute;inset:0;z-index:60;background:#000;display:flex;align-items:center;justify-content:center}
+.tl-ad-v{width:100%;height:100%;object-fit:contain;background:#000}
+.tl-ad-top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.tl-ad-tag{background:#f5c518;color:#111;font:700 12px/1 system-ui,sans-serif;padding:5px 8px;border-radius:5px;letter-spacing:.04em}
+.tl-ad-count{background:rgba(0,0,0,.65);color:#fff;font:700 14px/1 system-ui,sans-serif;min-width:34px;text-align:center;padding:6px 10px;border-radius:999px}
+.tl-ad-bot{position:absolute;left:10px;right:10px;bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:10px;color:#fff;font:500 12px/1.3 system-ui,sans-serif;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.tl-ad-link{pointer-events:auto;background:#fff;color:#111;text-decoration:none;font-weight:700;padding:8px 12px;border-radius:8px;white-space:nowrap}
+.tl-ad-skip{position:absolute;right:10px;bottom:52px;z-index:2;background:rgba(0,0,0,.7);color:#fff;border:1px solid rgba(255,255,255,.5);font:700 13px/1 system-ui,sans-serif;padding:10px 14px;border-radius:8px;cursor:pointer}
+.tl-ad-skip:disabled{opacity:.7;cursor:default}
+.tl-ad-skip:not(:disabled){background:#fff;color:#111;border-color:#fff}
