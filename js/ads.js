@@ -23,6 +23,20 @@
 
   var busy=false,own=false,overlay=null,adEl=null,idx=0,guard=null;
 
+  /* La liste des pubs se gère dans l'espace admin (onglet « Pubs ») : elle est lue dans la table app_settings (clé ads_config) */
+  function loadConfig(){
+    fetch(SB_URL+'/rest/v1/app_settings?select=value&key=eq.ads_config',{headers:{apikey:SB_KEY},cache:'no-store'})
+      .then(function(r){return r.ok?r.json():[]})
+      .then(function(rows){
+        var v=rows&&rows[0]&&rows[0].value;if(!v)return;
+        if(typeof v==='string'){try{v=JSON.parse(v)}catch(e){return}}
+        if(!v||typeof v!=='object')return;
+        if(v.on===false){ADS=[];return}
+        if(Array.isArray(v.list))ADS=v.list.filter(Boolean).map(function(s){return typeof s==='string'?{src:s}:s});
+      }).catch(function(){});
+  }
+  loadConfig();
+
   /* ---------- Acheteur ? (mis en cache 5 min) ---------- */
   var buyerCache={v:false,t:0};
   function isBuyer(){
