@@ -8,7 +8,8 @@
   var PROMOS={LANCEMENT:20,BIENVENUE:10}; /* démonstration : à valider côté serveur pour de vrai */
   var NEW_DAYS=14;
   var APP_VERSION='2.0.0',APP_BUILD='Novembre 2026';
-  var SB_URL='https://hivmcstxtciynbdwgmpl.supabase.co',SB_KEY='sb_publishable_ioVVYvSUx040k5zA-lmRow_uTkpyabC';
+  /* Config actuelle (celle de l'ancien index tout-en-un). Ancienne config de secours : SB_URL='https://hivmcstxtciynbdwgmpl.supabase.co' et R2_CDN='https://pub-e3f10db5a5ee4cbea0471157bd183fbf.r2.dev' */
+  var SB_URL='https://ozakwmoftlassrrcdiqg.supabase.co',SB_KEY='sb_publishable_yOJOb8ba26j8KsEbjQlUMA_ntB4GNo7';
 
   /* ---------- Textes : français, swahili, lingala (à faire relire par un locuteur) ---------- */
   var I={
@@ -1852,7 +1853,7 @@
 
 
   /* ---------- Upload 1 clic : navigateur → Worker Cloudflare → R2 (cdn.topleaks.online) → table videos ---------- */
-  var R2_WORKER='https://floral-disk-8bf2.dadjuJunior42.workers.dev',R2_CDN='https://pub-e3f10db5a5ee4cbea0471157bd183fbf.r2.dev',r2xhr=null,r2body=null;
+  var R2_WORKER='https://floral-disk-8bf2.dadjuJunior42.workers.dev',R2_CDN='https://cdn.topleaks.online',r2xhr=null,r2body=null;
   /* sans accents, sans espaces ; préfixe horodaté pour qu'un PUT n'écrase jamais un fichier déjà en ligne */
   function cleanName(n){
     var dot=n.lastIndexOf('.'),ext=dot>0?n.slice(dot+1):'',base=dot>0?n.slice(0,dot):n;
