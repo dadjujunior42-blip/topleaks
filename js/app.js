@@ -1879,6 +1879,7 @@
   }
   $('#r2form').addEventListener('submit',function(e){
     e.preventDefault();
+        if(($('#r2file').files||[]).length>1){r2batch();return}
     var file=$('#r2file').files[0],title=$('#r2title').value.trim(),price=parseInt($('#r2price').value,10);
     if(!file){r2ui('err','Choisissez un fichier vidéo',0,'');return}
     if(title.length<2){r2ui('err','Titre trop court (2 caractères minimum)',0,'');return}
