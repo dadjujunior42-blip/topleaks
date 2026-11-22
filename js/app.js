@@ -1903,6 +1903,45 @@
       });
     }).catch(function(err){r2ui('err',err.aborted?'Envoi annulé':'Échec de l’envoi',err.aborted?0:null,err.aborted?'':err.message)});
   });
+    var r2files=[];
+  $('#r2file').addEventListener('change',function(){
+    r2files=Array.prototype.slice.call(this.files||[]);
+    var box=$('#r2list');
+    if(r2files.length<2){box.hidden=true;box.innerHTML='';$('#r2go').textContent='Envoyer et publier';return}
+    box.hidden=false;
+    box.innerHTML=r2files.map(function(f,i){return '<div class="mrow" data-i="'+i+'" data-state="wait"><input class="field mt" type="text" maxlength="120" aria-label="Titre" value="'+esc(baseTitle(f.name))+'"><small>'+esc(f.name)+' · '+sizeMb(f)+'</small><span class="mst">En attente</span></div>'}).join('');
+    $('#r2go').textContent='Envoyer et publier '+r2files.length+' vidéos';
+  });
+  function r2batch(){
+    var rows=Array.prototype.slice.call(document.querySelectorAll('#r2list .mrow')).filter(function(r){return r.getAttribute('data-state')!=='ok'});
+    var price=parseInt($('#r2price').value,10),okN=0,failN=0;
+    if(!(price>=0)){r2ui('err','Prix invalide',0,'');return}
+    r2ui('up','Envoi de '+rows.length+' vidéos, une par une…',0,'Gardez cette page ouverte.');
+    rows.reduce(function(p,row){
+      var f=r2files[+row.getAttribute('data-i')],title=row.querySelector('.mt').value.trim();
+      return p.then(function(){
+        if(title.length<2)throw new Error('Titre trop court');
+        var name=cleanName(f.name),url=R2_CDN+'/'+encodeURIComponent(name);
+        markRow(row,'busy','Préparation…');
+        return getCover(f).catch(function(){return null}).then(function(info){
+          return r2put(f,name,function(l,tt){markRow(row,'busy','Envoi '+Math.floor(l/tt*100)+' %')}).then(function(){
+            return (info&&info.blob?upThumb(info,true):Promise.resolve(null)).then(function(tu){
+              var body={title:title,artist:$('#r2artist').value.trim()||null,description:$('#r2desc').value.trim()||null,price_fc:price,video_url:url,is_published:true};
+              if($('#rcat').value||CATS.length)body.category_id=$('#rcat').value||null;
+              if($('#r2pin').checked||PINOK)body.pinned=$('#r2pin').checked;
+              if(info&&info.dur)body.duration_seconds=info.dur;
+              if(tu)body.thumbnail_url=tu;
+              return authedFetch(REST+'videos',{method:'POST',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)}).then(function(r){if(!r.ok)return restErr(r)});
+            });
+          });
+        }).then(function(){markRow(row,'ok','Publiée')});
+      }).then(function(){okN++},function(err){failN++;markRow(row,'err','Échec : '+(err.noSession?t('admin_need'):err.message))});
+    },Promise.resolve()).then(function(){
+      loadStats();loadVideos();
+      if(!failN){$('#r2form').reset();r2files=[];$('#r2list').hidden=true;$('#r2list').innerHTML='';$('#r2go').textContent='Envoyer et publier';r2ui('ok',okN+' vidéo(s) publiée(s)',100,'')}
+      else r2ui('err',okN+' publiée(s), '+failN+' en échec',100,'Corrigez puis cliquez à nouveau : seules les vidéos en échec sont renvoyées.');
+    });
+  }
   $('#r2cancel').addEventListener('click',function(){if(r2xhr)r2xhr.abort()});
   $('#r2retry').addEventListener('click',function(){if(r2body)r2save(r2body)});
 
