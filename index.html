@@ -318,7 +318,8 @@ if('serviceWorker' in navigator){
         <form id="r2form" class="aform r2-card" novalidate>
           <p class="hint">Le fichier est renommé (sans espaces ni accents), envoyé vers Cloudflare R2, puis son lien <code>cdn.topleaks.online</code> est enregistré automatiquement dans le catalogue.</p>
           <label class="label" for="r2file">Fichier vidéo</label>
-          <input id="r2file" class="field aemail afile" type="file" accept="video/*">
+        <input id="r2file" class="field aemail afile" type="file" accept="video/*" multiple>
+<div id="r2list" class="multi" hidden></div>
           <label class="label" for="r2title">Titre</label>
           <input id="r2title" class="field aemail" type="text" maxlength="120" autocomplete="off">
           <label class="label" for="r2artist">Artiste</label>
