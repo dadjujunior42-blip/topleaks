@@ -7,6 +7,7 @@
    2) Il affiche un écran « Prochaine vidéo dans 5 s » (Lancer maintenant / Annuler).
    3) Puis, si une pub est configurée dans l'admin (onglet Pubs) et que la personne n'a aucun achat confirmé,
       il joue la pub (20 s max, bouton « Passer » après 5 s), puis lance la vidéo.
+      Rythme : pub après la 1re vidéo, puis 3 vidéos sans pub, puis une pub, etc. (réglage VIDEOS_BETWEEN).
    4) La liste des pubs est relue à chaque fin de vidéo (une pub ajoutée à l'instant apparaît sans recharger la page)
       et la pub est préchargée pendant la fin de la vidéo pour démarrer sans attente. */
 (function(){
@@ -17,6 +18,7 @@
   var SKIP_AFTER=5;         /* le bouton « Passer » apparaît après 5 s (0 = pas de bouton) */
   var AD_START_TIMEOUT=15;  /* si la pub ne démarre pas en 15 s (réseau lent), on passe à la vidéo */
   var NEXT_SECONDS=5;       /* compte à rebours avant la vidéo suivante */
+  var VIDEOS_BETWEEN=3;     /* nombre de vidéos qui s'enchaînent SANS pub après chaque pub (la 1re pub passe après la 1re vidéo) */
   var SKIP_FOR_BUYERS=true; /* les membres avec au moins un achat confirmé ne voient pas de pub */
   var CFG_TTL=60000;        /* la liste des pubs est relue au plus toutes les 60 s */
   var CAT_TTL=180000;       /* le catalogue est relu au plus toutes les 3 min */
@@ -104,6 +106,12 @@
     if(!id)return;
     var h=hist().filter(function(x){return x!==id});h.push(id);setHist(h);
   }
+  /* Rythme des pubs : 1re pub après la 1re vidéo, puis VIDEOS_BETWEEN vidéos sans pub, puis une pub, etc.
+     « since » = nombre de vidéos enchaînées depuis la dernière pub (au départ : pub due). */
+  var SK='tl_since_ad_v1';
+  function since(){var n=parseInt(sessionStorage.getItem(SK),10);return isNaN(n)?VIDEOS_BETWEEN:n}
+  function setSince(n){try{sessionStorage.setItem(SK,String(n))}catch(e){}}
+  function adDue(){return since()>=VIDEOS_BETWEEN}
   /* Vidéo actuellement ouverte : dernier clic connu, vérifié avec le titre affiché (couvre aussi les liens partagés ?video=) */
   function curId(){
     var el=$('#dtitle'),title=(el&&el.textContent||'').trim(),found='';
@@ -194,7 +202,7 @@
   }
   function prepAd(){
     try{
-      if(saveData()||buyerCache.v)return;
+      if(saveData()||buyerCache.v||!adDue())return;
       if(nextAd&&!ADS.some(function(a){return a.src===nextAd.src})){nextAd=null;pre=null}
       if(!nextAd)nextAd=pickAd();
       if(!nextAd)return;
@@ -304,8 +312,9 @@
       if(!openById(nx)){cancelAll();return}
       mark(nx.id);
       var buyer=r[0];
-      if(buyer||!adsOn||!ADS.length){cleanup();startNext()}
-      else showAd(startNext);
+      if(buyer||!adsOn||!ADS.length){cleanup();startNext();return}
+      if(adDue()){setSince(1);showAd(startNext)}   /* pub due : elle passe, la vidéo ouverte est la 1re du lot */
+      else{setSince(since()+1);cleanup();startNext()} /* pas de pub cette fois */
     }).catch(function(){if(token===runId)cancelAll()});
   }
 
