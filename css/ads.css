@@ -1,5 +1,9 @@
-/* TOPLEAKS : habillage de la pub avant la vidéo suivante */
+/* TOPLEAKS : habillage de la pub et de l'écran « Prochaine vidéo » */
 #player{position:relative}
+/* le bouton retour reste cliquable au-dessus des écrans de transition */
+#pback{z-index:70}
+
+/* ---------- Pub ---------- */
 .tl-ad{position:absolute;inset:0;z-index:60;background:#000;display:flex;align-items:center;justify-content:center}
 .tl-ad-v{width:100%;height:100%;object-fit:contain;background:#000}
 .tl-ad-top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
@@ -10,3 +14,30 @@
 .tl-ad-skip{position:absolute;right:10px;bottom:52px;z-index:2;background:rgba(0,0,0,.7);color:#fff;border:1px solid rgba(255,255,255,.5);font:700 13px/1 system-ui,sans-serif;padding:10px 14px;border-radius:8px;cursor:pointer}
 .tl-ad-skip:disabled{opacity:.7;cursor:default}
 .tl-ad-skip:not(:disabled){background:#fff;color:#111;border-color:#fff}
+
+/* ---------- Écran « Prochaine vidéo dans 5 s » ---------- */
+.tl-next{position:absolute;inset:0;z-index:60;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:16px;animation:tlNextIn .25s ease both}
+@keyframes tlNextIn{from{opacity:0}to{opacity:1}}
+.tl-next-box{display:flex;align-items:center;gap:16px;max-width:560px;width:100%;color:#fff;font-family:system-ui,sans-serif}
+.tl-next-img{width:42%;max-width:220px;aspect-ratio:16/9;object-fit:cover;border-radius:10px;background:#111;flex:none}
+.tl-next-tx{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
+.tl-next-lab{font-size:13px;opacity:.85}
+.tl-next-lab b{color:#f5c518;font-size:15px}
+.tl-next-t{font-size:17px;line-height:1.25;font-weight:700;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tl-next-act{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.tl-next-go,.tl-next-no{font:700 13px/1 system-ui,sans-serif;padding:11px 14px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff}
+.tl-next-go{background:#f5c518;border-color:#f5c518;color:#111}
+.tl-next-bar{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.15)}
+.tl-next-bar i{display:block;height:100%;width:0;background:#f5c518;transition-property:width;transition-timing-function:linear}
+
+/* lecteur vertical (9:16) ou petit écran : disposition en colonne */
+#player.vertical .tl-next-box,
+.tl-next-box:has(.tl-next-img):not(:only-child){}
+@media (max-width:480px){
+  .tl-next-box{flex-direction:column;text-align:center;gap:10px}
+  .tl-next-img{width:60%;max-width:200px}
+  .tl-next-act{justify-content:center}
+}
+#player.vertical .tl-next-box{flex-direction:column;text-align:center}
+#player.vertical .tl-next-img{width:60%;max-width:180px}
+#player.vertical .tl-next-act{justify-content:center}
